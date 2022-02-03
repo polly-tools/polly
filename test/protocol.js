@@ -3,7 +3,7 @@ const { keccak256 } = require("ethers/lib/utils");
 const { ethers } = require("hardhat");
 const {colors} = require('colors');
 
-describe("Derive", function () {
+describe("Polly", function () {
 
   const collID = 'My collection';
   const contracts = {};
