@@ -17,8 +17,8 @@ interface IMeta is IAccessControl, IInitializable {
 
 contract Meta is AccessControl, Initializable {
 
-  event metaUpdated(string indexed _key, string indexed value);
-  event metaDeleted(string indexed _key, string indexed value);
+  event metaUpdated(string indexed domain_, string indexed _key, string indexed value);
+  event metaDeleted(string indexed domain_, string indexed _key, string indexed value);
 
   /// @dev MANAGER_ROLE allow addresses to add items to the catalogue
   bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
@@ -39,13 +39,13 @@ contract Meta is AccessControl, Initializable {
   }
 
 
-  /// @dev private function to update meta for item_id_
+  /// @dev private function to update meta for domain item_id_
   function _updateMeta(string memory domain_, uint item_id_, string memory key_, string memory value_) private {
     _meta[domain_][item_id_][key_] = value_;
-    emit metaUpdated(key_, value_);
+    emit metaUpdated(domain_, key_, value_);
   }
 
-  /// @dev update meta for item_id_
+  /// @dev update meta for domain item_id_
   function updateMeta(string memory domain_, uint item_id_, string[] memory keys_, string[] memory values_) public onlyRole(MANAGER_ROLE) {
 
     require(keys_.length == values_.length, "KEY_VALUE_LENGTH_MISMATCH");
@@ -56,16 +56,16 @@ contract Meta is AccessControl, Initializable {
 
   }
 
-  /// @dev get meta for item_id_
+  /// @dev get meta for domain item_id_
   function getMeta(string memory domain_, uint item_id_, string memory key_) public view returns(string memory) {
     return _meta[domain_][item_id_][key_];
   }
 
-  /// @dev private _delete meta for item_id_
+  /// @dev private _delete meta for domain item_id_
   function _deleteMeta(string memory domain_, uint item_id_, string memory key_) private {
     string memory value_ = _meta[domain_][item_id_][key_];
     delete(_meta[domain_][item_id_][key_]);
-    emit metaDeleted(key_, value_);
+    emit metaDeleted(domain_, key_, value_);
   }
 
   /// @dev delete meta for item_id_
