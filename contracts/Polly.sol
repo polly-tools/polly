@@ -8,6 +8,7 @@ import "./Collection.sol";
 import "./Catalogue.sol";
 import "./Meta.sol";
 import "./Aux.sol";
+import "./Module.sol";
 
 
 interface IPolly {
@@ -22,74 +23,85 @@ interface IPolly {
 
 }
 
-contract Polly {
+
+contract Polly is Ownable {
 
 
-    mapping(string => IPolly.Instance) private _instances;
-    mapping(address => string) private _instance_ids;
-    address private _coll;
-    address private _cat;
-    address private _meta;
-    address private _aux_handler;
 
-    constructor() {
 
-      _coll = address(new Collection());
-      _cat = address(new Catalogue());
-      _meta = address(new Meta());
-      _aux_handler = address(new AuxHandler());
+    /// PROPERTIES ///
+
+    mapping(string => mapping(uint => address)) private _modules;
+    mapping(string => uint) private _module_versions;
+
+    //////////////////
+
+
+
+
+    /// EVENTS ///
+
+    event moduleUpdated(
+      string indexed name,
+      uint indexed version,
+      address indexed implementation
+    );
+
+    event moduleUse(
+      string indexed name,
+      address indexed module_address,
+      address indexed deployer
+    );
+
+
+    //////////////
+
+
+
+
+    function updateModule(string memory name_, address implementation_) public onlyOwner {
+
+      bool update = false;
+
+      _module_versions[name_]++;
+      _modules[name_][_module_versions[name_]] = implementation_;
+
+      if(update)
+        emit moduleUpdated(name_, _module_versions[name_], implementation_);
 
     }
 
 
-    /// @dev Creates a Polly instance for the calling address
-    /// @param id_ a string identification for the collection
-    /// @param aux_ auxiliaries to attach at instance creation
 
-    function createInstance(
-        string memory id_,
-        address[] memory aux_
-    ) public {
+    function useModule(string memory name_, uint version_) public returns(address module_address_) {
 
-        require(!instanceExists(id_), 'Collection with that id already exists');
+      require(moduleExists(name_, version_), 'MODULE_DOES_NOT_EXIST');
+      IModule.ModuleInfo memory module_info_ = IModule(_modules[name_][version_]).getModuleInfo();
+      require(module_info_.clone, 'MODULE_NOT_DEPLOYABLE');
 
-        IPolly.Instance memory instance_ = IPolly.Instance(
-            msg.sender,
-            Clones.clone(_coll),
-            Clones.clone(_cat),
-            Clones.clone(_meta),
-            Clones.clone(_aux_handler)
-        );
+      IModule module_ = IModule(Clones.clone(_modules[name_][version_]));
+      module_.init(msg.sender);
 
-        ICollection(instance_.coll).init(instance_);
-        ICatalogue(instance_.cat).init(instance_);
-        IMeta(instance_.meta).init(instance_);
-        IAuxHandler(instance_.aux_handler).init(instance_, aux_);
+      module_address_ = address(module_);
 
-        _instances[id_] = instance_;
+      emit moduleUse(name_, module_address_, msg.sender);
+
+      return module_address_;
 
     }
 
-    /// @notice Get the instance address for collection with id_
-    /// @param id_ a string identification for the collection
-    /// @return address of the instance;
 
-    function getInstance(
-        string memory id_
-    ) public view returns(IPolly.Instance memory){
-        require(instanceExists(id_), 'Instance does not exist');
-        return _instances[id_];
+
+    function getModuleVersion(string memory name_) public view returns(uint){
+      return _module_versions[name_];
     }
 
 
-    /// @notice Determine wether a collection instance exists or not
-    /// @param id_ a string identification for the collection
-    /// @return true if exists, false if not
 
-    function instanceExists(
-        string memory id_
-    ) public view returns(bool){
-        return !(_instances[id_].coll == address(0));
+    function moduleExists(string memory name_, uint version_) public view returns(bool exists_){
+      if(_modules[name_][version_] != address(0))
+        exists_ = true;
+      return exists_;
     }
 
 
