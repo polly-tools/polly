@@ -4,17 +4,14 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/IAccessControl.sol";
-import "./Collection.sol";
-import "./Catalogue.sol";
-import "./Meta.sol";
-import "./Aux.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./Initializable.sol";
 
 interface IModule is IInitializable {
 
   struct ModuleInfo {
     string name;
-    string implementation;
+    address implementation;
     bool clone;
   }
 
