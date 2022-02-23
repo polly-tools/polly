@@ -29,8 +29,12 @@ describe("Polly", function () {
     const TestModule = await ethers.getContractFactory("TestModule");
     contracts.testModule = await TestModule.deploy();
 
+    const TestModule2 = await ethers.getContractFactory("TestModule2");
+    contracts.testModule2 = await TestModule2.deploy();
+
     console.log(`   Polly -> `, contracts.polly.address.yellow);
     console.log(`   TestModule -> `, contracts.testModule.address.yellow);
+    console.log(`   TestModule2 -> `, contracts.testModule2.address.yellow);
 
     users[1] = await contracts.polly.connect(wallet1);
     users[2] = await contracts.polly.connect(wallet2);
@@ -43,17 +47,16 @@ describe("Polly", function () {
   describe("updateModule()", async function(){
 
     it("reverts on non-owner", async function(){
-
       expect(users[1].updateModule('testModule', contracts.testModule.address))
       .to.be.reverted;
-
     });
 
     it("allows owner to add module", async function(){
       expect(contracts.polly.updateModule('testModule', contracts.testModule.address))
       .to.emit(contracts.polly, 'moduleUpdated')
+      expect(contracts.polly.updateModule('testModule2', contracts.testModule2.address))
+      .to.emit(contracts.polly, 'moduleUpdated')
     });
-
 
   });
 
@@ -61,6 +64,7 @@ describe("Polly", function () {
   describe("getModule()", async function(){
 
     it("returns valid module", async function(){
+
       const tModule = await contracts.polly.getModule('testModule', 0);
 
       expect(tModule.name).to.equal('testModule');
@@ -80,16 +84,29 @@ describe("Polly", function () {
         ['testModule', 1, nullAddress]
       ]);
 
-
       const configs = await users[1].getConfigsForOwner(wallet1.address);
       const config = await users[1].getConfig(configs[0]);
-      console.log(config)
+      const module = config.modules[0];
 
-      // expect(tModule.name).to.equal('testModule');
-      // expect(tModule.version).to.equal(1);
-      // expect(tModule.implementation).to.equal(contracts.testModule.address);
+      expect(module.name).to.equal('testModule');
+      expect(module.version).to.equal(1);
 
     });
+
+    it("allows config owner to attach new module", async function(){
+
+      const configs = await users[1].getConfigsForOwner(wallet1.address);
+      const config_id = configs[0];
+
+      await expect(users[2].useModule(config_id, ['testModule2', 1, nullAddress])).to.be.revertedWith('NOT_CONFIG_OWNER');
+      expect(await users[1].useModule(config_id, ['testModule2', 1, nullAddress])).to.emit(contracts.polly, 'configUpdated')
+
+      expect(await users[1].useModule(config_id, config.modules[1])).to.emit(contracts.polly, 'configUpdated')
+
+
+    })
+
+
 
   });
 

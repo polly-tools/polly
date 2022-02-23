@@ -25,6 +25,10 @@ contract Module is Initializable, AccessControl {
 
   bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
+  constructor(){
+    init(msg.sender);
+  }
+
   function init(address for_) public {
     super.init();
     _grantRole(DEFAULT_ADMIN_ROLE, for_);
