@@ -47,8 +47,8 @@ describe("Polly", function () {
   describe("updateModule()", async function(){
 
     it("reverts on non-owner", async function(){
-      expect(users[1].updateModule('testModule', contracts.testModule.address))
-      .to.be.reverted;
+      await expect(users[1].updateModule('testModule', contracts.testModule.address))
+      .to.be.revertedWith('Ownable: caller is not the owner');
     });
 
     it("allows owner to add module", async function(){
@@ -100,13 +100,29 @@ describe("Polly", function () {
 
       await expect(users[2].useModule(config_id, ['testModule2', 1, nullAddress])).to.be.revertedWith('NOT_CONFIG_OWNER');
       expect(await users[1].useModule(config_id, ['testModule2', 1, nullAddress])).to.emit(contracts.polly, 'configUpdated')
+      const config = await users[1].getConfig(config_id);
 
       expect(await users[1].useModule(config_id, config.modules[1])).to.emit(contracts.polly, 'configUpdated')
-
 
     })
 
 
+  });
+
+  describe("Cannot user", async function(){
+
+    it("use a non-existing module", async function(){
+
+      const configs = await users[3].getConfigsForOwner(wallet1.address);
+      const config_id = configs[0];
+
+      await expect(users[1].useModule(config_id, ['fakeModule', 1, nullAddress])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule');
+      await expect(users[1].useModules(config_id, [
+        ['testModule', 1, nullAddress],
+        ['fakeModule2', 1, nullAddress]
+      ])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule2');
+
+    });
 
   });
 

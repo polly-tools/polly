@@ -5,9 +5,6 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Module.sol";
 
-import "hardhat/console.sol";
-
-
 interface IPolly {
 
   struct ModuleBase {
@@ -61,8 +58,16 @@ contract Polly is Ownable {
     //////////////
 
 
+    /// @dev restricts access to owner of config
     modifier onlyConfigOwner(uint config_id_) {
       require(isConfigOwner(config_id_, msg.sender), 'NOT_CONFIG_OWNER');
+      _;
+    }
+
+    modifier onlyValidModules(IPolly.ModuleInstance[] memory mods_) {
+      for(uint i = 0; i < mods_.length; i++){
+        require(moduleExists(mods_[i].name, mods_[i].version), string(abi.encodePacked('MODULE_DOES_NOT_EXIST: ', mods_[i].name)));
+      }
       _;
     }
 
@@ -104,11 +109,8 @@ contract Polly is Ownable {
     }
 
 
-
-    /// CONFIGS
-
     function _cloneAndAttachModule(uint config_id_, string memory name_, uint version_) private {
-      // console.log(string(abi.encodePacked('CLONING -> ', name_)));
+
       address implementation_ = _modules[name_][version_];
 
       IModule module_ = IModule(Clones.clone(implementation_));
@@ -119,29 +121,8 @@ contract Polly is Ownable {
     }
 
     function _attachModule(uint config_id_, string memory name_, uint version_, address location_) private {
-      // console.log(string(abi.encodePacked('ATTACHING -> ', name_)));
       _configs[config_id_].modules.push(IPolly.ModuleInstance(name_, version_, location_));
       emit configUpdated(name_, config_id_);
-    }
-
-    function useModule(uint config_id_, IPolly.ModuleInstance memory mod_) public onlyConfigOwner(config_id_) {
-
-      require(moduleExists(mod_.name, mod_.version), 'MODULE_DOESNT_EXIST');
-
-      _useModule(config_id_, mod_);
-
-    }
-
-    function useModules(uint config_id_, IPolly.ModuleInstance[] memory mods_) public onlyConfigOwner(config_id_) {
-
-      for(uint i = 0; i < mods_.length; i++){
-        require(moduleExists(mods_[i].name, mods_[i].version), 'MODULE_DOESNT_EXIST');
-      }
-
-      for(uint256 i = 0; i < mods_.length; i++) {
-        _useModule(config_id_, mods_[i]);
-      }
-
     }
 
     function _useModule(uint config_id_, IPolly.ModuleInstance memory mod_) private {
@@ -164,12 +145,32 @@ contract Polly is Ownable {
     }
 
 
+    function useModule(uint config_id_, IPolly.ModuleInstance memory mod_) public onlyConfigOwner(config_id_) {
+
+      require(moduleExists(mod_.name, mod_.version), string(abi.encodePacked('MODULE_DOES_NOT_EXIST: ', mod_.name)));
+
+      _useModule(config_id_, mod_);
+
+    }
+
+    function useModules(uint config_id_, IPolly.ModuleInstance[] memory mods_) public onlyConfigOwner(config_id_) onlyValidModules(mods_) {
+
+      for(uint256 i = 0; i < mods_.length; i++) {
+        _useModule(config_id_, mods_[i]);
+      }
+
+    }
+
+    /// CONFIGS
+
+
     function createConfig(string memory name_, IPolly.ModuleInstance[] memory mod_) public {
 
       _config_id++;
       _configs[_config_id].name = name_;
       _configs[_config_id].owner = msg.sender;
       _configs_for_owner[msg.sender].push(_config_id);
+
       useModules(_config_id, mod_);
 
     }
