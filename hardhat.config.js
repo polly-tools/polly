@@ -33,8 +33,28 @@ module.exports = {
   },
   gasReporter: {
     enabled: true,
-    gasPrice: 70,
+    // gasPrice: 70,
     currency: 'ETH',
     coinmarketcap: process.env.CMC_API_KEY
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
+  },
+  abiExporter: {
+    path: './sol/abi',
+  },
+  networks: {
+    mainnet: {
+      url: process.env.MAINNET_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY],
+    },
+    localhost: {
+      url: process.env.LOCALHOST_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY]
+    }
   }
 };

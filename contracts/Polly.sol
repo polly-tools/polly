@@ -7,6 +7,7 @@ import "./Module.sol";
 
 interface IPolly {
 
+
   struct ModuleBase {
     string name;
     uint version;
@@ -24,6 +25,19 @@ interface IPolly {
     address owner;
     ModuleInstance[] modules;
   }
+
+
+  function updateModule(string memory name_, address implementation_) external;
+  function getModule(string memory name_, uint version_) external view returns(IPolly.ModuleBase memory);
+  function moduleExists(string memory name_, uint version_) external view returns(bool exists_);
+  function useModule(uint config_id_, IPolly.ModuleInstance memory mod_) external;
+  function useModules(uint config_id_, IPolly.ModuleInstance[] memory mods_) external;
+  function createConfig(string memory name_, IPolly.ModuleInstance[] memory mod_) external;
+  function getConfigsForOwner(address owner_) external view returns(uint[] memory);
+  function getConfig(uint config_id_) external view returns(IPolly.Config memory);
+  function isConfigOwner(uint config_id_, address check_) external view returns(bool);
+  function transferConfig(uint config_id_, address to_) external;
+
 
 }
 
@@ -64,6 +78,7 @@ contract Polly is Ownable {
       _;
     }
 
+    /// @dev used when passing multiple modules
     modifier onlyValidModules(IPolly.ModuleInstance[] memory mods_) {
       for(uint i = 0; i < mods_.length; i++){
         require(moduleExists(mods_[i].name, mods_[i].version), string(abi.encodePacked('MODULE_DOES_NOT_EXIST: ', mods_[i].name)));
@@ -74,7 +89,7 @@ contract Polly is Ownable {
 
     /// MODULES ///
 
-
+    /// @dev adds or updates a given module implemenation
     function updateModule(string memory name_, address implementation_) public onlyOwner {
 
       uint version_ = _module_versions[name_]+1;
@@ -91,7 +106,7 @@ contract Polly is Ownable {
     }
 
 
-
+    /// @dev retrieves a specific module version base
     function getModule(string memory name_, uint version_) public view returns(IPolly.ModuleBase memory){
 
       if(version_ < 1)
@@ -101,7 +116,7 @@ contract Polly is Ownable {
 
     }
 
-
+    /// @dev check if a module version exists
     function moduleExists(string memory name_, uint version_) public view returns(bool exists_){
       if(_modules[name_][version_] != address(0))
         exists_ = true;
@@ -109,6 +124,7 @@ contract Polly is Ownable {
     }
 
 
+    /// @dev check if a module version exists
     function _cloneAndAttachModule(uint config_id_, string memory name_, uint version_) private {
 
       address implementation_ = _modules[name_][version_];
@@ -144,7 +160,7 @@ contract Polly is Ownable {
 
     }
 
-
+    /// @dev add one module to a configuration
     function useModule(uint config_id_, IPolly.ModuleInstance memory mod_) public onlyConfigOwner(config_id_) {
 
       require(moduleExists(mod_.name, mod_.version), string(abi.encodePacked('MODULE_DOES_NOT_EXIST: ', mod_.name)));
@@ -153,6 +169,7 @@ contract Polly is Ownable {
 
     }
 
+    /// @dev add multiple modules to a configuration
     function useModules(uint config_id_, IPolly.ModuleInstance[] memory mods_) public onlyConfigOwner(config_id_) onlyValidModules(mods_) {
 
       for(uint256 i = 0; i < mods_.length; i++) {
@@ -161,9 +178,11 @@ contract Polly is Ownable {
 
     }
 
+
+
     /// CONFIGS
 
-
+    /// @dev create a config with a name
     function createConfig(string memory name_, IPolly.ModuleInstance[] memory mod_) public {
 
       _config_id++;
@@ -175,21 +194,24 @@ contract Polly is Ownable {
 
     }
 
+    /// @dev retrieve configs for owner
     function getConfigsForOwner(address owner_) public view returns(uint[] memory){
       return _configs_for_owner[owner_];
     }
 
+    /// @dev get a specific config
     function getConfig(uint config_id_) public view returns(IPolly.Config memory){
       return _configs[config_id_];
     }
 
+    /// @dev check if address is config owner
     function isConfigOwner(uint config_id_, address check_) public view returns(bool){
       IPolly.Config memory config_ = getConfig(config_id_);
       return (config_.owner == check_);
     }
 
-    function transferConfig(uint config_id_, address to_) public {
-      require(isConfigOwner(config_id_, msg.sender), "NOT_CONFIG_OWNER");
+    /// @dev transfer config to another address
+    function transferConfig(uint config_id_, address to_) public onlyConfigOwner(config_id_) {
       _configs[config_id_].owner = to_;
     }
 

@@ -20,7 +20,6 @@ contract TestModule2 is Module {
       return IModule.ModuleInfo(name_, address(this), clone_);
     }
 
-
     function setString(string memory string_) public onlyRole(MANAGER_ROLE){
         _string = string_;
     }

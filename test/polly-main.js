@@ -109,7 +109,11 @@ describe("Polly", function () {
 
   });
 
-  describe("Cannot user", async function(){
+  describe("No one can...", async function(){
+
+    it("init a module", async function(){
+      await expect(contracts.testModule2['init(address)'](users[3].address)).to.be.revertedWith('CAN_NOT_INIT');
+    });
 
     it("use a non-existing module", async function(){
 
