@@ -84,7 +84,7 @@ describe("Polly", function () {
         ['testModule', 1, nullAddress]
       ]);
 
-      const configs = await users[1].getConfigsForOwner(wallet1.address);
+      const configs = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
       const config = await users[1].getConfig(configs[0]);
       const module = config.modules[0];
 
@@ -95,7 +95,7 @@ describe("Polly", function () {
 
     it("allows config owner to attach new module", async function(){
 
-      const configs = await users[1].getConfigsForOwner(wallet1.address);
+      const configs = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
       const config_id = configs[0];
 
       await expect(users[2].useModule(config_id, ['testModule2', 1, nullAddress])).to.be.revertedWith('NOT_CONFIG_OWNER');
@@ -109,6 +109,30 @@ describe("Polly", function () {
 
   });
 
+  describe("transferConfig()", async function(){
+
+    it("allows config owner to transfer config", async function(){
+
+      const configs1 = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
+      const configs2 = await users[1].getConfigsForOwner(wallet2.address, 0, 0);
+      const config_id = configs1[0];
+
+      await users[1].transferConfig(configs1[0], wallet2.address);
+
+      const configs1after = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
+      const configs2after = await users[2].getConfigsForOwner(wallet2.address, 0, 0);
+
+      await expect(users[3].transferConfig(config_id, wallet1.address)).to.be.revertedWith('NOT_CONFIG_OWNER');
+
+      expect(configs1.length -1).to.equal(configs1after.length);
+      expect(await users[1].isConfigOwner(config_id, wallet1.address)).is.false;
+      expect(configs2.length +1).to.equal(configs2after.length);
+      expect(await users[2].isConfigOwner(config_id, wallet2.address)).is.true;
+
+    });
+
+  });
+
   describe("No one can...", async function(){
 
     it("init a module", async function(){
@@ -117,11 +141,11 @@ describe("Polly", function () {
 
     it("use a non-existing module", async function(){
 
-      const configs = await users[3].getConfigsForOwner(wallet1.address);
+      const configs = await users[3].getConfigsForOwner(wallet2.address, 0, 0);
       const config_id = configs[0];
 
-      await expect(users[1].useModule(config_id, ['fakeModule', 1, nullAddress])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule');
-      await expect(users[1].useModules(config_id, [
+      await expect(users[2].useModule(config_id, ['fakeModule', 1, nullAddress])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule');
+      await expect(users[2].useModules(config_id, [
         ['testModule', 1, nullAddress],
         ['fakeModule2', 1, nullAddress]
       ])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule2');

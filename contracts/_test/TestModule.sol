@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
-import "./../Module.sol";
+import "./../PollyModule.sol";
 
-interface ITestModule is IModule {
+interface ITestModule is IPollyModule {
 
   function setString(string memory string_) external;
   function getString() external view returns(string memory);
@@ -10,14 +10,14 @@ interface ITestModule is IModule {
 }
 
 
-contract TestModule is Module {
+contract TestModule is PollyModule {
 
     string private _string;
 
-    function getModuleInfo() public view returns(IModule.ModuleInfo memory){
+    function getModuleInfo() public view returns(IPollyModule.ModuleInfo memory){
       string memory name_ = 'Test module';
       bool clone_ = false;
-      return IModule.ModuleInfo(name_, address(this), clone_);
+      return IPollyModule.ModuleInfo(name_, address(this), clone_);
     }
 
 
