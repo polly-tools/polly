@@ -57,7 +57,7 @@ interface IPolly {
   function useModule(uint config_id_, IPolly.ModuleInstance memory mod_) external;
   function useModules(uint config_id_, IPolly.ModuleInstance[] memory mods_) external;
   function createConfig(string memory name_, IPolly.ModuleInstance[] memory mod_) external;
-  function getConfigsForOwner(address owner_, uint page_) external view returns(uint[] memory);
+  function getConfigsForOwner(address owner_, uint limit_, uint page_) external view returns(uint[] memory);
   function getConfig(uint config_id_) external view returns(IPolly.Config memory);
   function isConfigOwner(uint config_id_, address check_) external view returns(bool);
   function transferConfig(uint config_id_, address to_) external;
