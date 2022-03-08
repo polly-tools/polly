@@ -88,6 +88,12 @@ describe("Polly", function () {
       const config = await users[1].getConfig(configs[0]);
       const module = config.modules[0];
 
+      await users[3].createConfig('config1', []);
+      await users[3].createConfig('config2', []);
+      await users[3].createConfig('config3', []);
+      await users[3].createConfig('config4', []);
+      await users[3].createConfig('config5', []);
+
       expect(module.name).to.equal('testModule');
       expect(module.version).to.equal(1);
 
@@ -106,6 +112,26 @@ describe("Polly", function () {
 
     })
 
+
+  });
+
+  describe("getConfigsForOwner", async function(){
+
+    it("pulls correct configs", async function(){
+
+      const configs1 = await users[1].getConfigsForOwner(wallet1.address, 0, 0)
+      const configs3 = await users[3].getConfigsForOwner(wallet3.address, 0, 0)
+
+      expect(configs1.length).to.equal(1);
+      expect(configs3.length).to.equal(5);
+
+      const configs3page1 = await users[3].getConfigsForOwner(wallet3.address, 3, 1);
+      const configs3page2 = await users[3].getConfigsForOwner(wallet3.address, 3, 2);
+
+      expect(configs3page1.length).to.equal(3);
+      expect(configs3page2[configs3page1.length-1]).to.equal(0);
+
+    });
 
   });
 

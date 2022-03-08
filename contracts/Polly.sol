@@ -29,7 +29,6 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PollyModule.sol";
 
-
 interface IPolly {
 
 
@@ -240,12 +239,15 @@ contract Polly is Ownable {
         return _configs_for_owner[owner_];
       }
 
-      uint[] memory configs_;
-      uint i = 1;
+      uint[] memory configs_ = new uint[](limit_);
+      uint i = 0;
       uint index;
-      while(i <= limit_ && i < _configs_for_owner[owner_].length){
-        index = page_ > 1 ? i*page_ : i;
-        configs_[i-1] = _configs_for_owner[owner_][index];
+      uint offset = (page_-1)*limit_;
+      while(i < limit_ && i < _configs_for_owner[owner_].length){
+        index = i+(offset);
+        if(_configs_for_owner[owner_].length > index){
+          configs_[i] = _configs_for_owner[owner_][index];
+        }
         i++;
       }
 
