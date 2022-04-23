@@ -1,5 +1,6 @@
 {
-  "name": "derive-protocol",
+  "name": "@polly-os/core",
+  "version": "1.1.0",
   "scripts": {
     "deploy-rinkeby": "npx hardhat run --network rinkeby scripts/deploy-rinkeby.js ",
     "deploy-mainnet": "npx hardhat run --network mainnet scripts/deploy-mainnet.js ",
@@ -16,7 +17,8 @@
     "ethers": "^5.5.2",
     "hardhat": "^2.8.0",
     "hardhat-abi-exporter": "^2.3.0",
-    "hardhat-gas-reporter": "^1.0.4"
+    "hardhat-gas-reporter": "^1.0.4",
+    "keccak256": "^1.0.6"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.1",
