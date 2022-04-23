@@ -1,7 +1,9 @@
 {
-  "name": "derive-protocol",
+  "name": "@polly-os/core",
+  "version": "1.0.0",
   "scripts": {
     "deploy-rinkeby": "npx hardhat run --network rinkeby scripts/deploy-rinkeby.js ",
+    "deploy-local": "npx hardhat run --network localhost scripts/deploy-local.js ",
     "deploy-mainnet": "npx hardhat run --network mainnet scripts/deploy-mainnet.js ",
     "test": "npx hardhat test",
     "dev": "npx nodemon -e sol,js --exec \"npm run test\""
