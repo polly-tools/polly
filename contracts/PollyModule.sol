@@ -25,6 +25,7 @@ interface IPollyModule {
   function getInt(string memory key_) external view returns(int);
   function getAddress(string memory key_) external view returns(address);
   function getBool(string memory key_) external view returns(bool);
+  function isManager(address address_) external view returns(bool);
 
 }
 
@@ -76,6 +77,9 @@ contract PollyModule is AccessControl {
   }
   function getBool(string memory key_) public view returns(bool) {
     return _keyStoreBool[key_];
+  }
+  function isManager(address address_) external view returns(bool){
+    return hasRole(MANAGER, address_);
   }
 
 }
