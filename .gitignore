@@ -1,15 +1,4 @@
+lerna-debug.log
 node_modules
 .env
-coverage
-coverage.json
-typechain
-
-.env
-.env.local
-
-#Hardhat files
-cache
-artifacts
-
-#yarn
-yarn-error.log
+/temp
