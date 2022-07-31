@@ -26,14 +26,14 @@ describe("Polly", function () {
     const Polly = await ethers.getContractFactory("Polly");
     contracts.polly = await Polly.deploy();
 
-    const TestModule = await ethers.getContractFactory("TestModule");
-    contracts.testModule = await TestModule.deploy();
+    const TestModule1 = await ethers.getContractFactory("TestModule1");
+    contracts.testModule1 = await TestModule1.deploy();
 
     const TestModule2 = await ethers.getContractFactory("TestModule2");
     contracts.testModule2 = await TestModule2.deploy();
 
     console.log(`   Polly -> `, contracts.polly.address.yellow);
-    console.log(`   TestModule -> `, contracts.testModule.address.yellow);
+    console.log(`   TestModule -> `, contracts.testModule1.address.yellow);
     console.log(`   TestModule2 -> `, contracts.testModule2.address.yellow);
 
     users[1] = await contracts.polly.connect(wallet1);
@@ -47,14 +47,14 @@ describe("Polly", function () {
   describe("updateModule()", async function(){
 
     it("reverts on non-owner", async function(){
-      await expect(users[1].updateModule('testModule', contracts.testModule.address))
+      await expect(users[1].updateModule(contracts.testModule1.address))
       .to.be.revertedWith('Ownable: caller is not the owner');
     });
 
     it("allows owner to add module", async function(){
-      expect(contracts.polly.updateModule('testModule', contracts.testModule.address))
+      expect(contracts.polly.updateModule(contracts.testModule1.address))
       .to.emit(contracts.polly, 'moduleUpdated')
-      expect(contracts.polly.updateModule('testModule2', contracts.testModule2.address))
+      expect(contracts.polly.updateModule(contracts.testModule2.address))
       .to.emit(contracts.polly, 'moduleUpdated')
     });
 
@@ -65,11 +65,11 @@ describe("Polly", function () {
 
     it("returns valid module", async function(){
 
-      const tModule = await contracts.polly.getModule('testModule', 0);
+      const tModule = await contracts.polly.getModule('TestModule1', 0);
 
-      expect(tModule.name).to.equal('testModule');
+      expect(tModule.name).to.equal('TestModule1');
       expect(tModule.version).to.equal(1);
-      expect(tModule.implementation).to.equal(contracts.testModule.address);
+      expect(tModule.implementation).to.equal(contracts.testModule1.address);
 
     });
 
@@ -81,7 +81,7 @@ describe("Polly", function () {
     it("allows anyone to create a config", async function(){
 
       await users[1].createConfig('test config', [
-        ['testModule', 1, nullAddress]
+        ['TestModule1', 1, nullAddress]
       ]);
 
       const configs = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
@@ -94,7 +94,7 @@ describe("Polly", function () {
       await users[3].createConfig('config4', []);
       await users[3].createConfig('config5', []);
 
-      expect(module.name).to.equal('testModule');
+      expect(module.name).to.equal('TestModule1');
       expect(module.version).to.equal(1);
 
     });
@@ -104,8 +104,8 @@ describe("Polly", function () {
       const configs = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
       const config_id = configs[0];
 
-      await expect(users[2].useModule(config_id, ['testModule2', 1, nullAddress])).to.be.revertedWith('NOT_CONFIG_OWNER');
-      expect(await users[1].useModule(config_id, ['testModule2', 1, nullAddress])).to.emit(contracts.polly, 'configUpdated')
+      await expect(users[2].useModule(config_id, ['TestModule2', 1, nullAddress])).to.be.revertedWith('NOT_CONFIG_OWNER');
+      expect(await users[1].useModule(config_id, ['TestModule2', 1, nullAddress])).to.emit(contracts.polly, 'configUpdated')
       const config = await users[1].getConfig(config_id);
 
       expect(await users[1].useModule(config_id, config.modules[1])).to.emit(contracts.polly, 'configUpdated')
@@ -172,7 +172,7 @@ describe("Polly", function () {
 
       await expect(users[2].useModule(config_id, ['fakeModule', 1, nullAddress])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule');
       await expect(users[2].useModules(config_id, [
-        ['testModule', 1, nullAddress],
+        ['TestModule1', 1, nullAddress],
         ['fakeModule2', 1, nullAddress]
       ])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule2');
 

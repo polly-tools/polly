@@ -50,8 +50,9 @@ interface IPolly {
     ModuleInstance[] modules;
   }
 
-  function updateModule(string memory name_, address implementation_) external;
+  function updateModule(address implementation_) external;
   function getModule(string memory name_, uint version_) external view returns(IPolly.ModuleBase memory);
+  function getModuleVersion(string memory name_) external view returns(uint);
   function moduleExists(string memory name_, uint version_) external view returns(bool exists_);
   function useModule(uint config_id_, IPolly.ModuleInstance memory mod_) external;
   function useModules(uint config_id_, IPolly.ModuleInstance[] memory mods_) external;
@@ -150,6 +151,13 @@ contract Polly is Ownable {
       return IPolly.ModuleBase(name_, version_, _modules[name_][version_]);
 
     }
+
+
+    /// @dev retrieves the most recent version number for a module
+    function getModuleVersion(string memory name_) public view returns(uint){
+      return _module_versions[name_];
+    }
+
 
     /// @dev check if a module version exists
     function moduleExists(string memory name_, uint version_) public view returns(bool exists_){
