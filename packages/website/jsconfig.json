@@ -1,0 +1,15 @@
+{
+    "baseUrl": ".",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@abi/*": [
+                "base/abis"
+            ],
+            "@hook/*": [
+                "base/hooks"
+            ]
+        }
+    }
+    
+}
