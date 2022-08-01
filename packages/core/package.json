@@ -2,6 +2,7 @@
   "name": "@polly-os/core",
   "version": "1.1.0",
   "scripts": {
+    "deploy-localhost": "npx hardhat run --network localhost scripts/deploy-localhost.js ",
     "deploy-rinkeby": "npx hardhat run --network rinkeby scripts/deploy-rinkeby.js ",
     "deploy-mainnet": "npx hardhat run --network mainnet scripts/deploy-mainnet.js ",
     "test": "npx hardhat test",

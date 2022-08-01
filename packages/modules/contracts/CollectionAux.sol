@@ -35,8 +35,8 @@ interface ICollectionAuxHandler is ICollectionHooks, IPollyAuxHandler {}
 
 contract CollectionAuxHandler is PollyModule, PollyAuxHandler {
 
-    function getModuleInfo() public view returns(IPollyModule.ModuleInfo memory){
-        return IPollyModule.ModuleInfo('polly.CollectionAuxHandler', address(this), true);
+    function getInfo() public pure returns(IPollyModule.Info memory){
+        return IPollyModule.Info('polly.CollectionAuxHandler', true);
     }
 
     // ACTIONS

@@ -4,6 +4,9 @@ require("@nomiclabs/hardhat-etherscan");
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
 
+const accounts = require('./hhaccounts.js');
+accounts[0] = {privateKey: process.env.DEPLOYER_KEY, balance: '10000000000000000000000'};
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -28,9 +31,6 @@ module.exports = {
       runs: 200
     },
   },
-  abiExporter: {
-    path: './sol/abi',
-  },
   gasReporter: {
     enabled: true,
     // gasPrice: 70,
@@ -41,9 +41,15 @@ module.exports = {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
   abiExporter: {
-    path: './sol/abi',
+    path: './abi',
+    runOnCompile: true,
+    except: ['@openzeppelin', 'TestModule'],
+    flat: true
   },
   networks: {
+    hardhat: {
+      accounts: accounts
+    },
     mainnet: {
       url: process.env.MAINNET_RPC_URL,
       accounts: [process.env.PRIVATE_KEY],
@@ -54,7 +60,7 @@ module.exports = {
     },
     localhost: {
       url: process.env.LOCALHOST_RPC_URL,
-      accounts: [process.env.PRIVATE_KEY]
+      accounts: [process.env.PRIVATE_KEY],
     }
   }
 };

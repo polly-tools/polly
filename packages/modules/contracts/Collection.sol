@@ -78,8 +78,8 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
     event EditionCreated(uint edition_id_);
 
 
-    function getModuleInfo() public view returns(IPollyModule.ModuleInfo memory){
-        return IPollyModule.ModuleInfo('polly.Collection', address(this), true);
+    function getInfo() public pure returns(IPollyModule.Info memory){
+        return IPollyModule.Info('polly.Collection', true);
     }
 
     function hasAuxHandler() public view returns(bool has_){

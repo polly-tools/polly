@@ -68,8 +68,8 @@ contract Catalogue is PollyModule {
     event metaUpdated(uint indexed id, string indexed key, string indexed value);
     event metaDeleted(uint indexed id, string indexed key, string indexed value);
 
-    function getModuleInfo() public view returns(IPollyModule.ModuleInfo memory){
-        return IPollyModule.ModuleInfo('polly.Catalogue', address(this), true);
+    function getInfo() public pure returns(IPollyModule.Info memory){
+        return IPollyModule.Info('polly.Catalogue', true);
     }
 
     function hasAuxHandler() public view returns(bool has_){

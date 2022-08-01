@@ -17,8 +17,8 @@ interface ICatalogueAuxHandler is ICatalogueHooks, IPollyAuxHandler {}
 contract CatalogueAuxHandler is PollyModule, PollyAuxHandler {
 
 
-    function getModuleInfo() public view returns(IPollyModule.ModuleInfo memory){
-        return IPollyModule.ModuleInfo('polly.CatalogueAuxHandler', address(this), true);
+    function getInfo() public pure returns(IPollyModule.Info memory){
+        return IPollyModule.Info('polly.CatalogueAuxHandler', true);
     }
 
     function filterHasItemAccess(bool has_, address check_, uint item_id_, string memory access_) public view onlyRole(MANAGER) returns(bool) {

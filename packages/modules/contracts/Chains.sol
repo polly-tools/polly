@@ -88,8 +88,8 @@ contract Chains is CollectionAux, PollyModule {
 
 
     /// @dev return module info -> (name, location, clone)
-    function getModuleInfo() public view returns(IPollyModule.ModuleInfo memory){
-        return IPollyModule.ModuleInfo("polly.Chains", address(this), true);
+    function getInfo() public pure returns(IPollyModule.Info memory){
+        return IPollyModule.Info("polly.Chains", true);
     }
     
 
