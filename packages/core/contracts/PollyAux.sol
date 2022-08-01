@@ -48,9 +48,6 @@ abstract contract PollyAuxHandler is PollyModule {
 
     function _addAux(address aux_address_) private {
 
-        // _aux.push(aux_address_);
-        // _aux_index[aux_address_] = (_aux.length -1);
-
         string[] memory hooks_ = IPollyAux(aux_address_).getHooks();
         if(hooks_.length > 0){
           for(uint i = 0; i < hooks_.length; i++){
@@ -66,13 +63,10 @@ abstract contract PollyAuxHandler is PollyModule {
 
     function removeAux(address aux_address_) public onlyRole(MANAGER) {
 
-        address[] memory new_aux_;
-
         string[] memory aux_hooks_ = IPollyAux(aux_address_).getHooks();
         if(aux_hooks_.length > 0){
 
           address[] memory saved_auxs_;
-          string[] memory new_hooks_;
           string memory hook_;
           uint saved_i_;
 
@@ -94,17 +88,6 @@ abstract contract PollyAuxHandler is PollyModule {
 
         }
 
-        // address[] memory new_aux_;
-        // uint aux_index_ = _aux_index[remove_];
-        // uint ii;
-        // for(uint256 i = 0; i < _aux.length; i++) {
-        //     if(aux_index_ != i){
-        //         new_aux_[ii] = _aux[i];
-        //     }
-        // }
-        // _aux = new_aux_;
-        // delete _aux_index[remove_];
-
     }
 
     function setAuxAddress(uint index_, address address_) public onlyRole(MANAGER) {
@@ -114,21 +97,6 @@ abstract contract PollyAuxHandler is PollyModule {
     }
 
     function getAuxForHook(string memory hook_) public view returns(address[] memory){
-
-        // uint ii = 0;
-        // address[100] memory aux_temp_;
-        // for(uint256 i = 0; i < _aux.length; i++){
-        //     if(IPollyAux(_aux[i]).usesHook(hook_)){
-        //         aux_temp_[ii] = _aux[i];
-        //         ii++;
-        //     }
-        // }
-
-
-        // address[] memory aux_ = new address[](ii);
-        // for(uint256 iii = 0; iii < aux_.length; iii++) {
-        //     aux_[iii] = aux_temp_[iii];
-        // }
 
         return _hooks[hook_];
 
