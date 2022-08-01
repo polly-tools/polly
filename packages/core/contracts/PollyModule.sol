@@ -17,7 +17,7 @@ interface IPollyModule {
   function didInit() external view returns(bool);
   function getInfo() external view returns(IPollyModule.Info memory module_);
   function setString(string memory key_, string memory value_) external;
-  function setInt(string memory key_, uint value_) external;
+  function setInt(string memory key_, int value_) external;
   function setAddress(string memory key_, address value_) external;
   function setBool(string memory key_, bool value_) external;
   function getString(string memory key_) external view returns(string memory);
