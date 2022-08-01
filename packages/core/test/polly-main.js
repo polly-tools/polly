@@ -75,89 +75,20 @@ describe("Polly", function () {
 
   });
 
+  describe("getModules()", async function(){
 
-  describe("createConfig()", async function(){
+    it("returns valid module list", async function(){
 
-    it("allows anyone to create a config", async function(){
+      const page1 = await contracts.polly.getModules(1, 1);
+      const page2 = await contracts.polly.getModules(1, 2);
 
-      await users[1].createConfig('test config', [
-        ['TestModule1', 1, nullAddress]
-      ]);
-
-      const configs = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
-      const config = await users[1].getConfig(configs[0]);
-      const module = config.modules[0];
-
-      await users[3].createConfig('config1', []);
-      await users[3].createConfig('config2', []);
-      await users[3].createConfig('config3', []);
-      await users[3].createConfig('config4', []);
-      await users[3].createConfig('config5', []);
-
-      expect(module.name).to.equal('TestModule1');
-      expect(module.version).to.equal(1);
-
-    });
-
-    it("allows config owner to attach new module", async function(){
-
-      const configs = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
-      const config_id = configs[0];
-
-      await expect(users[2].useModule(config_id, ['TestModule2', 1, nullAddress])).to.be.revertedWith('NOT_CONFIG_OWNER');
-      expect(await users[1].useModule(config_id, ['TestModule2', 1, nullAddress])).to.emit(contracts.polly, 'configUpdated')
-      const config = await users[1].getConfig(config_id);
-
-      expect(await users[1].useModule(config_id, config.modules[1])).to.emit(contracts.polly, 'configUpdated')
-
-    })
-
-
-  });
-
-  describe("getConfigsForOwner", async function(){
-
-    it("pulls correct configs", async function(){
-
-      const configs1 = await users[1].getConfigsForOwner(wallet1.address, 0, 0)
-      const configs3 = await users[3].getConfigsForOwner(wallet3.address, 0, 0)
-
-      expect(configs1.length).to.equal(1);
-      expect(configs3.length).to.equal(5);
-
-      const configs3page1 = await users[3].getConfigsForOwner(wallet3.address, 3, 1);
-      const configs3page2 = await users[3].getConfigsForOwner(wallet3.address, 3, 2);
-
-      expect(configs3page1.length).to.equal(3);
-      expect(configs3page2[configs3page1.length-1]).to.equal(0);
+      expect(page1.length).to.equal(1);
+      expect(page2.length).to.equal(1);
 
     });
 
   });
 
-  describe("transferConfig()", async function(){
-
-    it("allows config owner to transfer config", async function(){
-
-      const configs1 = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
-      const configs2 = await users[1].getConfigsForOwner(wallet2.address, 0, 0);
-      const config_id = configs1[0];
-
-      await users[1].transferConfig(configs1[0], wallet2.address);
-
-      const configs1after = await users[1].getConfigsForOwner(wallet1.address, 0, 0);
-      const configs2after = await users[2].getConfigsForOwner(wallet2.address, 0, 0);
-
-      await expect(users[3].transferConfig(config_id, wallet1.address)).to.be.revertedWith('NOT_CONFIG_OWNER');
-
-      expect(configs1.length -1).to.equal(configs1after.length);
-      expect(await users[1].isConfigOwner(config_id, wallet1.address)).is.false;
-      expect(configs2.length +1).to.equal(configs2after.length);
-      expect(await users[2].isConfigOwner(config_id, wallet2.address)).is.true;
-
-    });
-
-  });
 
   describe("No one can...", async function(){
 
@@ -166,16 +97,7 @@ describe("Polly", function () {
     });
 
     it("use a non-existing module", async function(){
-
-      const configs = await users[3].getConfigsForOwner(wallet2.address, 0, 0);
-      const config_id = configs[0];
-
-      await expect(users[2].useModule(config_id, ['fakeModule', 1, nullAddress])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule');
-      await expect(users[2].useModules(config_id, [
-        ['TestModule1', 1, nullAddress],
-        ['fakeModule2', 1, nullAddress]
-      ])).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule2');
-
+      await expect(users[2].cloneModule('fakeModule', 1)).to.be.revertedWith('MODULE_DOES_NOT_EXIST: fakeModule');
     });
 
   });

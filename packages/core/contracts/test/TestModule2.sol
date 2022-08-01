@@ -5,8 +5,8 @@ import '../PollyModule.sol';
 
 contract TestModule2 is PollyModule {
 
-  function getModuleInfo() public view returns(IPollyModule.ModuleInfo memory) {
-    return IPollyModule.ModuleInfo("TestModule2", address(this), false);
+  function getInfo() public pure returns(IPollyModule.Info memory) {
+    return IPollyModule.Info("TestModule2", false);
   }
 
 }

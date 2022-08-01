@@ -8,15 +8,14 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 
 interface IPollyModule {
 
-  struct ModuleInfo {
+  struct Info {
     string name;
-    address implementation;
     bool clone;
   }
 
   function init(address for_) external;
   function didInit() external view returns(bool);
-  function getModuleInfo() external view returns(IPollyModule.ModuleInfo memory module_);
+  function getInfo() external view returns(IPollyModule.Info memory module_);
   function setString(string memory key_, string memory value_) external;
   function setInt(string memory key_, uint value_) external;
   function setAddress(string memory key_, address value_) external;
