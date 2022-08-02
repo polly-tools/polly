@@ -35,8 +35,21 @@ interface ICollectionAuxHandler is ICollectionHooks, IPollyAuxHandler {}
 
 contract CollectionAuxHandler is PollyModule, PollyAuxHandler {
 
+
     function getInfo() public pure returns(IPollyModule.Info memory){
         return IPollyModule.Info('polly.CollectionAuxHandler', true);
+    }
+
+    function configure(address catalogue_, address collection_, address aux_handler_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+                
+        (bool s1,) = catalogue_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', MANAGER, address(this)));
+        (bool s2,) = collection_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', MANAGER, address(this)));
+
+        if(aux_handler_ != address(0)){
+            (bool s3,) = collection_.delegatecall(abi.encodeWithSignature('setAddress(string,address)', 'aux_handler', aux_handler_));
+            grantRole(MANAGER, collection_);
+        }
+
     }
 
     // ACTIONS

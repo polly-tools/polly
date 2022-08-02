@@ -66,8 +66,16 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
     uint private _edition_ids;
     mapping(uint => ICollection.Edition) private _editions;
 
-    constructor() ERC1155("") PollyModule() {}
+    constructor() ERC1155("") PollyModule(){}
 
+
+    function configure(address collection_, address catalogue_) public onlyRole(DEFAULT_ADMIN_ROLE) returns (bool) {        
+        (bool s1,) = collection_.delegatecall(abi.encodeWithSignature('setAddress(string,address)', 'catalogue', catalogue_));
+        (bool s2,) = catalogue_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', PollyModule(catalogue_).MANAGER(), collection_));
+        if(s1 && s2)
+            return true;
+        return false;
+    }
 
     /**
     ***********************************
