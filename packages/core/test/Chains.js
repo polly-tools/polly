@@ -2,12 +2,13 @@ const { expect, config } = require("chai");
 const { ethers } = require("hardhat");
 const keccak256 = require('keccak256')
 const colors = require('colors');
+const {inputParam} = require('@polly-os/utils/js/PollyConfigurator.js')
 
-configs = {};
-configs.collection = require('../polly_configurators/Collection');
-configs.catalogue = require('../polly_configurators/Catalogue');
-configs.aux_handler = require('../polly_configurators/CollectionAux');
-configs.chains = require('../polly_configurators/Chains');
+// configs = {};
+// configs.collection = require('../polly_configurators/Collection');
+// configs.catalogue = require('../polly_configurators/Catalogue');
+// configs.aux_handler = require('../polly_configurators/CollectionAux');
+// configs.chains = require('../polly_configurators/Chains');
 
 const TEST_CHAIN = 2;
 
@@ -39,15 +40,17 @@ describe("Chains.sol", async function(){
     minter3
 
     const MANAGER = '0x'+keccak256('MANAGER').toString('hex');
-    
 
-    it("deploys and is configurable", async function () {  
+    it("init polly", async function(){
+      const Polly = await ethers.getContractFactory("Polly");
+      polly = await Polly.deploy();
+      console.log('Polly deployed to', polly.address.green);
+    })
+
+
+    it("deploys and is configurable", async function () {
 
         [owner, user1, user2, user3] = await ethers.getSigners();
-    
-        const Polly = await ethers.getContractFactory("Polly");
-        polly = await Polly.deploy();
-        console.log('Polly deployed to', )
 
         // Collection
         Collection = await ethers.getContractFactory("Collection");
@@ -55,33 +58,62 @@ describe("Chains.sol", async function(){
         await collection.deployed();
         expect(collection.address).to.be.properAddress;
 
-
+        // Add collection to Polly
         await polly.updateModule(collection.address);
-        expect(Polly.get.address).to.be.properAddress;
-    
-        
+        const collection_module = await polly.getModule('collection', 0);
+        expect(collection_module.implementation).to.be.properAddress;
+
+
         // Collection AuxHandler
         AuxHandler = await ethers.getContractFactory("CollectionAuxHandler");
         aux_handler = await AuxHandler.deploy();
         await aux_handler.deployed();
-    
         expect(aux_handler.address).to.be.properAddress;
-    
+
+        // Add aux handler to Polly
+        await polly.updateModule(aux_handler.address);
+        const aux_handler_module = await polly.getModule('collection.aux_handler', 0);
+        expect(aux_handler_module.implementation).to.be.properAddress;
+
+
+
         // Catalogue
         Catalogue = await ethers.getContractFactory("Catalogue");
         catalogue = await Catalogue.deploy();
         await catalogue.deployed();
-    
         expect(catalogue.address).to.be.properAddress;
-    
-    
+
+        // Add catalogue handler to Polly
+        await polly.updateModule(catalogue.address);
+        const catalogue_module = await polly.getModule('catalogue', 0);
+        expect(catalogue_module.implementation).to.be.properAddress;
+
+
         // Chains
         Chains = await ethers.getContractFactory("Chains");
         chains = await Chains.deploy();
         await chains.deployed();
-    
         expect(chains.address).to.be.properAddress;
-                
+
+
+        // Add chains handler to Polly
+        await polly.updateModule(chains.address);
+        const chains_module = await polly.getModule('chains', 0);
+        expect(chains_module.implementation).to.be.properAddress;
+
+
+
+
+        /// RUN CONFIGURATOR
+
+        const tx = polly.runModuleConfigurator('collection', [inputParam(false)]);
+        await expect(tx).to.emit(polly, 'moduleConfigured');
+
+        const receipt = await tx.wait();
+        const event = receipt.events.find(x => x.event === "NewOrder");
+        console.log(event)
+
+
         const options = {
             collection, catalogue, aux_handler, chains
         }
@@ -89,7 +121,7 @@ describe("Chains.sol", async function(){
         for (const key in configs) {
             if (Object.hasOwnProperty.call(configs, key)) {
             configs[key] = new configs[key](options[key], options);
-            await configs[key].configure();              
+            await configs[key].configure();
             }
         }
 
@@ -97,9 +129,9 @@ describe("Chains.sol", async function(){
 
 
     it("managers can init chains", async function(){
-        
+
         moderation = true;
-        
+
         // Init a chain
         await chains.initChain(
             'Derive', // Creator name
@@ -118,9 +150,9 @@ describe("Chains.sol", async function(){
 
         // console.log(chain)
         // console.log(edition)
-        
+
         expect(chain.id).to.equal(1);
-        
+
     })
 
     it("lots of chains can be created", async function(){
@@ -140,11 +172,11 @@ describe("Chains.sol", async function(){
         }
 
         expect(await chains.getChainCount()).to.equal(max);
-        
+
     });
 
     it("contributor can update chain", async function(){
-        
+
         // The node object we'll be passing into contract
         const node = [
         1, // Chain ID of the chain to add this to
@@ -155,7 +187,7 @@ describe("Chains.sol", async function(){
         user3.address // Next contributor
         ];
 
-        
+
         // Check assertions
         await expect(chains.connect(user3).submitNode(node)).to.be.revertedWith('ONLY_CONTRIBUTOR');
 
@@ -166,7 +198,7 @@ describe("Chains.sol", async function(){
         // Check before snapshot
         expect(chainBefore.contributor).to.equal(user1.address);
         expect(chainBefore.node).to.equal(0);
-        
+
         // User1 submits a node
         await chains.connect(user1).submitNode(node);
 
@@ -207,7 +239,7 @@ describe("Chains.sol", async function(){
             user1.address // Next contributor
         ];
         // console.log(node)
-        
+
         let currChain = await chains.getChain(node[0]);
         let current = 2;
         let current_user;
@@ -258,14 +290,14 @@ describe("Chains.sol", async function(){
         const chainid = TEST_CHAIN;
         let ed = await collection.getEdition(chainid, true);
         // console.log(ed)
-        
+
         let i = 0;
         while(i < ed.supply){
             await collection.mint(chainid, {value: ed.price});
             // console.log('mint', i+1)
             i++;
         }
-        
+
     })
 
 

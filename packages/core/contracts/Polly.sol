@@ -28,6 +28,7 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PollyModule.sol";
+import "./PollyConfigurator.sol";
 
 interface IPolly {
 
@@ -51,9 +52,10 @@ interface IPolly {
     ModuleInstance[] modules;
   }
 
+
   function updateModule(address implementation_) external;
   function getModule(string memory name_, uint version_) external view returns(IPolly.Module memory);
-  function getModuleVersion(string memory name_) external view returns(uint);
+  function getLatestModuleVersion(string memory name_) external view returns(uint);
   function moduleExists(string memory name_, uint version_) external view returns(bool exists_);
   function useModule(uint config_id_, IPolly.ModuleInstance memory mod_) external;
   function useModules(uint config_id_, IPolly.ModuleInstance[] memory mods_) external;
@@ -91,6 +93,7 @@ contract Polly is Ownable {
       string indexed name, uint version, address location
     );
 
+    event moduleConfigured(string indexed name, uint version, PollyConfigurator.ReturnParam[]);
 
     /// MODULES ///
 
@@ -126,7 +129,7 @@ contract Polly is Ownable {
 
 
     /// @dev retrieves the most recent version number for a module
-    function getModuleVersion(string memory name_) public view returns(uint){
+    function getLatestModuleVersion(string memory name_) public view returns(uint){
       return _module_versions[name_];
     }
 
@@ -142,7 +145,10 @@ contract Polly is Ownable {
     /// @dev clone a given module
     function cloneModule(string memory name_, uint version_) public returns(address) {
 
-      require(moduleExists(name_, version_), string(abi.encodePacked('MODULE_DOES_NOT_EXIST: ', name_)));
+      if(version_ == 0)
+        version_ = getLatestModuleVersion(name_);
+
+      require(moduleExists(name_, version_), string(abi.encodePacked('MODULE_OR_MODULE_VERSION: ', name_, '@', Strings.toString(version_))));
       IPollyModule.Info memory base_info_ = IPollyModule(_modules[name_][version_]).getInfo();
       require(base_info_.clone, 'MODULE_DOES_NOT_SUPPORT_CLONE');
 
@@ -187,5 +193,26 @@ contract Polly is Ownable {
       return modules_;
 
     }
+
+
+    function runModuleConfigurator(string memory name_, PollyConfigurator.InputParam[] memory params_) public returns(PollyConfigurator.ReturnParam[] memory rparams_) {
+
+      string memory config_name_ = string(abi.encodePacked(name_ ,'.configurator'));
+      uint config_version_ = getLatestModuleVersion(config_name_);
+
+      require(moduleExists(config_name_, config_version_), 'NO_CONFIGURATOR_FOR_MODULE');
+
+      IPolly.Module memory config_ = getModule(config_name_, config_version_);
+
+
+      rparams_ = PollyConfigurator(config_.implementation).run(msg.sender, params_);
+
+      // TODO: Store configuration here
+      emit moduleConfigured(config_name_, config_version_, rparams_);
+      return rparams_;
+
+    }
+
+    // TODO: Storing and retreival of configurations
 
 }

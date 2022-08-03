@@ -1,0 +1,68 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "has_",
+        "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "check_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "item_id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "access_",
+        "type": "string"
+      }
+    ],
+    "name": "filterHasItemAccess",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getHooks",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "hook_",
+        "type": "string"
+      }
+    ],
+    "name": "usesHook",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

@@ -4,9 +4,9 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@polly-os/core/contracts/PollyModule.sol";
-import "@polly-os/core/contracts/PollyAux.sol";
-import "@polly-os/core/contracts/PollyAux.sol";
+import "../PollyModule.sol";
+import "../PollyAux.sol";
+import "../PollyAux.sol";
 import "./Catalogue.sol";
 
 
@@ -17,7 +17,7 @@ import "./Catalogue.sol";
 /// A Polly module for creating digital editions of
 /// stuff. Supports auxiliary contracts for added
 /// functionality.
-/// 
+///
 ////////////////////////////////////////////////////
 
 
@@ -68,14 +68,6 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
     constructor() ERC1155("") PollyModule(){}
 
 
-    function configure(address collection_, address catalogue_) public onlyRole(DEFAULT_ADMIN_ROLE) returns (bool) {        
-        (bool s1,) = collection_.delegatecall(abi.encodeWithSignature('setAddress(string,address)', 'catalogue', catalogue_));
-        (bool s2,) = catalogue_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', PollyModule(catalogue_).MANAGER(), collection_));
-        if(s1 && s2)
-            return true;
-        return false;
-    }
-
     /**
     ***********************************
     || EVENTS
@@ -86,7 +78,7 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
 
 
     function getInfo() public pure returns(IPollyModule.Info memory){
-        return IPollyModule.Info('polly.Collection', true);
+        return IPollyModule.Info('collection', true);
     }
 
     function hasAuxHandler() public view returns(bool has_){
@@ -162,13 +154,13 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
     function getEdition(uint edition_id_, bool filtered_) public view returns(ICollection.Edition memory edition_) {
 
         edition_ = _editions[edition_id_]; // Get edition;
-    
+
         /**
         Filter result if there's a aux handler and the filtered_ var is true
         */
         if(filtered_ && hasAuxHandler())
             edition_ = ICollectionAuxHandler(getAddress('aux_handler')).filterGetEdition(edition_);
-        
+
         return edition_;
 
     }
@@ -183,7 +175,7 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
     @dev mint an edition to tx sender
     */
     function mint(uint edition_id_) public payable nonReentrant {
-		
+
 		/** First get the edition by edition_id_ */
         ICollection.Edition memory edition_ = getEdition(edition_id_, true);
 
@@ -218,7 +210,7 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
     @dev returns the token URI for a given edition
     */
     function uri(uint edition_id_) public view override returns(string memory uri_){
-		
+
 		uri_ = getString('uri'); // Get the uri string
 
 		/** Filter the URI if there's a aux handler connected */
@@ -281,20 +273,9 @@ contract CollectionAuxHandler is PollyModule, PollyAuxHandler {
 
 
     function getInfo() public pure returns(IPollyModule.Info memory){
-        return IPollyModule.Info('polly.CollectionAuxHandler', true);
+        return IPollyModule.Info('collection.aux_handler', true);
     }
 
-    function configure(address catalogue_, address collection_, address aux_handler_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-                
-        (bool s1,) = catalogue_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', MANAGER, address(this)));
-        (bool s2,) = collection_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', MANAGER, address(this)));
-
-        if(aux_handler_ != address(0)){
-            (bool s3,) = collection_.delegatecall(abi.encodeWithSignature('setAddress(string,address)', 'aux_handler', aux_handler_));
-            grantRole(MANAGER, collection_);
-        }
-
-    }
 
     // ACTIONS
     function actionBeforeMint(uint edition_id_, address sender_) public onlyRole(MANAGER) {
@@ -393,7 +374,7 @@ contract CollectionConfigurator is PollyConfigurator {
         Config memory config_;
 
         Polly polly_ = Polly(msg.sender);
-        
+
         // CLONE
         config_.catalogue = polly_.cloneModule('catalogue', 0);
         config_.collection = polly_.cloneModule('collection', 0);

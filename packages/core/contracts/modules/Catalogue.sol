@@ -2,8 +2,8 @@
 pragma solidity ^0.8.2;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@polly-os/core/contracts/Polly.sol";
-import "@polly-os/core/contracts/PollyAux.sol";
+import "../Polly.sol";
+import "../PollyAux.sol";
 
 ////////////////////////////////////////////////////
 ///
@@ -12,7 +12,7 @@ import "@polly-os/core/contracts/PollyAux.sol";
 /// A Polly module for managing metadata for any
 /// type of item. Supports per-item permissions,
 /// multiple media sources and auxiliary contracts.
-/// 
+///
 ////////////////////////////////////////////////////
 
 
@@ -69,7 +69,7 @@ contract Catalogue is PollyModule {
     event metaDeleted(uint indexed id, string indexed key, string indexed value);
 
     function getInfo() public pure returns(IPollyModule.Info memory){
-        return IPollyModule.Info('polly.Catalogue', true);
+        return IPollyModule.Info('catalogue', true);
     }
 
     function hasAuxHandler() public view returns(bool has_){
@@ -288,7 +288,7 @@ contract CatalogueAuxHandler is PollyModule, PollyAuxHandler {
 
 
     function getInfo() public pure returns(IPollyModule.Info memory){
-        return IPollyModule.Info('polly.CatalogueAuxHandler', true);
+        return IPollyModule.Info('catalogue.aux_handler', true);
     }
 
     function filterHasItemAccess(bool has_, address check_, uint item_id_, string memory access_) public view onlyRole(MANAGER) returns(bool) {

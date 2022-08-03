@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@polly-os/core/contracts/Polly.sol";
+import "../Polly.sol";
 import "./Collection.sol";
 
 /**
@@ -35,7 +35,7 @@ contract Chains is CollectionAux, PollyModule {
         string checksum;
         address next;
     }
-    
+
 
     uint private constant _default_nodes = 7;
     uint private _chain_ids;
@@ -43,7 +43,7 @@ contract Chains is CollectionAux, PollyModule {
     mapping(uint => Node) private _node_submissions;
     mapping(uint => mapping(uint => address)) _node_contributors; // (chain => (node => contributor))
     mapping(uint => uint) private _edition_chain;
-    
+
 
     modifier onlyContributorOrAdmin(uint chain_id_){
         Chain memory chain_ = _chains[chain_id_];
@@ -73,30 +73,23 @@ contract Chains is CollectionAux, PollyModule {
 
 
 /**
-                                                 
- _|_|_|      _|_|    _|        _|    _|      _|  
- _|    _|  _|    _|  _|        _|      _|  _|    
- _|_|_|    _|    _|  _|        _|        _|      
- _|        _|    _|  _|        _|        _|      
- _|          _|_|    _|_|_|_|  _|_|_|_|  _|      
-                                                 
-*/                                              
+
+ _|_|_|      _|_|    _|        _|    _|      _|
+ _|    _|  _|    _|  _|        _|      _|  _|
+ _|_|_|    _|    _|  _|        _|        _|
+ _|        _|    _|  _|        _|        _|
+ _|          _|_|    _|_|_|_|  _|_|_|_|  _|
+
+*/
 
 
 
 
     /// @dev return module info -> (name, location, clone)
     function getInfo() public pure returns(IPollyModule.Info memory){
-        return IPollyModule.Info("polly.Chains", true);
+        return IPollyModule.Info("chains", true);
     }
 
-    function configure(address collection_, address catalogue_, address aux_handler_) public onlyRole(DEFAULT_ADMIN_ROLE){
-        setAddress('collection', collection_);
-        (bool s1,) = collection_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', MANAGER, address(this)));
-        (bool s2,) = catalogue_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', MANAGER, address(this)));
-        (bool s3,) = aux_handler_.delegatecall(abi.encodeWithSignature('addAux(address)', address(this)));
-    }
-    
 
     /// @dev defines what hooks are used in this aux contract
     function getHooks() public pure override returns(string[] memory hooks_){
@@ -133,14 +126,14 @@ contract Chains is CollectionAux, PollyModule {
 
 
 /**
-                                                                                                           
-   _|_|_|    _|_|    _|        _|        _|_|_|_|    _|_|_|  _|_|_|_|_|  _|_|_|    _|_|    _|      _|  
- _|        _|    _|  _|        _|        _|        _|            _|        _|    _|    _|  _|_|    _|  
- _|        _|    _|  _|        _|        _|_|_|    _|            _|        _|    _|    _|  _|  _|  _|  
- _|        _|    _|  _|        _|        _|        _|            _|        _|    _|    _|  _|    _|_|  
-   _|_|_|    _|_|    _|_|_|_|  _|_|_|_|  _|_|_|_|    _|_|_|      _|      _|_|_|    _|_|    _|      _|  
-                                                                                                       
-                                                                                                       
+
+   _|_|_|    _|_|    _|        _|        _|_|_|_|    _|_|_|  _|_|_|_|_|  _|_|_|    _|_|    _|      _|
+ _|        _|    _|  _|        _|        _|        _|            _|        _|    _|    _|  _|_|    _|
+ _|        _|    _|  _|        _|        _|_|_|    _|            _|        _|    _|    _|  _|  _|  _|
+ _|        _|    _|  _|        _|        _|        _|            _|        _|    _|    _|  _|    _|_|
+   _|_|_|    _|_|    _|_|_|_|  _|_|_|_|  _|_|_|_|    _|_|_|      _|      _|_|_|    _|_|    _|      _|
+
+
 */
 
 
@@ -153,11 +146,11 @@ contract Chains is CollectionAux, PollyModule {
 
 
     function filterGetEdition(ICollection.Edition memory edition_) public view returns(ICollection.Edition memory){
-        
+
         /// @dev get chain for edition
         if(_chains[_edition_chain[edition_.id]].admin == address(0))
             return edition_;
-        
+
         Chain memory chain_ = _chains[_edition_chain[edition_.id]];
 
         edition_.name = string(abi.encodePacked('#', Strings.toString(edition_.id)));
@@ -190,14 +183,14 @@ contract Chains is CollectionAux, PollyModule {
 
 
 /**
-                                                                 
-   _|_|_|  _|    _|    _|_|    _|_|_|  _|      _|    _|_|_|  
- _|        _|    _|  _|    _|    _|    _|_|    _|  _|        
- _|        _|_|_|_|  _|_|_|_|    _|    _|  _|  _|    _|_|    
- _|        _|    _|  _|    _|    _|    _|    _|_|        _|  
-   _|_|_|  _|    _|  _|    _|  _|_|_|  _|      _|  _|_|_|    
-                                                             
-                                                             
+
+   _|_|_|  _|    _|    _|_|    _|_|_|  _|      _|    _|_|_|
+ _|        _|    _|  _|    _|    _|    _|_|    _|  _|
+ _|        _|_|_|_|  _|_|_|_|    _|    _|  _|  _|    _|_|
+ _|        _|    _|  _|    _|    _|    _|    _|_|        _|
+   _|_|_|  _|    _|  _|    _|  _|_|_|  _|      _|  _|_|_|
+
+
 */
 
 
@@ -206,7 +199,7 @@ contract Chains is CollectionAux, PollyModule {
     function _updateChain(Node memory node_) private {
 
         require(!chainCompleted(node_.chain), 'CHAIN_COMPLETED');
-        
+
         ICollection coll_ = _getCollection();
         ICatalogue cat_ = _getCatalogue();
 
@@ -237,7 +230,7 @@ contract Chains is CollectionAux, PollyModule {
 
         address coll_0x_ = getAddress('collection');
         require(coll_0x_ != address(0), "Please set collection address");
-        
+
         ICollection.EditionInput memory edition_ = ICollection.EditionInput(
             "",
             creator_,
@@ -261,7 +254,7 @@ contract Chains is CollectionAux, PollyModule {
             admin_supply_,
             moderation_
         );
-        
+
         _edition_chain[edition_id_] = _chain_ids;
 
     }
@@ -276,7 +269,7 @@ contract Chains is CollectionAux, PollyModule {
     }
 
     function getCurrentChainRecipient(uint chain_id_) public view returns(address) {
-        
+
         Chain memory chain_ = getChain(chain_id_);
         uint supply_ = ICollection(getAddress('collection')).totalSupply(chain_.edition);
         uint supply_node_ = (supply_/chain_.node_supply)+1;
@@ -290,7 +283,7 @@ contract Chains is CollectionAux, PollyModule {
             return _node_contributors[chain_.id][supply_node_];
         return chain_.admin;
 
-        
+
     }
 
 
@@ -308,20 +301,20 @@ contract Chains is CollectionAux, PollyModule {
 
 
 /**
-                                                         
- _|      _|    _|_|    _|_|_|    _|_|_|_|    _|_|_|  
- _|_|    _|  _|    _|  _|    _|  _|        _|        
- _|  _|  _|  _|    _|  _|    _|  _|_|_|      _|_|    
- _|    _|_|  _|    _|  _|    _|  _|              _|  
- _|      _|    _|_|    _|_|_|    _|_|_|_|  _|_|_|    
-                                                     
-                                                     
+
+ _|      _|    _|_|    _|_|_|    _|_|_|_|    _|_|_|
+ _|_|    _|  _|    _|  _|    _|  _|        _|
+ _|  _|  _|  _|    _|  _|    _|  _|_|_|      _|_|
+ _|    _|_|  _|    _|  _|    _|  _|              _|
+ _|      _|    _|_|    _|_|_|    _|_|_|_|  _|_|_|
+
+
 */
 
 
 
     function submitNode(Node memory node_) public onlyContributor(node_.chain) {
-        
+
         Chain memory chain_ = _chains[node_.chain];
 
         if(chain_.moderation){ // Chain moderation is ON and the node is held for chain admin approval
@@ -350,13 +343,13 @@ contract Chains is CollectionAux, PollyModule {
     function setContributor(uint chain_id_, address contributor_) public onlyAdmin(chain_id_){
         _setContributor(chain_id_, contributor_);
     }
-    
+
     function _rejectNodeSubmission(uint chain_id_) public onlyAdmin(chain_id_) {
         _node_submissions[chain_id_] = Node(0, '', '', '', '', address(0));
     }
 
     function _approveNodeSubmission(uint chain_id_) private {
-        
+
         Node memory sub_ = _node_submissions[chain_id_];
 
         // TODO: Assert if already submitted
