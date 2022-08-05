@@ -49,8 +49,7 @@ interface IPolly {
 
   struct Config {
     string name;
-    address owner;
-    ModuleInstance[] modules;
+    PollyConfigurator.ReturnParam[] params;
   }
 
 
@@ -78,6 +77,8 @@ contract Polly is Ownable {
     string[] private _module_names;
     mapping(string => mapping(uint => address)) private _modules;
     mapping(string => uint) private _module_versions;
+    mapping(address => mapping(uint => IPolly.Config)) private _configs;
+    mapping(address => uint) private _configs_count;
 
     //////////////////
 
@@ -87,14 +88,16 @@ contract Polly is Ownable {
     /// EVENTS ///
 
     event moduleUpdated(
-      string indexed name, uint version, address indexed implementation
+      string indexed indexedName, string name, uint version, address indexed implementation
     );
 
     event moduleCloned(
-      string indexed name, uint version, address location
+      string indexed indexedName, string name, uint version, address location
     );
 
-    event moduleConfigured(string indexed name, uint version, PollyConfigurator.ReturnParam[]);
+    event moduleConfigured(
+      string indexedName, string name, uint version, PollyConfigurator.ReturnParam[] params
+    );
 
     /// MODULES ///
 
@@ -111,7 +114,7 @@ contract Polly is Ownable {
       if(version_ == 1)
         _module_names.push(info_.name);
 
-      emit moduleUpdated(info_.name, version_, implementation_);
+      emit moduleUpdated(info_.name, info_.name, version_, implementation_);
 
     }
 
@@ -158,7 +161,7 @@ contract Polly is Ownable {
       IPollyModule module_ = IPollyModule(Clones.clone(implementation_));
       module_.init(msg.sender);
 
-      emit moduleCloned(name_, version_, address(module_));
+      emit moduleCloned(name_, name_, version_, address(module_));
       return address(module_);
 
     }
@@ -210,13 +213,45 @@ contract Polly is Ownable {
       PollyConfigurator config_ = PollyConfigurator(configurator_);
       rparams_ = config_.run(this, msg.sender, params_);
 
-      // TODO: Store configuration here if requested
+      if(store_){
+        _configs[msg.sender][_configs_count[msg.sender] + 1].name = name_;
+        for (uint i = 0; i < rparams_.length; i++) {
+          _configs[msg.sender][_configs_count[msg.sender] + 1].params.push(rparams_[i]);
+        }
+        ++_configs_count[msg.sender];
+      }
 
-      emit moduleConfigured(name_, version_, rparams_);
+
+      emit moduleConfigured(name_, name_, version_, rparams_);
       return rparams_;
 
     }
 
-    // TODO: Storing and retreival of configurations
+
+    function getConfigsForAddress(address address_, uint limit_, uint page_) public view returns(IPolly.Config[] memory){
+
+      if(limit_ < 1 && page_ < 1){
+        page_ = 1;
+        limit_ = _configs_count[address_];
+      }
+
+      IPolly.Config[] memory configs_ = new IPolly.Config[](limit_);
+      IPolly.Config memory config_;
+
+      uint i = 0;
+      uint index;
+      uint offset = (page_-1)*limit_;
+      while(i < limit_ && i < _configs_count[address_]){
+        index = i+(offset);
+        if(_configs_count[address_] > index){
+          config_ = _configs[address_][index];
+          configs_[i] = config_;
+        }
+        ++i;
+      }
+
+      return configs_;
+
+    }
 
 }

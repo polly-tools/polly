@@ -411,44 +411,6 @@
         "type": "string"
       }
     ],
-    "name": "getBool",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "getInt",
-    "outputs": [
-      {
-        "internalType": "int256",
-        "name": "",
-        "type": "int256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
     "name": "getString",
     "outputs": [
       {
@@ -476,6 +438,25 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "isLockedKey",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "address_",
         "type": "address"
@@ -490,6 +471,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "lockKey",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -562,42 +556,6 @@
       }
     ],
     "name": "setAuxAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "internalType": "bool",
-        "name": "value_",
-        "type": "bool"
-      }
-    ],
-    "name": "setBool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "internalType": "int256",
-        "name": "value_",
-        "type": "int256"
-      }
-    ],
-    "name": "setInt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

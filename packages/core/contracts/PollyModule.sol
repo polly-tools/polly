@@ -17,14 +17,13 @@ interface IPollyModule {
   function didInit() external view returns(bool);
   function moduleInfo() external view returns(Info memory module_);
   function configurator() external view returns(address);
+
+  function lockKey(string memory key_) external;
+  function isLockedKey(string memory key_) external view returns(bool);
   function setString(string memory key_, string memory value_) external;
-  function setInt(string memory key_, int value_) external;
   function setAddress(string memory key_, address value_) external;
-  function setBool(string memory key_, bool value_) external;
   function getString(string memory key_) external view returns(string memory);
-  function getInt(string memory key_) external view returns(int);
   function getAddress(string memory key_) external view returns(address);
-  function getBool(string memory key_) external view returns(bool);
   function isManager(address address_) external view returns(bool);
 
 }
@@ -34,6 +33,7 @@ contract PollyModule is AccessControl {
 
   bytes32 public constant MANAGER = keccak256("MANAGER");
   bool private _did_init = false;
+
   mapping(string => bool) private _locked_keys;
   mapping(string => string) private _key_strings;
   mapping(string => int) private _key_ints;
@@ -64,10 +64,8 @@ contract PollyModule is AccessControl {
     return _configurator;
   }
 
-  function lockKeys(string[] memory keys_) public onlyRole(DEFAULT_ADMIN_ROLE){
-    for (uint256 i = 0; i < keys_.length; i++) {
-      _locked_keys[keys_[i]] = true;
-    }
+  function lockKey(string memory key_) public onlyRole(DEFAULT_ADMIN_ROLE){
+    _locked_keys[key_] = true;
   }
 
   function isLockedKey(string memory key_) public view returns(bool) {

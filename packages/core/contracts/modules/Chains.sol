@@ -409,7 +409,7 @@ contract ChainsConfigurator is PollyConfigurator {
         return IPollyModule.Info('chains.configurator', false);
     }
 
-    function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory params_) public override returns(PollyConfigurator.ReturnParam[] memory){
+    function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory) public override returns(PollyConfigurator.ReturnParam[] memory){
 
         InputParam[] memory coll_input_params_ = new InputParam[](1);
         coll_input_params_[0] = InputParam('', 0, true, address(0));// Include aux handler

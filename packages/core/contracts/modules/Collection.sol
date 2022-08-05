@@ -359,11 +359,6 @@ contract CollectionConfigurator is PollyConfigurator {
         address aux_handler;
     }
 
-    // function moduleInfo() public pure returns(IPollyModule.Info memory){
-    //     return IPollyModule.Info('collection.configurator', false);
-    // }
-
-
 
     function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory params_) public override returns(PollyConfigurator.ReturnParam[] memory){
 
@@ -388,7 +383,7 @@ contract CollectionConfigurator is PollyConfigurator {
         // SET PERMISSIONS
         cat_.grantRole(MANAGER, address(coll_));
         coll_.setAddress('catalogue', config_.catalogue);
-        coll_.setAddress('catalogue', config_.catalogue);
+        coll_.lockKey('catalogue');
 
         PollyConfigurator.ReturnParam[] memory rparams_ = new PollyConfigurator.ReturnParam[](3);
 

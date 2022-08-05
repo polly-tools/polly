@@ -638,12 +638,12 @@
   {
     "inputs": [
       {
-        "internalType": "string[]",
-        "name": "keys_",
-        "type": "string[]"
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
       }
     ],
-    "name": "lockKeys",
+    "name": "lockKey",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

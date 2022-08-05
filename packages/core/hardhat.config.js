@@ -3,6 +3,7 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
+require("./tasks.js");
 
 const accounts = require('./hhaccounts.js');
 accounts[0] = {privateKey: process.env.DEPLOYER_KEY, balance: '10000000000000000000000'};
@@ -48,14 +49,18 @@ module.exports = {
   },
   networks: {
     hardhat: {
-      accounts: accounts
+      accounts: accounts,
+      forking: {
+        blockNumber: 7352016,
+        url: process.env.GOERLI_RPC_URL
+      },
     },
     mainnet: {
       url: process.env.MAINNET_RPC_URL,
       accounts: [process.env.PRIVATE_KEY],
     },
-    rinkeby: {
-      url: process.env.RINKEBY_RPC_URL,
+    goerli: {
+      url: process.env.GOERLI_RPC_URL,
       accounts: [process.env.PRIVATE_KEY],
     },
     localhost: {

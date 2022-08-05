@@ -42,16 +42,24 @@ describe("Chains.sol", async function(){
     const MANAGER = '0x'+keccak256('MANAGER').toString('hex');
 
     it("init polly", async function(){
-      const Polly = await ethers.getContractFactory("Polly");
-      polly = await Polly.deploy();
-      console.log('Polly deployed to', polly.address.green);
+
+      [owner, user1, user2, user3] = await ethers.getSigners();
+
+      // DEPLOY POLLY
+
+      // const Polly = await ethers.getContractFactory("Polly");
+      // polly = await Polly.deploy();
+      // console.log('Polly deployed to -> ', polly.address.green);
+
+
+      // FORKED POLLY
+      polly = await hre.ethers.getContractAt('Polly', process.env.POLLY_ADDRESS, owner);
+      console.log('Using forked Polly at -> ', polly.address.green);
+
     })
 
 
     it("deploys and is configurable", async function () {
-
-        [owner, user1, user2, user3] = await ethers.getSigners();
-
 
         // Catalogue
         Catalogue = await ethers.getContractFactory("Catalogue");
