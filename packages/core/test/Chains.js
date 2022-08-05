@@ -52,6 +52,20 @@ describe("Chains.sol", async function(){
 
         [owner, user1, user2, user3] = await ethers.getSigners();
 
+
+        // Catalogue
+        Catalogue = await ethers.getContractFactory("Catalogue");
+        catalogue = await Catalogue.deploy();
+        await catalogue.deployed();
+        expect(catalogue.address).to.be.properAddress;
+
+        // Add catalogue handler to Polly
+        await polly.updateModule(catalogue.address);
+        const catalogue_module = await polly.getModule('catalogue', 0);
+        expect(catalogue_module.implementation).to.be.properAddress;
+
+
+
         // Collection
         Collection = await ethers.getContractFactory("Collection");
         collection = await Collection.deploy();
@@ -76,19 +90,6 @@ describe("Chains.sol", async function(){
         expect(aux_handler_module.implementation).to.be.properAddress;
 
 
-
-        // Catalogue
-        Catalogue = await ethers.getContractFactory("Catalogue");
-        catalogue = await Catalogue.deploy();
-        await catalogue.deployed();
-        expect(catalogue.address).to.be.properAddress;
-
-        // Add catalogue handler to Polly
-        await polly.updateModule(catalogue.address);
-        const catalogue_module = await polly.getModule('catalogue', 0);
-        expect(catalogue_module.implementation).to.be.properAddress;
-
-
         // Chains
         Chains = await ethers.getContractFactory("Chains");
         chains = await Chains.deploy();
@@ -106,24 +107,24 @@ describe("Chains.sol", async function(){
 
         /// RUN CONFIGURATOR
 
-        const tx = polly.runModuleConfigurator('collection', [inputParam(false)]);
-        await expect(tx).to.emit(polly, 'moduleConfigured');
+        const tx = await polly.runModuleConfigurator(
+          'chains', // Name
+          0, // Latest version
+          [], // No params
+          true // Store config in Polly
+        );
 
         const receipt = await tx.wait();
-        const event = receipt.events.find(x => x.event === "NewOrder");
-        console.log(event)
+        const args = receipt.events.filter(x => x.event === "moduleConfigured").map(event => event.args[2]);
+        const arg = args[args.length-1];
 
+        await expect(tx).to.emit(polly, 'moduleConfigured');
 
-        const options = {
-            collection, catalogue, aux_handler, chains
-        }
+        catalogue = await Catalogue.attach(arg[0]._address);
+        collection = await Collection.attach(arg[1]._address);
+        aux_handler = await AuxHandler.attach(arg[2]._address)
+        chains = await Chains.attach(arg[3]._address);
 
-        for (const key in configs) {
-            if (Object.hasOwnProperty.call(configs, key)) {
-            configs[key] = new configs[key](options[key], options);
-            await configs[key].configure();
-            }
-        }
 
     });
 

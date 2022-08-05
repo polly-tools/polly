@@ -82,7 +82,9 @@ contract Chains is CollectionAux, PollyModule {
 
 */
 
-
+    constructor() PollyModule(){
+      _setConfigurator(address(new ChainsConfigurator()));
+    }
 
 
     /// @dev return module info -> (name, location, clone)
@@ -390,5 +392,57 @@ contract Chains is CollectionAux, PollyModule {
     }
 
 
+
+}
+
+
+contract ChainsConfigurator is PollyConfigurator {
+
+
+    struct Config {
+        address collection;
+        address catalogue;
+        address aux_handler;
+    }
+
+    function getInfo() public pure returns(IPollyModule.Info memory){
+        return IPollyModule.Info('chains.configurator', false);
+    }
+
+    function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory params_) public override returns(PollyConfigurator.ReturnParam[] memory){
+
+        InputParam[] memory coll_input_params_ = new InputParam[](1);
+        coll_input_params_[0] = InputParam('', 0, true, address(0));// Include aux handler
+        PollyConfigurator.ReturnParam[] memory dep_params_ = polly_.runModuleConfigurator(
+          'collection',
+          0,
+          coll_input_params_,
+          false /*Don't store*/
+        );
+
+        Catalogue cat_ = Catalogue(dep_params_[0]._address);
+        Collection coll_ = Collection(dep_params_[1]._address);
+        CollectionAuxHandler coll_aux_ = CollectionAuxHandler(dep_params_[2]._address);
+
+        Chains chains_ = Chains(polly_.cloneModule('chains', 0));
+
+        chains_.grantRole(DEFAULT_ADMIN_ROLE, for_);
+        chains_.grantRole(MANAGER, for_);
+
+        chains_.setAddress('collection', address(coll_));
+        coll_.grantRole(MANAGER, address(chains_));
+        cat_.grantRole(MANAGER, address(chains_));
+        coll_aux_.addAux(address(chains_));
+
+        PollyConfigurator.ReturnParam[] memory rparams_ = new PollyConfigurator.ReturnParam[](4);
+
+        rparams_[0] = PollyConfigurator.ReturnParam('catalogue', '', 0, false, address(cat_));
+        rparams_[1] = PollyConfigurator.ReturnParam('collection', '', 0, false, address(coll_));
+        rparams_[2] = PollyConfigurator.ReturnParam('aux_handler', '', 0, false, address(coll_aux_));
+        rparams_[3] = PollyConfigurator.ReturnParam('chains', '', 0, false, address(chains_));
+
+        return rparams_;
+
+    }
 
 }

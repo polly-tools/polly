@@ -46,6 +46,11 @@ abstract contract PollyAuxHandler is PollyModule {
     mapping(address => uint) private _aux_index;
     mapping(string => address[]) private _hooks;
 
+    modifier canManageAux(){
+      require(hasRole(MANAGER, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender), 'UNATHORIZED_TO_MANAGE_AUX');
+      _;
+    }
+
     function _addAux(address aux_address_) private {
 
         string[] memory hooks_ = IPollyAux(aux_address_).getHooks();
@@ -57,11 +62,11 @@ abstract contract PollyAuxHandler is PollyModule {
 
     }
 
-    function addAux(address aux_address_) public onlyRole(MANAGER) {
+    function addAux(address aux_address_) public canManageAux {
         _addAux(aux_address_);
     }
 
-    function removeAux(address aux_address_) public onlyRole(MANAGER) {
+    function removeAux(address aux_address_) public canManageAux {
 
         string[] memory aux_hooks_ = IPollyAux(aux_address_).getHooks();
         if(aux_hooks_.length > 0){
@@ -90,7 +95,7 @@ abstract contract PollyAuxHandler is PollyModule {
 
     }
 
-    function setAuxAddress(uint index_, address address_) public onlyRole(MANAGER) {
+    function setAuxAddress(uint index_, address address_) public canManageAux {
         delete _aux_index[address(_aux[index_])];
         _aux[index_] = address_;
         _aux_index[address_] = index_;

@@ -16,6 +16,7 @@ interface IPollyModule {
   function init(address for_) external;
   function didInit() external view returns(bool);
   function getInfo() external view returns(IPollyModule.Info memory module_);
+  function configurator() external view returns(address);
   function setString(string memory key_, string memory value_) external;
   function setInt(string memory key_, int value_) external;
   function setAddress(string memory key_, address value_) external;
@@ -37,6 +38,7 @@ contract PollyModule is AccessControl {
   mapping(string => int) private _keyStoreInts;
   mapping(string => bool) private _keyStoreBool;
   mapping(string => address) private _keyStoreAddresses;
+  address private _configurator;
 
   constructor(){
     init(msg.sender);
@@ -51,6 +53,14 @@ contract PollyModule is AccessControl {
 
   function didInit() public view returns(bool){
     return _did_init;
+  }
+
+  function _setConfigurator(address configurator_) internal {
+    _configurator = configurator_;
+  }
+
+  function configurator() public view returns(address){
+    return _configurator;
   }
 
   function setString(string memory key_, string memory value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -80,5 +90,4 @@ contract PollyModule is AccessControl {
   function isManager(address address_) external view returns(bool){
     return hasRole(MANAGER, address_);
   }
-
 }

@@ -400,15 +400,23 @@ contract CollectionConfigurator is PollyConfigurator {
         if(params_[0]._bool) // Use a aux_handler?
             config_.aux_handler = polly_.cloneModule('collection.aux_handler', 0);
 
+        Collection coll_ = Collection(config_.collection);
+        Catalogue cat_ = Catalogue(config_.catalogue);
+
         // SET PERMISSIONS FOR CALLER
-        Catalogue(config_.catalogue).grantRole(DEFAULT_ADMIN_ROLE, for_);
-        Collection(config_.collection).grantRole(DEFAULT_ADMIN_ROLE, for_);
+        cat_.grantRole(DEFAULT_ADMIN_ROLE, for_);
+        coll_.grantRole(DEFAULT_ADMIN_ROLE, for_);
 
         // TODO: Set vars here
 
+        coll_.setAddress('catalogue', config_.catalogue);
+        cat_.grantRole(MANAGER, address(this));
+        coll_.setAddress('catalogue', config_.catalogue);
+
+
         // REMOVE PERMISSIONS FOR THIS
-        Catalogue(config_.catalogue).revokeRole(DEFAULT_ADMIN_ROLE, address(this));
-        Collection(config_.collection).revokeRole(DEFAULT_ADMIN_ROLE, address(this));
+        cat_.revokeRole(DEFAULT_ADMIN_ROLE, address(this));
+        coll_.revokeRole(DEFAULT_ADMIN_ROLE, address(this));
 
         PollyConfigurator.ReturnParam[] memory rparams_ = new PollyConfigurator.ReturnParam[](3);
 

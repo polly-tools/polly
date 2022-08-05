@@ -2,10 +2,12 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
+import './Polly.sol';
 import './PollyModule.sol';
 
 
-abstract contract PollyConfigurator is PollyModule {
+
+abstract contract PollyConfigurator is AccessControl {
 
   struct InputParam {
     string _string;
@@ -22,7 +24,8 @@ abstract contract PollyConfigurator is PollyModule {
     address _address;
   }
 
+  bytes32 public constant MANAGER = keccak256("MANAGER");
 
-  function run(address for_, PollyConfigurator.InputParam[] memory params_) public virtual returns(ReturnParam[] memory);
+  function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory params_) public virtual returns(ReturnParam[] memory);
 
 }

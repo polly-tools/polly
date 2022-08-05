@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../PollyModule.sol";
 import "../PollyAux.sol";
-import "../PollyAux.sol";
 import "./Catalogue.sol";
 
 
@@ -65,7 +64,9 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
     uint private _edition_ids;
     mapping(uint => ICollection.Edition) private _editions;
 
-    constructor() ERC1155("") PollyModule(){}
+    constructor() ERC1155("") PollyModule(){
+      _setConfigurator(address(new CollectionConfigurator()));
+    }
 
 
     /**
@@ -355,9 +356,6 @@ abstract contract CollectionAux is PollyAux {
 
 contract CollectionConfigurator is PollyConfigurator {
 
-    struct Options {
-        bool with_aux_handler;
-    }
 
     struct Config {
         address collection;
@@ -365,38 +363,65 @@ contract CollectionConfigurator is PollyConfigurator {
         address aux_handler;
     }
 
-    function getInfo() public pure returns(IPollyModule.Info memory){
-        return IPollyModule.Info('collection.configurator', false);
-    }
+    // function getInfo() public pure returns(IPollyModule.Info memory){
+    //     return IPollyModule.Info('collection.configurator', false);
+    // }
 
-    function run(address for_, PollyConfigurator.InputParam[] memory params_) public override onlyRole(DEFAULT_ADMIN_ROLE) returns(PollyConfigurator.ReturnParam[] memory){
+
+
+    function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory params_) public override returns(PollyConfigurator.ReturnParam[] memory){
 
         Config memory config_;
-
-        Polly polly_ = Polly(msg.sender);
 
         // CLONE
         config_.catalogue = polly_.cloneModule('catalogue', 0);
         config_.collection = polly_.cloneModule('collection', 0);
-        if(params_[0]._bool) // Use a aux_handler?
-            config_.aux_handler = polly_.cloneModule('collection.aux_handler', 0);
+        if(params_[0]._bool)
+            config_.aux_handler = polly_.cloneModule('collection.aux_handler', 0); // Use a aux_handler?
+
+
+        Collection coll_ = Collection(config_.collection);
+        Catalogue cat_ = Catalogue(config_.catalogue);
 
         // SET PERMISSIONS FOR CALLER
-        Catalogue(config_.catalogue).grantRole(DEFAULT_ADMIN_ROLE, for_);
-        Collection(config_.collection).grantRole(DEFAULT_ADMIN_ROLE, for_);
+        cat_.grantRole(DEFAULT_ADMIN_ROLE, for_);
+        coll_.grantRole(DEFAULT_ADMIN_ROLE, for_);
+        cat_.grantRole(MANAGER, for_);
+        coll_.grantRole(MANAGER, for_);
 
-        // TODO: Set vars here
-
-        // REMOVE PERMISSIONS FOR THIS
-        Catalogue(config_.catalogue).revokeRole(DEFAULT_ADMIN_ROLE, address(this));
-        Collection(config_.collection).revokeRole(DEFAULT_ADMIN_ROLE, address(this));
+        // SET PERMISSIONS
+        cat_.grantRole(MANAGER, address(coll_));
+        coll_.setAddress('catalogue', config_.catalogue);
+        coll_.setAddress('catalogue', config_.catalogue);
 
         PollyConfigurator.ReturnParam[] memory rparams_ = new PollyConfigurator.ReturnParam[](3);
 
         rparams_[0] = PollyConfigurator.ReturnParam('catalogue', '', 0, false, config_.catalogue);
         rparams_[1] = PollyConfigurator.ReturnParam('collection', '', 0, false, config_.collection);
-        if(config_.aux_handler == address(0))
-            rparams_[2] = PollyConfigurator.ReturnParam('aux_handler', '', 0, false, config_.catalogue);
+
+        if(config_.aux_handler != address(0)){
+
+            rparams_[2] = PollyConfigurator.ReturnParam('aux_handler', '', 0, false, config_.aux_handler);
+
+            CollectionAuxHandler aux_handler_ = CollectionAuxHandler(config_.aux_handler);
+
+            aux_handler_.grantRole(DEFAULT_ADMIN_ROLE, for_);
+
+            cat_.grantRole(MANAGER, config_.aux_handler);
+            coll_.grantRole(MANAGER, config_.aux_handler);
+
+
+            coll_.setAddress('aux_handler', config_.aux_handler);
+            aux_handler_.grantRole(MANAGER, config_.collection);
+
+        }
+
+        // REMOVE PERMISSIONS FOR THIS
+        cat_.revokeRole(MANAGER, address(this));
+        coll_.revokeRole(MANAGER, address(this));
+        cat_.revokeRole(DEFAULT_ADMIN_ROLE, address(this));
+        coll_.revokeRole(DEFAULT_ADMIN_ROLE, address(this));
+
 
         return rparams_;
 

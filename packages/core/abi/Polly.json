@@ -307,6 +307,11 @@
         "type": "string"
       },
       {
+        "internalType": "uint256",
+        "name": "version_",
+        "type": "uint256"
+      },
+      {
         "components": [
           {
             "internalType": "string",
@@ -332,6 +337,11 @@
         "internalType": "struct PollyConfigurator.InputParam[]",
         "name": "params_",
         "type": "tuple[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "store_",
+        "type": "bool"
       }
     ],
     "name": "runModuleConfigurator",

@@ -90,12 +90,6 @@ contract Chains is CollectionAux, PollyModule {
         return IPollyModule.Info("polly.Chains", true);
     }
 
-    function configure(address collection_, address catalogue_, address aux_handler_) public onlyRole(DEFAULT_ADMIN_ROLE){
-        setAddress('collection', collection_);
-        (bool s1,) = collection_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', MANAGER, address(this)));
-        (bool s2,) = catalogue_.delegatecall(abi.encodeWithSignature('grantRole(bytes32,address)', MANAGER, address(this)));
-        (bool s3,) = aux_handler_.delegatecall(abi.encodeWithSignature('addAux(address)', address(this)));
-    }
     
 
     /// @dev defines what hooks are used in this aux contract

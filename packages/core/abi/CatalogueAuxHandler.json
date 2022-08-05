@@ -115,6 +115,19 @@
   },
   {
     "inputs": [],
+    "name": "configurator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "didInit",
     "outputs": [
       {

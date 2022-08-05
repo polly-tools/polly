@@ -29,6 +29,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PollyModule.sol";
 import "./PollyConfigurator.sol";
+import "hardhat/console.sol";
 
 interface IPolly {
 
@@ -195,20 +196,23 @@ contract Polly is Ownable {
     }
 
 
-    function runModuleConfigurator(string memory name_, PollyConfigurator.InputParam[] memory params_) public returns(PollyConfigurator.ReturnParam[] memory rparams_) {
+    function runModuleConfigurator(string memory name_, uint version_, PollyConfigurator.InputParam[] memory params_, bool store_) public returns(PollyConfigurator.ReturnParam[] memory rparams_) {
 
-      string memory config_name_ = string(abi.encodePacked(name_ ,'.configurator'));
-      uint config_version_ = getLatestModuleVersion(config_name_);
+      if(version_ == 0)
+        version_ = getLatestModuleVersion(name_);
 
-      require(moduleExists(config_name_, config_version_), 'NO_CONFIGURATOR_FOR_MODULE');
+      require(moduleExists(name_, version_), 'MODULE_DOES_NOT_EXIST');
 
-      IPolly.Module memory config_ = getModule(config_name_, config_version_);
+      IPolly.Module memory module_ = getModule(name_, version_);
+      address configurator_ = IPollyModule(module_.implementation).configurator();
+      require(configurator_ != address(0), 'NO_MODULE_CONFIGURATOR');
 
+      PollyConfigurator config_ = PollyConfigurator(configurator_);
+      rparams_ = config_.run(this, msg.sender, params_);
 
-      rparams_ = PollyConfigurator(config_.implementation).run(msg.sender, params_);
+      // TODO: Store configuration here if requested
 
-      // TODO: Store configuration here
-      emit moduleConfigured(config_name_, config_version_, rparams_);
+      emit moduleConfigured(name_, version_, rparams_);
       return rparams_;
 
     }
