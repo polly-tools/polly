@@ -101,7 +101,7 @@ contract Polly is Ownable {
     /// @dev adds or updates a given module implemenation
     function updateModule(address implementation_) public onlyOwner {
 
-      IPollyModule.Info memory info_ = IPollyModule(implementation_).getInfo();
+      IPollyModule.Info memory info_ = IPollyModule(implementation_).moduleInfo();
 
       uint version_ = _module_versions[info_.name]+1;
 
@@ -122,7 +122,7 @@ contract Polly is Ownable {
       if(version_ < 1)
         version_ = _module_versions[name_];
 
-      IPollyModule.Info memory module_info_ = IPollyModule(_modules[name_][version_]).getInfo();
+      IPollyModule.Info memory module_info_ = IPollyModule(_modules[name_][version_]).moduleInfo();
 
       return IPolly.Module(name_, version_, _modules[name_][version_], module_info_.clone);
 
@@ -150,7 +150,7 @@ contract Polly is Ownable {
         version_ = getLatestModuleVersion(name_);
 
       require(moduleExists(name_, version_), string(abi.encodePacked('MODULE_OR_MODULE_VERSION: ', name_, '@', Strings.toString(version_))));
-      IPollyModule.Info memory base_info_ = IPollyModule(_modules[name_][version_]).getInfo();
+      IPollyModule.Info memory base_info_ = IPollyModule(_modules[name_][version_]).moduleInfo();
       require(base_info_.clone, 'MODULE_DOES_NOT_SUPPORT_CLONE');
 
       address implementation_ = _modules[name_][version_];
@@ -180,7 +180,7 @@ contract Polly is Ownable {
       while(i < limit_ && i < _module_names.length){
         index = i+(offset);
         if(_module_names.length > index){
-          module_info_ = IPollyModule(_modules[_module_names[index]][_module_versions[_module_names[index]]]).getInfo();
+          module_info_ = IPollyModule(_modules[_module_names[index]][_module_versions[_module_names[index]]]).moduleInfo();
           modules_[i] = IPolly.Module(
             _module_names[index],
             _module_versions[_module_names[index]],

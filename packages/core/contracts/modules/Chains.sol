@@ -88,7 +88,7 @@ contract Chains is CollectionAux, PollyModule {
 
 
     /// @dev return module info -> (name, location, clone)
-    function getInfo() public pure returns(IPollyModule.Info memory){
+    function moduleInfo() public pure returns(IPollyModule.Info memory){
         return IPollyModule.Info("chains", true);
     }
 
@@ -405,7 +405,7 @@ contract ChainsConfigurator is PollyConfigurator {
         address aux_handler;
     }
 
-    function getInfo() public pure returns(IPollyModule.Info memory){
+    function moduleInfo() public pure returns(IPollyModule.Info memory){
         return IPollyModule.Info('chains.configurator', false);
     }
 

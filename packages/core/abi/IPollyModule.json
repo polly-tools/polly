@@ -64,31 +64,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getInfo",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "clone",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IPollyModule.Info",
-        "name": "module_",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "string",
@@ -153,6 +128,31 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "moduleInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "clone",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct IPollyModule.Info",
+        "name": "module_",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",

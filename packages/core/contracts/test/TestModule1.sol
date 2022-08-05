@@ -5,7 +5,7 @@ import '../PollyModule.sol';
 
 contract TestModule1 is PollyModule {
 
-  function getInfo() public pure returns(IPollyModule.Info memory) {
+  function moduleInfo() public pure returns(IPollyModule.Info memory) {
     return IPollyModule.Info("TestModule1", true);
   }
 

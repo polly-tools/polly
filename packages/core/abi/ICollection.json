@@ -121,32 +121,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "aux_",
-        "type": "address"
-      }
-    ],
-    "name": "addAux",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "edition_id_",
-        "type": "uint256"
-      }
-    ],
-    "name": "addItem",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "account",
         "type": "address"
       },
@@ -400,31 +374,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getInfo",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "clone",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IPollyModule.Info",
-        "name": "module_",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "string",
@@ -519,21 +468,28 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "moduleInfo",
+    "outputs": [
       {
-        "internalType": "uint256",
-        "name": "edition_id_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "index_",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "clone",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct IPollyModule.Info",
+        "name": "module_",
+        "type": "tuple"
       }
     ],
-    "name": "removeItem",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {

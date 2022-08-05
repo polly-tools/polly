@@ -49,10 +49,6 @@ interface ICollection is IPollyModule, IERC1155 {
 
     function createEdition(ICollection.EditionInput memory edition_input_) external returns(uint);
     function getEdition(uint edition_id_, bool filtered_) external view returns(Edition memory);
-    function addItem(uint edition_id_) external;
-    function removeItem(uint edition_id_, uint index_) external;
-
-    function addAux(address aux_) external;
 
 }
 
@@ -78,7 +74,7 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
     event EditionCreated(uint edition_id_);
 
 
-    function getInfo() public pure returns(IPollyModule.Info memory){
+    function moduleInfo() public pure returns(IPollyModule.Info memory){
         return IPollyModule.Info('collection', true);
     }
 
@@ -187,8 +183,8 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
         ICollectionAuxHandler aux_ = ICollectionAuxHandler(getAddress('aux_handler')); // Init aux_ var
 
         /** If there's a AUX handler connected run actionBeforeMint */
-		if(hasAuxHandler())
-        	aux_.actionBeforeMint(edition_id_, msg.sender);
+        if(hasAuxHandler())
+              aux_.actionBeforeMint(edition_id_, msg.sender);
 
         /**
         If the edition has a price and a recipient attempt to transfer the funds
@@ -202,8 +198,8 @@ contract Collection is ERC1155, ERC1155Supply, ReentrancyGuard, PollyModule {
         _mint(msg.sender, edition_id_, 1, "");
 
         /** If there's a AUX handler connected run actionAfterMint */
-		if(hasAuxHandler())
-	        aux_.actionAfterMint(edition_id_, msg.sender);
+        if(hasAuxHandler())
+              aux_.actionAfterMint(edition_id_, msg.sender);
 
     }
 
@@ -273,7 +269,7 @@ interface ICollectionAuxHandler is ICollectionHooks, IPollyAuxHandler {}
 contract CollectionAuxHandler is PollyModule, PollyAuxHandler {
 
 
-    function getInfo() public pure returns(IPollyModule.Info memory){
+    function moduleInfo() public pure returns(IPollyModule.Info memory){
         return IPollyModule.Info('collection.aux_handler', true);
     }
 
@@ -363,7 +359,7 @@ contract CollectionConfigurator is PollyConfigurator {
         address aux_handler;
     }
 
-    // function getInfo() public pure returns(IPollyModule.Info memory){
+    // function moduleInfo() public pure returns(IPollyModule.Info memory){
     //     return IPollyModule.Info('collection.configurator', false);
     // }
 

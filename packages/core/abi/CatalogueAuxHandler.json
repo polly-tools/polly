@@ -214,69 +214,6 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "getBool",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getInfo",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "clone",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IPollyModule.Info",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "getInt",
-    "outputs": [
-      {
-        "internalType": "int256",
-        "name": "",
-        "type": "int256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -370,6 +307,25 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "isLockedKey",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "address_",
         "type": "address"
@@ -384,6 +340,44 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string[]",
+        "name": "keys_",
+        "type": "string[]"
+      }
+    ],
+    "name": "lockKeys",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "moduleInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "clone",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct IPollyModule.Info",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -467,42 +461,6 @@
       }
     ],
     "name": "setAuxAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "internalType": "bool",
-        "name": "value_",
-        "type": "bool"
-      }
-    ],
-    "name": "setBool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "internalType": "int256",
-        "name": "value_",
-        "type": "int256"
-      }
-    ],
-    "name": "setInt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -15,7 +15,7 @@ interface IPollyModule {
 
   function init(address for_) external;
   function didInit() external view returns(bool);
-  function getInfo() external view returns(IPollyModule.Info memory module_);
+  function moduleInfo() external view returns(Info memory module_);
   function configurator() external view returns(address);
   function setString(string memory key_, string memory value_) external;
   function setInt(string memory key_, int value_) external;
@@ -34,10 +34,11 @@ contract PollyModule is AccessControl {
 
   bytes32 public constant MANAGER = keccak256("MANAGER");
   bool private _did_init = false;
-  mapping(string => string) private _keyStoreStrings;
-  mapping(string => int) private _keyStoreInts;
-  mapping(string => bool) private _keyStoreBool;
-  mapping(string => address) private _keyStoreAddresses;
+  mapping(string => bool) private _locked_keys;
+  mapping(string => string) private _key_strings;
+  mapping(string => int) private _key_ints;
+  mapping(string => bool) private _key_bools;
+  mapping(string => address) private _key_addresses;
   address private _configurator;
 
   constructor(){
@@ -63,31 +64,40 @@ contract PollyModule is AccessControl {
     return _configurator;
   }
 
+  function lockKeys(string[] memory keys_) public onlyRole(DEFAULT_ADMIN_ROLE){
+    for (uint256 i = 0; i < keys_.length; i++) {
+      _locked_keys[keys_[i]] = true;
+    }
+  }
+
+  function isLockedKey(string memory key_) public view returns(bool) {
+    return _locked_keys[key_];
+  }
+
+  function _reqUnlockedKey(string memory key_) private view {
+    require(!isLockedKey((key_)), 'KEY_IS_LOCKED');
+  }
+
   function setString(string memory key_, string memory value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _keyStoreStrings[key_] = value_;
+    _reqUnlockedKey(key_);
+    _key_strings[key_] = value_;
   }
-  function setInt(string memory key_, int value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _keyStoreInts[key_] = value_;
-  }
+
   function setAddress(string memory key_, address value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _keyStoreAddresses[key_] = value_;
+    _reqUnlockedKey(key_);
+    _key_addresses[key_] = value_;
   }
-  function setBool(string memory key_, bool value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _keyStoreBool[key_] = value_;
-  }
+
   function getString(string memory key_) public view returns(string memory) {
-    return _keyStoreStrings[key_];
+    return _key_strings[key_];
   }
-  function getInt(string memory key_) public view returns(int) {
-    return _keyStoreInts[key_];
-  }
+
   function getAddress(string memory key_) public view returns(address) {
-    return _keyStoreAddresses[key_];
+    return _key_addresses[key_];
   }
-  function getBool(string memory key_) public view returns(bool) {
-    return _keyStoreBool[key_];
-  }
+
   function isManager(address address_) external view returns(bool){
     return hasRole(MANAGER, address_);
   }
+
 }

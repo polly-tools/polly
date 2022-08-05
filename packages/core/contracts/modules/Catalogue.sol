@@ -68,7 +68,7 @@ contract Catalogue is PollyModule {
     event metaUpdated(uint indexed id, string indexed key, string indexed value);
     event metaDeleted(uint indexed id, string indexed key, string indexed value);
 
-    function getInfo() public pure returns(IPollyModule.Info memory){
+    function moduleInfo() public pure returns(IPollyModule.Info memory){
         return IPollyModule.Info('catalogue', true);
     }
 
@@ -287,7 +287,7 @@ interface ICatalogueAuxHandler is ICatalogueHooks, IPollyAuxHandler {}
 contract CatalogueAuxHandler is PollyModule, PollyAuxHandler {
 
 
-    function getInfo() public pure returns(IPollyModule.Info memory){
+    function moduleInfo() public pure returns(IPollyModule.Info memory){
         return IPollyModule.Info('catalogue.aux_handler', true);
     }
 
