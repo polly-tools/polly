@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "description": "utils for use with polly",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "prompt-confirm": "^2.0.4"
+  }
 }

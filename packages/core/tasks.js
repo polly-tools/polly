@@ -5,7 +5,9 @@ require("colors");
 
 task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 
-  console.log('Deploying Polly to network:', hre.network.name);
+  console.log(`Deploying Polly to network ${hre.network.name}`);
+
+
 
   const Polly = await hre.ethers.getContractFactory("Polly");
   const polly = await Polly.deploy();
@@ -16,11 +18,11 @@ task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 });
 
 
-task('polly:deploy-module', 'Deploy a module to the selected network', async (args) => {
+task('polly:deploy-module', 'Deploy a module implementation', async (args) => {
 
-  console.log('Deploying module to network:', hre.network.name);
+  console.log(`Deploying module to network ${hre.network.name}`);
 
-  const Module = await hre.ethers.getContractFactory(args.module);
+  const Module = await hre.ethers.getContractFactory(args.name);
   const moduleDeploy = await Module.deploy();
   await moduleDeploy.deployed();
   const moduleAddress = moduleDeploy.address;
@@ -30,9 +32,9 @@ task('polly:deploy-module', 'Deploy a module to the selected network', async (ar
 .addParam("module", "The module contract name")
 
 
-task('polly:update-module', 'Update a module to the selected network', async ({implementation}) => {
+task('polly:update-module', 'Update a module in Polly', async ({implementation}) => {
 
-  console.log('Updating module on network:', hre.network.name);
+  console.log(`Updating module on network ${hre.network.name}`);
   const [owner] = await ethers.getSigners();
 
   const polly = await hre.ethers.getContractAt('Polly', process.env.POLLY_ADDRESS, owner);

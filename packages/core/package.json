@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.1",
-    "colors": "^1.4.0"
+    "colors": "^1.4.0",
+    "prompt-confirm": "^2.0.4"
   }
 }

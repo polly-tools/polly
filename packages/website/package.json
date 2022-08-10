@@ -16,6 +16,7 @@
     "lodash": "^4.17.21",
     "next": "11.1.2",
     "node-fetch": "^2.6.1",
+    "prompt-confirm": "^2.0.4",
     "react": "^16.8.0",
     "react-aspect-ratio": "^1.0.49",
     "react-dom": "^16.8.0",
