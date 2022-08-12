@@ -1,13 +1,10 @@
 const { task } = require("hardhat/config");
-const requireNetwork = require("./scripts/_utils/require-network");
 
 require("colors");
 
 task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 
   console.log(`Deploying Polly to network ${hre.network.name}`);
-
-
 
   const Polly = await hre.ethers.getContractFactory("Polly");
   const polly = await Polly.deploy();
