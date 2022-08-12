@@ -15,18 +15,18 @@ task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 });
 
 
-task('polly:deploy-module', 'Deploy a module implementation', async (args) => {
+task('polly:deploy-module', 'Deploy a module implementation', async ({name}) => {
 
-  console.log(`Deploying module to network ${hre.network.name}`);
+  console.log(`Deploying module ${name} to network ${hre.network.name}`);
 
-  const Module = await hre.ethers.getContractFactory(args.name);
+  const Module = await hre.ethers.getContractFactory(name);
   const moduleDeploy = await Module.deploy();
   await moduleDeploy.deployed();
   const moduleAddress = moduleDeploy.address;
-  console.log(`${args.module} deployed to:`, moduleAddress.green.bold);
+  console.log(`${name} deployed to:`, moduleAddress.green.bold);
 
 })
-.addParam("module", "The module contract name")
+.addParam("name", "The module contract name")
 
 
 task('polly:update-module', 'Update a module in Polly', async ({implementation}) => {
