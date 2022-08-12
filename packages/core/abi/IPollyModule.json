@@ -52,6 +52,25 @@
         "type": "string"
       }
     ],
+    "name": "getInt",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
     "name": "getString",
     "outputs": [
       {
@@ -166,6 +185,24 @@
       }
     ],
     "name": "setAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "int256",
+        "name": "value_",
+        "type": "int256"
+      }
+    ],
+    "name": "setInt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

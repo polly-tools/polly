@@ -165,6 +165,89 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "name_",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "version_",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct PollyConfigurator.InputParam[]",
+        "name": "params_",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "store_",
+        "type": "bool"
+      }
+    ],
+    "name": "configureModule",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "key",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct PollyConfigurator.ReturnParam[]",
+        "name": "rparams_",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "address_",
         "type": "address"
@@ -222,7 +305,7 @@
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct IPolly.Config[]",
+        "internalType": "struct Polly.Config[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -287,7 +370,7 @@
             "type": "bool"
           }
         ],
-        "internalType": "struct IPolly.Module",
+        "internalType": "struct Polly.Module",
         "name": "",
         "type": "tuple"
       }
@@ -333,7 +416,7 @@
             "type": "bool"
           }
         ],
-        "internalType": "struct IPolly.Module[]",
+        "internalType": "struct Polly.Module[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -382,89 +465,6 @@
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "name_",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "version_",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
-          },
-          {
-            "internalType": "int256",
-            "name": "_int",
-            "type": "int256"
-          },
-          {
-            "internalType": "bool",
-            "name": "_bool",
-            "type": "bool"
-          },
-          {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct PollyConfigurator.InputParam[]",
-        "name": "params_",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "bool",
-        "name": "store_",
-        "type": "bool"
-      }
-    ],
-    "name": "runModuleConfigurator",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "key",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
-          },
-          {
-            "internalType": "int256",
-            "name": "_int",
-            "type": "int256"
-          },
-          {
-            "internalType": "bool",
-            "name": "_bool",
-            "type": "bool"
-          },
-          {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct PollyConfigurator.ReturnParam[]",
-        "name": "rparams_",
-        "type": "tuple[]"
-      }
-    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },

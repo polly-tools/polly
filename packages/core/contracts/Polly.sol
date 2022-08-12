@@ -29,47 +29,30 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PollyModule.sol";
 import "./PollyConfigurator.sol";
-import "hardhat/console.sol";
-
-interface IPolly {
-
-
-  struct Module {
-    string name;
-    uint version;
-    address implementation;
-    bool clone;
-  }
-
-  struct ModuleInstance {
-    string name;
-    uint version;
-    address location;
-  }
-
-  struct Config {
-    string name;
-    PollyConfigurator.ReturnParam[] params;
-  }
-
-
-  function updateModule(address implementation_) external;
-  function getModule(string memory name_, uint version_) external view returns(IPolly.Module memory);
-  function getLatestModuleVersion(string memory name_) external view returns(uint);
-  function moduleExists(string memory name_, uint version_) external view returns(bool exists_);
-  function useModule(uint config_id_, IPolly.ModuleInstance memory mod_) external;
-  function useModules(uint config_id_, IPolly.ModuleInstance[] memory mods_) external;
-  // function createConfig(string memory name_, IPolly.ModuleInstance[] memory mod_) external;
-  // function getConfigsForOwner(address owner_, uint limit_, uint page_) external view returns(uint[] memory);
-  // function getConfig(uint config_id_) external view returns(IPolly.Config memory);
-  // function isConfigOwner(uint config_id_, address check_) external view returns(bool);
-  // function transferConfig(uint config_id_, address to_) external;
-
-
-}
 
 
 contract Polly is Ownable {
+
+    /// @dev struct fo an uninstantiated polly module
+    struct Module {
+      string name;
+      uint version;
+      address implementation;
+      bool clone;
+    }
+
+    /// @dev struct for an instantiated polly module
+    struct ModuleInstance {
+      string name;
+      uint version;
+      address location;
+    }
+
+    /// @dev struct for a configuration of a polly module
+    struct Config {
+      string name;
+      PollyConfigurator.ReturnParam[] params;
+    }
 
 
     /// PROPERTIES ///
@@ -77,7 +60,7 @@ contract Polly is Ownable {
     string[] private _module_names;
     mapping(string => mapping(uint => address)) private _modules;
     mapping(string => uint) private _module_versions;
-    mapping(address => mapping(uint => IPolly.Config)) private _configs;
+    mapping(address => mapping(uint => Config)) private _configs;
     mapping(address => uint) private _configs_count;
 
     //////////////////
@@ -120,14 +103,14 @@ contract Polly is Ownable {
 
 
     /// @dev retrieves a specific module version base
-    function getModule(string memory name_, uint version_) public view returns(IPolly.Module memory){
+    function getModule(string memory name_, uint version_) public view returns(Module memory){
 
       if(version_ < 1)
         version_ = _module_versions[name_];
 
       IPollyModule.Info memory module_info_ = IPollyModule(_modules[name_][version_]).moduleInfo();
 
-      return IPolly.Module(name_, version_, _modules[name_][version_], module_info_.clone);
+      return Module(name_, version_, _modules[name_][version_], module_info_.clone);
 
     }
 
@@ -152,9 +135,9 @@ contract Polly is Ownable {
       if(version_ == 0)
         version_ = getLatestModuleVersion(name_);
 
-      require(moduleExists(name_, version_), string(abi.encodePacked('MODULE_OR_MODULE_VERSION: ', name_, '@', Strings.toString(version_))));
+      require(moduleExists(name_, version_), string(abi.encodePacked('INVALID_MODULE_OR_VERSION: ', name_, '@', Strings.toString(version_))));
       IPollyModule.Info memory base_info_ = IPollyModule(_modules[name_][version_]).moduleInfo();
-      require(base_info_.clone, 'MODULE_DOES_NOT_SUPPORT_CLONE');
+      require(base_info_.clone, 'MODULE_NOT_CLONABLE');
 
       address implementation_ = _modules[name_][version_];
 
@@ -167,46 +150,15 @@ contract Polly is Ownable {
     }
 
 
-    function getModules(uint limit_, uint page_) public view returns(IPolly.Module[] memory){
-
-      if(limit_ < 1 && page_ < 1){
-        page_ = 1;
-        limit_ = _module_names.length;
-      }
-
-      IPolly.Module[] memory modules_ = new IPolly.Module[](limit_);
-      IPollyModule.Info memory module_info_;
-
-      uint i = 0;
-      uint index;
-      uint offset = (page_-1)*limit_;
-      while(i < limit_ && i < _module_names.length){
-        index = i+(offset);
-        if(_module_names.length > index){
-          module_info_ = IPollyModule(_modules[_module_names[index]][_module_versions[_module_names[index]]]).moduleInfo();
-          modules_[i] = IPolly.Module(
-            _module_names[index],
-            _module_versions[_module_names[index]],
-            _modules[_module_names[index]][_module_versions[_module_names[index]]],
-            module_info_.clone
-          );
-        }
-        ++i;
-      }
-
-      return modules_;
-
-    }
-
-
-    function runModuleConfigurator(string memory name_, uint version_, PollyConfigurator.InputParam[] memory params_, bool store_) public returns(PollyConfigurator.ReturnParam[] memory rparams_) {
+    /// @dev if a module is configurable run the configurator
+    function configureModule(string memory name_, uint version_, PollyConfigurator.InputParam[] memory params_, bool store_) public returns(PollyConfigurator.ReturnParam[] memory rparams_) {
 
       if(version_ == 0)
         version_ = getLatestModuleVersion(name_);
 
-      require(moduleExists(name_, version_), 'MODULE_DOES_NOT_EXIST');
+      require(moduleExists(name_, version_), string(abi.encodePacked('INVALID_MODULE_OR_VERSION: ', name_, '@', Strings.toString(version_))));
 
-      IPolly.Module memory module_ = getModule(name_, version_);
+      Module memory module_ = getModule(name_, version_);
       address configurator_ = IPollyModule(module_.implementation).configurator();
       require(configurator_ != address(0), 'NO_MODULE_CONFIGURATOR');
 
@@ -227,30 +179,62 @@ contract Polly is Ownable {
 
     }
 
-
-    function getConfigsForAddress(address address_, uint limit_, uint page_) public view returns(IPolly.Config[] memory){
+    /// @dev retrieves the stored configurations for a given address
+    function getConfigsForAddress(address address_, uint limit_, uint page_) public view returns(Config[] memory){
 
       if(limit_ < 1 && page_ < 1){
         page_ = 1;
         limit_ = _configs_count[address_];
       }
 
-      IPolly.Config[] memory configs_ = new IPolly.Config[](limit_);
-      IPolly.Config memory config_;
+      Config[] memory configs_ = new Config[](limit_);
+      Config memory config_;
 
       uint i = 0;
-      uint index;
-      uint offset = (page_-1)*limit_;
+      uint index_ = 0;
+      uint offset_ = (page_-1)*limit_;
+
       while(i < limit_ && i < _configs_count[address_]){
-        index = i+(offset);
-        if(_configs_count[address_] > index){
-          config_ = _configs[address_][index];
-          configs_[i] = config_;
-        }
+        index_ = (i+(offset_))+1;
+        config_ = _configs[address_][index_];
+        configs_[i] = config_;
         ++i;
       }
 
       return configs_;
+
+    }
+
+
+    /// @dev returns a list of modules available
+    function getModules(uint limit_, uint page_) public view returns(Module[] memory){
+
+      if(limit_ < 1 && page_ < 1){
+        page_ = 1;
+        limit_ = _module_names.length;
+      }
+
+      Module[] memory modules_ = new Module[](limit_);
+      IPollyModule.Info memory module_info_;
+
+      uint i = 0;
+      uint index;
+      uint offset_ = (page_-1)*limit_;
+      while(i < limit_ && i < _module_names.length){
+        index = i+(offset_);
+        if(_module_names.length > index){
+          module_info_ = IPollyModule(_modules[_module_names[index]][_module_versions[_module_names[index]]]).moduleInfo();
+          modules_[i] = Module(
+            _module_names[index],
+            _module_versions[_module_names[index]],
+            _modules[_module_names[index]][_module_versions[_module_names[index]]],
+            module_info_.clone
+          );
+        }
+        ++i;
+      }
+
+      return modules_;
 
     }
 

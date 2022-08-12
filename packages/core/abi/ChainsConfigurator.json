@@ -162,31 +162,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "moduleInfo",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "clone",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IPollyModule.Info",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes32",

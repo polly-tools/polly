@@ -13,18 +13,24 @@ interface IPollyModule {
     bool clone;
   }
 
+  // Read-only
+  function moduleInfo() external view returns(Info memory module_);
+
+  // Clonable
   function init(address for_) external;
   function didInit() external view returns(bool);
-  function moduleInfo() external view returns(Info memory module_);
   function configurator() external view returns(address);
+  function isManager(address address_) external view returns(bool);
 
+  // Utility functions
   function lockKey(string memory key_) external;
   function isLockedKey(string memory key_) external view returns(bool);
+  function setInt(string memory key_, int value_) external;
   function setString(string memory key_, string memory value_) external;
   function setAddress(string memory key_, address value_) external;
+  function getInt(string memory key_) external view returns(int);
   function getString(string memory key_) external view returns(string memory);
   function getAddress(string memory key_) external view returns(address);
-  function isManager(address address_) external view returns(bool);
 
 }
 
@@ -37,9 +43,10 @@ contract PollyModule is AccessControl {
   mapping(string => bool) private _locked_keys;
   mapping(string => string) private _key_strings;
   mapping(string => int) private _key_ints;
-  mapping(string => bool) private _key_bools;
   mapping(string => address) private _key_addresses;
   address private _configurator;
+
+  uint public constant PMVERSION = 1;
 
   constructor(){
     init(msg.sender);
@@ -76,6 +83,12 @@ contract PollyModule is AccessControl {
     require(!isLockedKey((key_)), 'KEY_IS_LOCKED');
   }
 
+  function setInt(string memory key_, int value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    _reqUnlockedKey(key_);
+    _key_ints[key_] = value_;
+  }
+
+
   function setString(string memory key_, string memory value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
     _reqUnlockedKey(key_);
     _key_strings[key_] = value_;
@@ -84,6 +97,10 @@ contract PollyModule is AccessControl {
   function setAddress(string memory key_, address value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
     _reqUnlockedKey(key_);
     _key_addresses[key_] = value_;
+  }
+
+  function getInt(string memory key_) public view returns(int) {
+    return _key_ints[key_];
   }
 
   function getString(string memory key_) public view returns(string memory) {
