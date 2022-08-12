@@ -2,11 +2,10 @@
   "name": "@polly-os/core",
   "version": "1.1.0",
   "scripts": {
-    "deploy-localhost": "npx hardhat run --network localhost scripts/deploy-localhost.js ",
-    "deploy-rinkeby": "npx hardhat run --network rinkeby scripts/deploy-rinkeby.js ",
-    "deploy-mainnet": "npx hardhat run --network mainnet scripts/deploy-mainnet.js ",
     "test": "npx hardhat test",
-    "dev": "npx nodemon -e sol,js --exec \"npm run test\""
+    "dev": "npx nodemon -e sol,js --exec \"npm run test\"",
+    "polly:test": "npx hardhat test test/polly.js",
+    "polly:dev": "npx nodemon -e sol,js --exec \"npm run polly:test\""
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.3",
@@ -23,6 +22,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.1",
+    "base64-sol": "^1.1.0",
     "colors": "^1.4.0",
     "prompt-confirm": "^2.0.4"
   }
