@@ -1,6 +1,6 @@
 import styled, {keyframes} from 'styled-components';
 import Grid from 'styled-components-grid';
-import content, {open, extendable, permanent} from 'base/content/index';
+import content, {tag, open, extendable, permanent} from 'base/content/index';
 import { useState } from 'react';
 
 const fadeIn = keyframes`
@@ -62,7 +62,7 @@ export default function Home(props){
             </Grid.Unit>
             <Grid.Unit size={{sm: 1/1, md: 8/12}} style={{marginBottom: '7em'}}>
                 <h2>
-                    {content}
+                    {tag}
                 </h2>
             </Grid.Unit>
             <Grid.Unit size={1/1} style={{alignSelf: 'end'}}>
@@ -75,6 +75,9 @@ export default function Home(props){
                 <FoldOut index={3} title="Permanent">
                         {permanent}
                 </FoldOut>
+            </Grid.Unit>
+            <Grid.Unit size={1/1} style={{alignSelf: 'end'}}>
+                {content}
             </Grid.Unit>
     </Wrapper>
 }
