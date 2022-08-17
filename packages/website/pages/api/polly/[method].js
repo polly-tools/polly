@@ -8,6 +8,7 @@ const abi = new ABIAPI(pollyABI);
 abi.supportedMethods = abi.getReadMethods();
 abi.cacheTTL = 60*60;
 
+// NUMBER PARSER
 function bigNumbersToNumber(value){
 
     if(value._isBigNumber){
@@ -29,7 +30,6 @@ function bigNumbersToNumber(value){
     return value;
 
 }
-
 abi.addGlobalParser(bigNumbersToNumber)
 
 function moduleParser(module){
@@ -37,17 +37,35 @@ function moduleParser(module){
     return {
         name: module[0],
         version: module[1],
-        location: module[2]
+        implementation: module[2],
+        clonable: module[3]
     }
 }
 abi.addParser('getModule', moduleParser)
-abi.addParser('getConfig', function(config){
+abi.addParser('getModules', (modules) => modules.map(moduleParser))
+
+
+function parseReturnParam(param){
+
+    return {
+        name: param[0],
+        _string: param[1],
+        _int: param[2],
+        _bool: param[3],
+        _address: param[4]
+    };
+    
+}
+
+function parseConfig(config){
     return {
         name: config[0],
-        owner: config[1],
-        modules: config[2].map(moduleParser)
+        params: config[1].map(parseReturnParam)
     }
-});
+
+}
+
+abi.addParser('getConfigsForAddress', (configs) => configs.map(parseConfig));
 
 export default async (req, res) => {
 
