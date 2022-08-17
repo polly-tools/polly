@@ -9,6 +9,7 @@ import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
 import {ethers} from 'ethers';
 import { EthNetProvider } from '@hook/useEthNet';
 import { ConnectIntent } from 'components/ConnectButton/ConnectButton';
+import { useEffect } from 'react';
 
 function getLibrary(provider){
   return new ethers.providers.Web3Provider(provider);
@@ -47,6 +48,10 @@ const GlobalStyle = createGlobalStyle`
   h1, h2, h3, h4, h5 {
     margin-top: 0;
     font-weight: ${p => p.theme.fonts[0].bold};
+  }
+
+  h4, h5 {
+    margin-bottom: 0;
   }
 
   p {
@@ -114,7 +119,7 @@ export default function App({ Component, pageProps }) {
   return (
         <ErrorProvider>
             <Web3ReactProvider getLibrary={getLibrary}>
-              <EthNetProvider chainID={process.env.NEXT_PUBLIC_NETWORK}>
+              <EthNetProvider chainHex={process.env.NEXT_PUBLIC_NETWORK_HEX} chainID={process.env.NEXT_PUBLIC_NETWORK_ID}>
                 <ThemeProvider theme={theme}>
                 <ConnectIntent>
                   <ErrorMessage/>

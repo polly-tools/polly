@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 
 export const chains = {
     1: "mainnet",
-    4: "rinkeby",
+    5: "goerli",
     31337: "localhost"
 }
 

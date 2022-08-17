@@ -42,7 +42,7 @@ function moduleParser(module){
     }
 }
 abi.addParser('getModule', moduleParser)
-abi.addParser('getModules', (modules) => modules.map(moduleParser))
+abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').map(moduleParser))
 
 
 function parseReturnParam(param){
@@ -65,7 +65,7 @@ function parseConfig(config){
 
 }
 
-abi.addParser('getConfigsForAddress', (configs) => configs.map(parseConfig));
+abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => config[0] !== '').map(parseConfig));
 
 export default async (req, res) => {
 

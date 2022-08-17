@@ -39,8 +39,9 @@ export default function Modules(p){
         
         if(polly){
             setModules(-1);
-            polly.read('getModules', {page_: 1, limit_: 1}).then(response => {
-                setModules(response.result);
+            polly.read('getModules', {page_: 1, limit_: 50}).then(response => {
+                const mods = response.result;
+                setModules(mods);
             }).catch(err => {
                 console.log(err);
             });
@@ -56,10 +57,9 @@ export default function Modules(p){
                 return <div key={index}>
                     ________________________________
                     <br/><br/>
-                    <div>{module.name}</div>
-                    <small>Type: {module.clonable ? 'Clonable' : 'Read-only'}</small><br/>
-                    <small>Implementation: <a href={etherscanLink(module.implementation)} target="_blank">{module.implementation}</a> </small><br/>
-                    {(module.clonable && account) && <a href="#deploy" onClick={() => handleClone(module.name, 0, [])}>Deploy your own</a>}
+                    <div>{module.name} <small>v{module.version}</small></div>
+                    <small>{module.clonable ? 'CLONABLE' : 'READ-ONLY'}</small><br/>
+                    <div><a href={etherscanLink(module.implementation)} target="_blank">view code</a>  {(module.clonable && account) && <> · <a href="#deploy" onClick={() => handleClone(module.name, 0, [])}>deploy</a></>} </div>
                 </div>
             })}
         </Grid.Unit>

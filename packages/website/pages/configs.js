@@ -22,8 +22,9 @@ export default function Configs(p){
         
         if(polly && account){
             setConfigs(-1);
-            polly.read('getConfigsForAddress', {address_: account, limit_: 1, page_: 1}).then(response => {
-                setConfigs(response.result);
+            polly.read('getConfigsForAddress', {address_: account, limit_: 50, page_: 1}).then(response => {
+                const confs = response.result;
+                setConfigs(confs);
             }).catch(err => {
                 console.log(err);
             });

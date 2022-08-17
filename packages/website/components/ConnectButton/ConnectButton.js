@@ -11,16 +11,13 @@ import { ethers } from 'ethers';
 import useENS from 'base/hooks/useENS';
 import useEthNet from 'base/hooks/useEthNet';
 import Modal, { ModalActions, ModalInner } from 'components/Modal';
+import Button from 'components/Button';
 
-export const injected = new InjectedConnector({ supportedChainIds: [1, 4, 31337]});
+export const injected = new InjectedConnector({ supportedChainIds: [1, 5, 31337]});
 export const wcConnector = new WalletConnectConnector({
   infuraId: process.env.NEXT_PUBLIC_INFURA_ID,
 });
 
-
-const Clickable = styled.div`
-  cursor: pointer;
-`
 
 const Wrapper = styled.div`
   display: flex;
@@ -73,16 +70,6 @@ const Connect = styled.a`
 function createConnectIntent(){
 
   const [connectIntent, setConnectIntent] = useState(false);
-  let timeout = false;
-
-  useEffect(() => {
-    if(connectIntent){
-      clearTimeout(timeout)
-      timeout = setTimeout(() => {
-        setConnectIntent(false);
-      }, 10000);
-    }
-  }, [connectIntent])
 
   return {connectIntent, setConnectIntent};
 
@@ -120,8 +107,17 @@ export default function ConnectButton({onActivate}) {
   }, [account])
 
   useEffect(() => {
-    console.log()
-  }, [connectIntent])
+    if(chainId){
+      if(!net.isChainID()){
+        deactivate()
+        err.send(<ModalInner>
+          You are connected to the wrong network. Please switch to {chainToName(net.chainID).toUpperCase()} to proceed.
+        <ModalActions actions={[{
+          label: 'OK', callback: () => net.switchNet(() => setConnectIntent(true)), cta: true
+        }]}/></ModalInner>);
+      }
+    }
+  }, [chainId])
 
   return (
     <Wrapper>

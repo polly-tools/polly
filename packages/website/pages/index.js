@@ -51,7 +51,7 @@ export default function Home(props){
             </Grid.Unit>
             
 
-            <Grid.Unit size={1/3}>
+            <Grid.Unit size={1/3} style={{marginBottom: '7em'}}>
 
                 <Action>
                     <ConnectButton/>

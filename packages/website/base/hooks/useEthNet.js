@@ -4,15 +4,21 @@ import React, { useState, useEffect } from 'react';
 
 const EthNetCtx = React.createContext(false);
 
-const createEthNet = ({chainID, ...p}) => {
+const createEthNet = ({chainID, chainHex, ...p}) => {
     
     const web3 = useWeb3React();
 
-    async function switchNet(){
+    async function switchNet(onSwitched = false){
+    
         await window.ethereum.request({
             method: 'wallet_switchEthereumChain',
-            params: [{ chainId: ethers.utils.hexlify(parseInt(chainID))}],
+            params: [{
+                chainId: chainHex
+            }],
         })
+
+        if(onSwitched)
+            onSwitched();
     }
 
     function isChainID(){
