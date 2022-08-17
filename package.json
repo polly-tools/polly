@@ -8,6 +8,7 @@
     "lerna": "^4.0.0"
   },
   "scripts": {
+    "node": "cd packages/core && npx hardhat node",
     "link-env": "ln -f .env packages/core/.env; ln -f .env packages/modules/.env; ln -f .env packages/website/.env; "
   }
 }
