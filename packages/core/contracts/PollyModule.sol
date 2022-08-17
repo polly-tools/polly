@@ -111,7 +111,7 @@ contract PollyModule is AccessControl {
     return _key_addresses[key_];
   }
 
-  function isManager(address address_) external view returns(bool){
+  function isManager(address address_) public view returns(bool){
     return hasRole(MANAGER, address_);
   }
 
