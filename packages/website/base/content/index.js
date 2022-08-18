@@ -17,7 +17,7 @@ Polly is a protocol for creating, deploying and configuring reusable smart contr
 </>
 
 export const open = <>
-The projects and protocols of the future must be accesible and open to all and so must the tools with which they are build. Polly is structured to ensure access for everyone by making the foundational entry points fully permissionless.
+The projects and protocols of the future must be accesible and open to all and so must the tools with which they are built. Polly is structured to ensure access for everyone by making the foundational entry points fully permissionless.
 </>
 
 export const extendable = <>
