@@ -4,7 +4,8 @@ import useContract from 'base/hooks/useContract';
 import pollyABI from '@polly-os/core/abi/Polly.json';
 import { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
-
+import {paramCase} from 'param-case'
+import Link from 'next/link'
 
 function etherscanLink(append_){
     if(process.env.NEXT_PUBLIC_NETWORK_ID == 5)
@@ -24,16 +25,6 @@ export default function Modules(p){
         endpoint: '/api/polly'
     });
 
-
-    async function handleClone(name, version, params){
-        await polly.write('configureModule', {
-            name_: name,
-            version_: version,
-            params_: params,
-            store_: true
-        });
-
-    }
 
     useEffect(() => {
         
@@ -57,7 +48,13 @@ export default function Modules(p){
                 return <div key={index}>
                     ________________________________
                     <br/><br/>
-                    <div>{module.name} <small>v{module.version}</small></div>
+                    <div>
+                    <Link href={`/modules/${paramCase(module.name)}`}>
+                        <a>
+                            {module.name} <small>v{module.version}</small>
+                        </a>
+                    </Link> 
+                    </div>
                     <small>{module.clonable ? 'CLONABLE' : 'READ-ONLY'}</small><br/>
                     <div><a href={etherscanLink(module.implementation)} target="_blank">view code</a>  {(module.clonable && account) && <> · <a href="#deploy" onClick={() => handleClone(module.name, 0, [])}>deploy</a></>} </div>
                 </div>

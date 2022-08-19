@@ -9,6 +9,7 @@
   },
   "scripts": {
     "node": "cd packages/core && npx hardhat node",
-    "link-env": "ln -f .env packages/core/.env; ln -f .env packages/modules/.env; ln -f .env packages/website/.env; "
+    "link-env": "ln -f .env packages/core/.env; ln -f .env packages/modules/.env; ln -f .env packages/website/.env; ",
+    "website:dev": "vercel dev"
   }
 }

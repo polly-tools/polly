@@ -22,6 +22,22 @@ contract Hello is PollyModule {
 
 contract HelloConfigurator is PollyConfigurator {
 
+  function info() public pure override returns(string[] memory, string[] memory) {
+
+    /// Inputs
+    string[] memory inputs = new string[](1);
+    inputs[0] = "string:Who to say hello to";
+
+    /// Outputs
+    string[] memory outputs = new string[](1);
+    outputs[0] = "module:Hello:the instance of the deployed module";
+
+
+    return (inputs, outputs);
+  }
+
+
+
   function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory) public override returns(PollyConfigurator.ReturnParam[] memory){
 
     // Clone a Hello module

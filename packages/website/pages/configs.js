@@ -5,11 +5,13 @@ import pollyABI from '@polly-os/core/abi/Polly.json';
 import { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { isArray } from 'lodash';
+import Link from 'next/link';
 
 export default function Configs(p){
 
     const [configs, setConfigs] = useState(-1);
     const {account} = useWeb3React();
+    const [page, setPage] = useState(1);
 
     const polly = useContract({
         address: process.env.NEXT_PUBLIC_POLLY_ADDRESS,
@@ -22,7 +24,7 @@ export default function Configs(p){
         
         if(polly && account){
             setConfigs(-1);
-            polly.read('getConfigsForAddress', {address_: account, limit_: 50, page_: 1}).then(response => {
+            polly.read('getConfigsForAddress', {address_: account, limit_: 50, page_: page}).then(response => {
                 const confs = response.result;
                 setConfigs(confs);
             }).catch(err => {
@@ -39,11 +41,16 @@ export default function Configs(p){
 
                 {configs === -1 && <div>Loading...</div>}
                 {(isArray(configs) && configs.length > 0) && configs.map((config, index) => {
-                    return <div key={index}>
+                    const realIndex = (index+1)*page;
+                    return <div key={realIndex}>
                        ________________________________
                         <br/><br/>
                         <div>
-                            {config.name}
+                            <Link href={`/configs/${realIndex}`}>
+                                <a>
+                                {config.name}
+                                </a>
+                            </Link>
                         </div>
                         <div>
                             {config.params.length} parameter{config.params.length > 1 ? 's' : ''}
