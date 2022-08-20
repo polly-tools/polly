@@ -56,7 +56,7 @@ export default function Modules(p){
                     </Link> 
                     </div>
                     <small>{module.clonable ? 'CLONABLE' : 'READ-ONLY'}</small><br/>
-                    <div><a href={etherscanLink(module.implementation)} target="_blank">view code</a>  {(module.clonable && account) && <> · <a href="#deploy" onClick={() => handleClone(module.name, 0, [])}>deploy</a></>} </div>
+                    <div><a href={etherscanLink(module.implementation)} target="_blank">view code</a></div>
                 </div>
             })}
         </Grid.Unit>

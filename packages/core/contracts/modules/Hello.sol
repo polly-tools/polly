@@ -26,7 +26,7 @@ contract HelloConfigurator is PollyConfigurator {
 
     /// Inputs
     string[] memory inputs = new string[](1);
-    inputs[0] = "string:Who to say hello to";
+    inputs[0] = "string:To:Who do you want to say hello to today?";
 
     /// Outputs
     string[] memory outputs = new string[](1);
@@ -38,12 +38,12 @@ contract HelloConfigurator is PollyConfigurator {
 
 
 
-  function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory) public override returns(PollyConfigurator.ReturnParam[] memory){
+  function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory inputs_) public override returns(PollyConfigurator.ReturnParam[] memory){
 
     // Clone a Hello module
     Hello hello_ = Hello(polly_.cloneModule('Hello', 0));
     // Set the string with key "to" to "World"
-    hello_.setString('to', 'World');
+    hello_.setString('to', bytes(inputs_[0]._string).length < 1 ? 'World' : inputs_[0]._string);
 
     // Grant roles to the address calling the configurator
     hello_.grantRole(hello_.DEFAULT_ADMIN_ROLE(), for_);

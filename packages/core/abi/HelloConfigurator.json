@@ -251,7 +251,7 @@
           }
         ],
         "internalType": "struct PollyConfigurator.InputParam[]",
-        "name": "",
+        "name": "inputs_",
         "type": "tuple[]"
       }
     ],

@@ -73,7 +73,9 @@ const GlobalStyle = createGlobalStyle`
     background-color: transparent;
     font-family: ${theme.fonts[0].family};
     font-size: inherit;
-    padding: 1vw 2vw;
+    padding: 1vw 0;
+    color: inherit;
+    width: 100%;
     ${breakpoint('sm', 'md')`
       padding: 2vw 3vw;
     `}
