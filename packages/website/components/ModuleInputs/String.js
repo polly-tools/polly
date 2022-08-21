@@ -9,10 +9,11 @@ export default function String({input, module, ...p}){
 
     return <Grid>
         <Grid.Unit>
-        <label>{input.name}</label>
         </Grid.Unit>
         <Grid.Unit size={1/2}>
+        <label>{input.name}</label><br/>
         <input type="text" onKeyUp={handleChange}/>
+        <small>{input.description}</small>
         </Grid.Unit>
     </Grid>
 }

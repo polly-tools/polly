@@ -9,6 +9,15 @@ import { useWeb3React } from "@web3-react/core";
 import Link from "next/link";
 import Button from "components/Button";
 import ModuleInput from "components/ModuleInputs/ModuleInput";
+import { ConnectIntent, useConnectIntent } from "components/ConnectButton";
+
+
+function etherscanLink(append_){
+    if(process.env.NEXT_PUBLIC_NETWORK_ID == 5)
+        return `https://goerli.etherscan.io/address/${append_}`;
+
+    return `https://etherscan.io/address/${append_}`;
+}
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -56,7 +65,7 @@ export default function Module({p}){
     const {account} = useWeb3React();
 
     const [showDeployScreen, setShowDeployScreen] = useState(false);
-
+    const {setConnectIntent} = useConnectIntent();
     async function fetchModule(){
         const name = hyphenToCC(query.name);
         const _module = await polly.read('getModule', {name_: name, version_: 0}).then(res => res.result);
@@ -72,23 +81,30 @@ export default function Module({p}){
 
 
     return <Page header>
-        {module && <Grid.Unit>
-            <h1>{module.name}</h1>
-            <Grid.Unit size={1/2}>
-            {info && <p>{info.description}</p>}
+        {module && <Grid>
+            <Grid.Unit size={1/1}>
+            <h1 className="compact">{module.name}</h1>
+            <small>v{module.version} | {module.clonable ? 'CLONABLE' : 'READ-ONLY'} | <a href={etherscanLink(module.implementation)} target="_blank">CODE</a></small>
+            <br/>
+            <br/>
+            {info && <p>
+                {info.description}
+            </p>}
             {info && info.inputs.map((input, index) => <ModuleInput onChange={value => setInputs(prev => {prev[index] = value; return prev;})} key={index} input={input} module={module}/>)}
             </Grid.Unit>
-            {account && <div>
-                <Button onClick={() => setShowDeployScreen(true)}>
-                    Deploy
+            <Grid.Unit size={1/1}>
+            {module.clonable && <div>
+                <Button onClick={() => account ? setShowDeployScreen(true) : setConnectIntent(true)}>
+                    {account ? 'Deploy' : 'Connect to deploy'}
                 </Button>
                 <DeployModuleScreen actions={[
                     {label: 'Cancel', callback: () => setShowDeployScreen(false)},
                     {label: 'Deploy', cta: true, callback: () => handleClone(polly, module.name, module.version, inputs, true)}
                 ]} module={module} show={showDeployScreen}/>
             </div>}
+            </Grid.Unit>
 
-        </Grid.Unit>}
+        </Grid>}
     </Page>
 
 }

@@ -22,7 +22,7 @@ contract Hello is PollyModule {
 
 contract HelloConfigurator is PollyConfigurator {
 
-  function info() public pure override returns(string[] memory, string[] memory) {
+  function info() public pure override returns(string memory, string[] memory, string[] memory) {
 
     /// Inputs
     string[] memory inputs = new string[](1);
@@ -33,7 +33,8 @@ contract HelloConfigurator is PollyConfigurator {
     outputs[0] = "module:Hello:the instance of the deployed module";
 
 
-    return (inputs, outputs);
+    return ("A simple 'Hello world!' module to showcase how Polly works.", inputs, outputs);
+
   }
 
 

@@ -180,26 +180,67 @@ contract Polly is Ownable {
     }
 
     /// @dev retrieves the stored configurations for a given address
-    function getConfigsForAddress(address address_, uint limit_, uint page_) public view returns(Config[] memory){
+    function getConfigsForAddress(address address_, uint limit_, uint page_, bool ascending_) public view returns(Config[] memory){
+
+      uint count_ = _configs_count[address_];
 
       if(limit_ < 1 && page_ < 1){
+        limit_ = count_;
         page_ = 1;
-        limit_ = _configs_count[address_];
       }
+
 
       Config[] memory configs_ = new Config[](limit_);
-      Config memory config_;
 
-      uint i = 0;
-      uint index_ = 0;
-      uint offset_ = (page_-1)*limit_;
+      uint i;
+      uint id_;
 
-      while(i < limit_ && i < _configs_count[address_]){
-        index_ = (i+(offset_))+1;
-        config_ = _configs[address_][index_];
-        configs_[i] = config_;
-        ++i;
+      if(ascending_){
+
+        // ASCENDING
+        id_ = page_ == 1 ? 1 : ((page_-1)*limit_)+1;
+        while(id_ <= count_ && i < limit_){
+            configs_[i] = _configs[address_][id_];
+            ++i;
+            ++id_;
+        }
+
       }
+      else {
+
+        /// DESCENDING
+        id_ = page_ == 1 ? count_ : count_ - (limit_*(page_-1));
+        while(id_ > 0 && i < limit_){
+            configs_[i] = _configs[address_][id_];
+            ++i;
+            --id_;
+        }
+
+      }
+
+      // if(ascending_){
+      //   // ASCENDING
+      //   uint id = page_ == 1 ? 1 : ((page_-1)*limit_)+1;
+      //   while(id <= count_ && i < limit_){
+      //     config_ = _configs[address_][index_];
+      //     ++i;
+      //     ++id;
+      //   }
+      // }
+      // else {
+
+      //   i = 0;
+      //   index_ = 0;
+      //   offset_ = (page_-1)*limit_;
+
+      //   while(i < limit_ && i < _configs_count[address_]){
+      //     index_ = (i+(offset_))+1;
+      //     config_ = _configs[address_][index_];
+      //     configs_[i] = config_;
+      //     ++i;
+      //   }
+
+      // }
 
       return configs_;
 

@@ -41,9 +41,11 @@ const Action = styled.div`
 
 export default function Home(props){
     return <Page minHeight="100%">
+
             <Grid.Unit size={{sm: 1/1, md: 2/12}} style={{marginBottom: '7em'}}>
                 <Logo src='/img/logo.png'/>
             </Grid.Unit>
+            
             <Grid.Unit size={{sm: 1/1, md: 8/12}} style={{marginBottom: '7em'}}>
                 <h2>
                     {tag}
@@ -69,8 +71,7 @@ export default function Home(props){
                     <small>Review your configurations</small>
                 </Action>
 
-
-             </Grid.Unit>
+            </Grid.Unit>
             
             <Grid.Unit size={1/1} style={{alignSelf: 'end', marginBottom: '5em'}}>
                 <FoldOut index={1} title="Open">

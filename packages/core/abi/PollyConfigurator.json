@@ -166,6 +166,11 @@
     "name": "info",
     "outputs": [
       {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
         "internalType": "string[]",
         "name": "",
         "type": "string[]"

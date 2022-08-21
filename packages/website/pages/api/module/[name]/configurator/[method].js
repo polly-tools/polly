@@ -50,8 +50,9 @@ function parseInfoParam(param){
 
 abi.addParser('info', (info) => {
     return {
-        inputs: info[0].map(parseInfoParam).filter(res => res),
-        outputs: info[1].map(parseInfoParam).filter(res => res)
+        description: info[0],
+        inputs: info[1].map(parseInfoParam).filter(res => res),
+        outputs: info[2].map(parseInfoParam).filter(res => res)
     }
 })
 

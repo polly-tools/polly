@@ -261,6 +261,11 @@
         "internalType": "uint256",
         "name": "page_",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "ascending_",
+        "type": "bool"
       }
     ],
     "name": "getConfigsForAddress",

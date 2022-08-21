@@ -7,12 +7,6 @@ import { useWeb3React } from '@web3-react/core';
 import {paramCase} from 'param-case'
 import Link from 'next/link'
 
-function etherscanLink(append_){
-    if(process.env.NEXT_PUBLIC_NETWORK_ID == 5)
-        return `https://goerli.etherscan.io/address/${append_}`;
-
-    return `https://etherscan.io/address/${append_}`;
-}
 
 export default function Modules(p){
 
@@ -55,8 +49,6 @@ export default function Modules(p){
                         </a>
                     </Link> 
                     </div>
-                    <small>{module.clonable ? 'CLONABLE' : 'READ-ONLY'}</small><br/>
-                    <div><a href={etherscanLink(module.implementation)} target="_blank">view code</a></div>
                 </div>
             })}
         </Grid.Unit>

@@ -50,6 +50,10 @@ const GlobalStyle = createGlobalStyle`
     font-weight: ${p => p.theme.fonts[0].bold};
   }
 
+  h1.compact, h2.compact, h3.compact, h4.compact, h5.compact {
+    margin-bottom: 0;
+  }
+
   h4, h5 {
     margin-bottom: 0;
   }

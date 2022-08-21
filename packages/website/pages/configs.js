@@ -6,12 +6,14 @@ import { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { isArray } from 'lodash';
 import Link from 'next/link';
+import { useConnectIntent } from 'components/ConnectButton';
 
 export default function Configs(p){
 
     const [configs, setConfigs] = useState(-1);
     const {account} = useWeb3React();
     const [page, setPage] = useState(1);
+    const {setConnectIntent} = useConnectIntent();
 
     const polly = useContract({
         address: process.env.NEXT_PUBLIC_POLLY_ADDRESS,
@@ -24,7 +26,7 @@ export default function Configs(p){
         
         if(polly && account){
             setConfigs(-1);
-            polly.read('getConfigsForAddress', {address_: account, limit_: 50, page_: page}).then(response => {
+            polly.read('getConfigsForAddress', {address_: account, limit_: 50, page_: page, ascending_: false}).then(response => {
                 const confs = response.result;
                 setConfigs(confs);
             }).catch(err => {
@@ -60,7 +62,7 @@ export default function Configs(p){
             
             </>}
 
-            {!account && <span>Connect to view your configs</span>}
+            {!account && <span><a href="#" onClick={e => {e.preventDefault(); setConnectIntent(true)}}>Connect</a> to view your configs</span>}
 
         </Grid.Unit>
     </Page>
