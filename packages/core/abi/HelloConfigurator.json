@@ -162,6 +162,29 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "info",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -233,7 +256,7 @@
           }
         ],
         "internalType": "struct PollyConfigurator.InputParam[]",
-        "name": "",
+        "name": "inputs_",
         "type": "tuple[]"
       }
     ],

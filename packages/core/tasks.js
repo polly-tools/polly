@@ -4,6 +4,7 @@ require("colors");
 
 task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 
+  await hre.run('compile');
   console.log(`Deploying Polly to network ${hre.network.name}`);
 
   const Polly = await hre.ethers.getContractFactory("Polly");
@@ -17,6 +18,7 @@ task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 
 task('polly:deploy-module', 'Deploy a module implementation', async ({name}) => {
 
+  await hre.run('compile');
   console.log(`Deploying module ${name} to network ${hre.network.name}`);
 
   const Module = await hre.ethers.getContractFactory(name);

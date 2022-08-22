@@ -13,3 +13,4 @@ artifacts
 
 #yarn
 yarn-error.log
+.vercel

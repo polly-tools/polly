@@ -1,10 +1,11 @@
-import pollyABI from '@polly-os/core/abi/Polly.json';
+import configABI from '@polly-os/core/abi/PollyConfigurator.json';
 import { ethers } from "ethers";
 import ABIAPI from 'abiapi';
-import { getProvider } from "../../../base/provider";
+import { getProvider } from "base/provider";
 import { isArray, isArrayLikeObject, isObject, isObjectLike } from 'lodash';
+import getBaseUrl from 'base/url';
 
-const abi = new ABIAPI(pollyABI);
+const abi = new ABIAPI(configABI);
 abi.supportedMethods = abi.getReadMethods();
 abi.cacheTTL = 60*60;
 
@@ -32,17 +33,28 @@ function bigNumbersToNumber(value){
 }
 abi.addGlobalParser(bigNumbersToNumber)
 
-function moduleParser(module){
+function parseInfoParam(param){
+    
+    const parts = param.split(':');
+
+    if(parts.length < 2){
+        return false;
+    }
 
     return {
-        name: module[0],
-        version: module[1],
-        implementation: module[2],
-        clonable: module[3]
+        type: parts[0],
+        name: parts[1],
+        description: parts[2]
     }
 }
-abi.addParser('getModule', moduleParser)
-abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').map(moduleParser))
+
+abi.addParser('info', (info) => {
+    return {
+        description: info[0],
+        inputs: info[1].map(parseInfoParam).filter(res => res),
+        outputs: info[2].map(parseInfoParam).filter(res => res)
+    }
+})
 
 
 function parseReturnParam(param){
@@ -70,12 +82,14 @@ abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => conf
 export default async (req, res) => {
 
     const data = {};
-    const {method, ...query} = req.query;
+    const {name, method, version, ...query} = req.query;
+
+    const configurator = await fetch(`${getBaseUrl()}/api/module/${name}/configurator?version_=${version ? version : 0}`).then(res => res.json()).then(res => res.result);
 
     if(abi.supportsMethod(method)){
 
         const provider = getProvider();
-        const contract = new ethers.Contract(process.env.POLLY_ADDRESS, pollyABI, provider);
+        const contract = new ethers.Contract(configurator, configABI, provider);
         
         try {
             data.result = await contract[method](...abi.methodParamsFromQuery(method, query));

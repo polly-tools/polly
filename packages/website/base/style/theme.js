@@ -7,6 +7,7 @@ export const colors = {
     bg: '#ffffff',
     altBg: '#cfcfcf',
     text: mainColor,
+    modalBg: 'rgba(255,255,255,0.5)',
 };
 
 

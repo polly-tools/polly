@@ -8,6 +8,8 @@ import { ErrorProvider } from '@hook/useError';
 import ErrorMessage from 'components/ErrorMessage/ErrorMessage';
 import {ethers} from 'ethers';
 import { EthNetProvider } from '@hook/useEthNet';
+import { ConnectIntent } from 'components/ConnectButton/ConnectButton';
+import { useEffect } from 'react';
 
 function getLibrary(provider){
   return new ethers.providers.Web3Provider(provider);
@@ -48,6 +50,14 @@ const GlobalStyle = createGlobalStyle`
     font-weight: ${p => p.theme.fonts[0].bold};
   }
 
+  h1.compact, h2.compact, h3.compact, h4.compact, h5.compact {
+    margin-bottom: 0;
+  }
+
+  h4, h5 {
+    margin-bottom: 0;
+  }
+
   p {
     margin: 0 0 20px 0;
   }
@@ -67,7 +77,9 @@ const GlobalStyle = createGlobalStyle`
     background-color: transparent;
     font-family: ${theme.fonts[0].family};
     font-size: inherit;
-    padding: 1vw 2vw;
+    padding: 1vw 0;
+    color: inherit;
+    width: 100%;
     ${breakpoint('sm', 'md')`
       padding: 2vw 3vw;
     `}
@@ -112,15 +124,17 @@ export default function App({ Component, pageProps }) {
 
   return (
         <ErrorProvider>
-          <Web3ReactProvider getLibrary={getLibrary}>
-            <EthNetProvider chainID={process.env.NEXT_PUBLIC_NETWORK}>
-              <ThemeProvider theme={theme}>
-                <ErrorMessage/>
-                <GlobalStyle />
-                <Component {...pageProps} />
-              </ThemeProvider>
-            </EthNetProvider>
-        </Web3ReactProvider>
+            <Web3ReactProvider getLibrary={getLibrary}>
+              <EthNetProvider chainHex={process.env.NEXT_PUBLIC_NETWORK_HEX} chainID={process.env.NEXT_PUBLIC_NETWORK_ID}>
+                <ThemeProvider theme={theme}>
+                <ConnectIntent>
+                  <ErrorMessage/>
+                  <GlobalStyle />
+                  <Component {...pageProps} />
+                </ConnectIntent>
+                </ThemeProvider>
+              </EthNetProvider>
+          </Web3ReactProvider>
        </ErrorProvider>
   )
 

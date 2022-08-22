@@ -2,32 +2,10 @@ import styled, {keyframes} from 'styled-components';
 import Grid from 'styled-components-grid';
 import content, {tag, open, extendable, permanent} from 'base/content/index';
 import { useState } from 'react';
-
-const fadeIn = keyframes`
-    from {
-        transform: scale(0.85) rotate(-20deg);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-    }
-`
-
-const Wrapper = styled(Grid)`
-width: 100vw;
-min-height: 100vh;
-place-items: top;
-padding: 5vw;
-justify-content: space-between;
-box-sizing: border-box;
-`
-
-const Logo = styled.img`
-    max-width: 100%;
-    height: auto;
-    animation: ${fadeIn} 0.5s;
-`
+import Page from 'templates/Page';
+import Logo from 'components/Logo/Logo';
+import ConnectButton from 'components/ConnectButton';
+import Link from "next/link"
 
 
 const FoldOut = styled(({title, index, children, ...p}) => {
@@ -55,17 +33,47 @@ const FoldOut = styled(({title, index, children, ...p}) => {
     
 `
 
+const Action = styled.div`
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+`
+
 export default function Home(props){
-    return <Wrapper>
+    return <Page minHeight="100%">
+
             <Grid.Unit size={{sm: 1/1, md: 2/12}} style={{marginBottom: '7em'}}>
                 <Logo src='/img/logo.png'/>
             </Grid.Unit>
+            
             <Grid.Unit size={{sm: 1/1, md: 8/12}} style={{marginBottom: '7em'}}>
                 <h2>
                     {tag}
                 </h2>
             </Grid.Unit>
-            <Grid.Unit size={1/1} style={{alignSelf: 'end'}}>
+            
+
+            <Grid.Unit size={1/3} style={{marginBottom: '7em'}}>
+
+                <Action>
+                    <ConnectButton/>
+                    <small>Connect your wallet to interact with Polly</small>
+                </Action>
+
+
+                <Action>
+                    <Link href="/modules"><a>Modules</a></Link>
+                    <small>See all available modules in Polly</small>
+                </Action>
+
+                <Action>
+                    <Link href="/configs"><a>Configurations</a></Link>
+                    <small>Review your configurations</small>
+                </Action>
+
+            </Grid.Unit>
+            
+            <Grid.Unit size={1/1} style={{alignSelf: 'end', marginBottom: '5em'}}>
                 <FoldOut index={1} title="Open">
                         {open}
                 </FoldOut>
@@ -76,10 +84,12 @@ export default function Home(props){
                         {permanent}
                 </FoldOut>
             </Grid.Unit>
+
+
             <Grid.Unit size={1/1} style={{alignSelf: 'end'}}>
                 {content}
             </Grid.Unit>
-    </Wrapper>
+    </Page>
 }
 
 export async function getStaticProps(){

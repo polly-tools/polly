@@ -1,12 +1,11 @@
-import pollyABI from '@polly-os/core/abi/Polly.json';
 import { ethers } from "ethers";
 import ABIAPI from 'abiapi';
-import { getProvider } from "../../../base/provider";
+import { getProvider } from "base/provider";
 import { isArray, isArrayLikeObject, isObject, isObjectLike } from 'lodash';
+import getBaseUrl from 'base/url';
 
-const abi = new ABIAPI(pollyABI);
-abi.supportedMethods = abi.getReadMethods();
-abi.cacheTTL = 60*60;
+import ModuleABIs from '@polly-os/utils/js/ModuleABIs';
+
 
 // NUMBER PARSER
 function bigNumbersToNumber(value){
@@ -30,7 +29,6 @@ function bigNumbersToNumber(value){
     return value;
 
 }
-abi.addGlobalParser(bigNumbersToNumber)
 
 function moduleParser(module){
 
@@ -41,8 +39,6 @@ function moduleParser(module){
         clonable: module[3]
     }
 }
-abi.addParser('getModule', moduleParser)
-abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').map(moduleParser))
 
 
 function parseReturnParam(param){
@@ -65,17 +61,29 @@ function parseConfig(config){
 
 }
 
-abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => config[0] !== '').map(parseConfig));
 
 export default async (req, res) => {
-
+    
     const data = {};
-    const {method, ...query} = req.query;
+    const {name, address, method, version, ...query} = req.query;
+
+    const moduleABI = ModuleABIs[name];
+    const abi = new ABIAPI(moduleABI);
+    abi.supportedMethods = abi.getReadMethods();
+    abi.cacheTTL = 60*60;
+
+    abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => config[0] !== '').map(parseConfig));
+    abi.addGlobalParser(bigNumbersToNumber)
+    abi.addParser('getModule', moduleParser)
+    abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').map(moduleParser))
+    
+    const module = await fetch(`${getBaseUrl()}/api/polly/getModule?name_=${name}&version_=${version ? version : 0}`).then(res => res.json()).then(res => res.result);
 
     if(abi.supportsMethod(method)){
 
         const provider = getProvider();
-        const contract = new ethers.Contract(process.env.POLLY_ADDRESS, pollyABI, provider);
+
+        const contract = new ethers.Contract(address, moduleABI, provider);
         
         try {
             data.result = await contract[method](...abi.methodParamsFromQuery(method, query));

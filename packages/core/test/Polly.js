@@ -35,14 +35,9 @@ describe("Polly", function () {
     const TestModule2 = await ethers.getContractFactory("TestModule2");
     contracts.testModule2 = await TestModule2.deploy();
 
-    // Clonable with configurator
-    const TestModule3 = await ethers.getContractFactory("TestModule3");
-    contracts.testModule3 = await TestModule3.deploy();
-
     console.log(`   Polly -> `, contracts.polly.address.yellow);
     console.log(`   TestModule -> `, contracts.testModule1.address.yellow);
     console.log(`   TestModule2 -> `, contracts.testModule2.address.yellow);
-    console.log(`   TestModule3 -> `, contracts.testModule3.address.yellow);
 
     users[1] = await contracts.polly.connect(wallet1);
     users[2] = await contracts.polly.connect(wallet2);
@@ -64,8 +59,6 @@ describe("Polly", function () {
       .to.emit(contracts.polly, 'moduleUpdated')
       expect(contracts.polly.updateModule(contracts.testModule2.address))
       .to.emit(contracts.polly, 'moduleUpdated')
-      expect(contracts.polly.updateModule(contracts.testModule3.address))
-      .to.emit(contracts.polly, 'moduleUpdated')
     });
 
   });
@@ -84,11 +77,6 @@ describe("Polly", function () {
       expect(tModule2.name).to.equal('TestModule2');
       expect(tModule2.version).to.equal(1);
       expect(tModule2.implementation).to.equal(contracts.testModule2.address);
-
-      const tModule3 = await contracts.polly.getModule('TestModule3', 0);
-      expect(tModule3.name).to.equal('TestModule3');
-      expect(tModule3.version).to.equal(1);
-      expect(tModule3.implementation).to.equal(contracts.testModule3.address);
 
     });
 
@@ -115,19 +103,19 @@ describe("Polly", function () {
 
     it("create a configuration", async function(){
 
-      await expect(contracts.polly.configureModule('TestModule3', 0, [], false))
+      await expect(contracts.polly.configureModule('TestModule2', 0, [], false))
       .to.emit(contracts.polly, 'moduleConfigured');
 
     })
 
     it("create a configuration and store it for the owner", async function(){
 
-      await expect(contracts.polly.configureModule('TestModule3', 0, [], true))
+      await expect(contracts.polly.configureModule('TestModule2', 0, [], true))
       .to.emit(contracts.polly, 'moduleConfigured');
 
-      const configs = await contracts.polly.getConfigsForAddress(owner.address, 5, 1);
-      expect(configs[0].params[0].key).to.equal('Hello');
-      expect(configs[0].params[0]._string).to.equal('World!');
+      const configs = await contracts.polly.getConfigsForAddress(owner.address, 5, 1, false);
+      expect(configs[0].params[0].key).to.equal('TestModule2');
+      expect(configs[0].params[0]._address).to.be.properAddress;
 
     })
 
