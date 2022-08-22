@@ -114,7 +114,6 @@ describe("Polly", function () {
       .to.emit(contracts.polly, 'moduleConfigured');
 
       const configs = await contracts.polly.getConfigsForAddress(owner.address, 5, 1, false);
-      expect(configs[0].params[0].key).to.equal('TestModule2');
       expect(configs[0].params[0]._address).to.be.properAddress;
 
     })

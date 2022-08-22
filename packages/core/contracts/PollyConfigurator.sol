@@ -9,15 +9,7 @@ import './PollyModule.sol';
 
 abstract contract PollyConfigurator is AccessControl {
 
-  struct InputParam {
-    string _string;
-    int _int;
-    bool _bool;
-    address _address;
-  }
-
-  struct ReturnParam {
-    string key;
+  struct Param {
     string _string;
     int _int;
     bool _bool;
@@ -30,6 +22,6 @@ abstract contract PollyConfigurator is AccessControl {
     return ('', new string[](0), new string[](0));
   }
 
-  function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory params_) public virtual returns(ReturnParam[] memory);
+  function run(Polly polly_, address for_, PollyConfigurator.Param[] memory params_) public virtual returns(Param[] memory);
 
 }

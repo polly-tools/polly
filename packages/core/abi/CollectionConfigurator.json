@@ -255,7 +255,7 @@
             "type": "address"
           }
         ],
-        "internalType": "struct PollyConfigurator.InputParam[]",
+        "internalType": "struct PollyConfigurator.Param[]",
         "name": "params_",
         "type": "tuple[]"
       }
@@ -264,11 +264,6 @@
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "string",
-            "name": "key",
-            "type": "string"
-          },
           {
             "internalType": "string",
             "name": "_string",
@@ -290,7 +285,7 @@
             "type": "address"
           }
         ],
-        "internalType": "struct PollyConfigurator.ReturnParam[]",
+        "internalType": "struct PollyConfigurator.Param[]",
         "name": "",
         "type": "tuple[]"
       }

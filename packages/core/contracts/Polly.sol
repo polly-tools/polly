@@ -51,7 +51,7 @@ contract Polly is Ownable {
     /// @dev struct for a configuration of a polly module
     struct Config {
       string name;
-      PollyConfigurator.ReturnParam[] params;
+      PollyConfigurator.Param[] params;
     }
 
 
@@ -79,7 +79,7 @@ contract Polly is Ownable {
     );
 
     event moduleConfigured(
-      string indexedName, string name, uint version, PollyConfigurator.ReturnParam[] params
+      string indexedName, string name, uint version, PollyConfigurator.Param[] params
     );
 
     /// MODULES ///
@@ -151,7 +151,7 @@ contract Polly is Ownable {
 
 
     /// @dev if a module is configurable run the configurator
-    function configureModule(string memory name_, uint version_, PollyConfigurator.InputParam[] memory params_, bool store_) public returns(PollyConfigurator.ReturnParam[] memory rparams_) {
+    function configureModule(string memory name_, uint version_, PollyConfigurator.Param[] memory params_, bool store_) public returns(PollyConfigurator.Param[] memory rparams_) {
 
       if(version_ == 0)
         version_ = getLatestModuleVersion(name_);
@@ -217,30 +217,6 @@ contract Polly is Ownable {
         }
 
       }
-
-      // if(ascending_){
-      //   // ASCENDING
-      //   uint id = page_ == 1 ? 1 : ((page_-1)*limit_)+1;
-      //   while(id <= count_ && i < limit_){
-      //     config_ = _configs[address_][index_];
-      //     ++i;
-      //     ++id;
-      //   }
-      // }
-      // else {
-
-      //   i = 0;
-      //   index_ = 0;
-      //   offset_ = (page_-1)*limit_;
-
-      //   while(i < limit_ && i < _configs_count[address_]){
-      //     index_ = (i+(offset_))+1;
-      //     config_ = _configs[address_][index_];
-      //     configs_[i] = config_;
-      //     ++i;
-      //   }
-
-      // }
 
       return configs_;
 

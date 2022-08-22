@@ -360,7 +360,7 @@ contract CollectionConfigurator is PollyConfigurator {
     }
 
 
-    function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory params_) public override returns(PollyConfigurator.ReturnParam[] memory){
+    function run(Polly polly_, address for_, PollyConfigurator.Param[] memory params_) public override returns(PollyConfigurator.Param[] memory){
 
         Config memory config_;
 
@@ -385,14 +385,14 @@ contract CollectionConfigurator is PollyConfigurator {
         coll_.setAddress('catalogue', config_.catalogue);
         coll_.lockKey('catalogue');
 
-        PollyConfigurator.ReturnParam[] memory rparams_ = new PollyConfigurator.ReturnParam[](3);
+        PollyConfigurator.Param[] memory rparams_ = new PollyConfigurator.Param[](3);
 
-        rparams_[0] = PollyConfigurator.ReturnParam('catalogue', '', 0, false, config_.catalogue);
-        rparams_[1] = PollyConfigurator.ReturnParam('collection', '', 0, false, config_.collection);
+        rparams_[0] = PollyConfigurator.Param('', 0, false, config_.catalogue);
+        rparams_[1] = PollyConfigurator.Param('', 0, false, config_.collection);
 
         if(config_.aux_handler != address(0)){
 
-            rparams_[2] = PollyConfigurator.ReturnParam('aux_handler', '', 0, false, config_.aux_handler);
+            rparams_[2] = PollyConfigurator.Param('', 0, false, config_.aux_handler);
 
             CollectionAuxHandler aux_handler_ = CollectionAuxHandler(config_.aux_handler);
 

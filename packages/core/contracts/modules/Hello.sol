@@ -22,24 +22,25 @@ contract Hello is PollyModule {
 
 contract HelloConfigurator is PollyConfigurator {
 
+
   function info() public pure override returns(string memory, string[] memory, string[] memory) {
 
     /// Inputs
-    string[] memory inputs = new string[](1);
-    inputs[0] = "string:To:Who do you want to say hello to today?";
+    string[] memory inputs_ = new string[](1);
+    inputs_[0] = "string:To:Who do you want to say hello to today?";
 
     /// Outputs
-    string[] memory outputs = new string[](1);
-    outputs[0] = "module:Hello:the instance of the deployed module";
+    string[] memory outputs_ = new string[](1);
+    outputs_[0] = "module:Hello:the instance of the deployed module";
 
 
-    return ("A simple 'Hello world!' module to showcase how Polly works.", inputs, outputs);
+    return ("A simple 'Hello world!' module to showcase how Polly works.", inputs_, outputs_);
 
   }
 
 
 
-  function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory inputs_) public override returns(PollyConfigurator.ReturnParam[] memory){
+  function run(Polly polly_, address for_, PollyConfigurator.Param[] memory inputs_) public override returns(PollyConfigurator.Param[] memory){
 
     // Clone a Hello module
     Hello hello_ = Hello(polly_.cloneModule('Hello', 0));
@@ -55,12 +56,8 @@ contract HelloConfigurator is PollyConfigurator {
     hello_.revokeRole(hello_.DEFAULT_ADMIN_ROLE(), address(this));
 
     // Return the cloned module as part of the return parameters
-    PollyConfigurator.ReturnParam[] memory return_ = new PollyConfigurator.ReturnParam[](1);
-    return_[0] = PollyConfigurator.ReturnParam(
-      'hello', // describe the return parameter
-      '', 0, false, // Unused types of the return parameter
-      address(hello_) // The address of newly cloned and configured hello module
-    );
+    PollyConfigurator.Param[] memory return_ = new PollyConfigurator.Param[](1);
+    return_[0]._address = address(hello_);
 
     return return_;
 

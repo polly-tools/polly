@@ -27,11 +27,11 @@ contract TestModule2Configurator is PollyConfigurator {
     return ("TestModuleConfigurator", new string[](0), outputs_);
   }
 
-  function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory) public override returns(ReturnParam[] memory){
+  function run(Polly polly_, address for_, PollyConfigurator.Param[] memory) public override returns(Param[] memory){
 
     address self_ = address(this);
 
-    ReturnParam[] memory ret_ = new ReturnParam[](1);
+    Param[] memory ret_ = new Param[](1);
 
     // Clone a Hello module
     TestModule2 mod_ = TestModule2(polly_.cloneModule('TestModule2', 0));
@@ -44,8 +44,6 @@ contract TestModule2Configurator is PollyConfigurator {
     mod_.revokeRole(mod_.MANAGER(), self_);
     mod_.revokeRole(mod_.DEFAULT_ADMIN_ROLE(), self_);
 
-
-    ret_[0].key = 'TestModule2';
     ret_[0]._address = address(mod_);
 
     return ret_;

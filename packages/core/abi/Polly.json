@@ -74,11 +74,6 @@
         "components": [
           {
             "internalType": "string",
-            "name": "key",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
             "name": "_string",
             "type": "string"
           },
@@ -99,7 +94,7 @@
           }
         ],
         "indexed": false,
-        "internalType": "struct PollyConfigurator.ReturnParam[]",
+        "internalType": "struct PollyConfigurator.Param[]",
         "name": "params",
         "type": "tuple[]"
       }
@@ -197,7 +192,7 @@
             "type": "address"
           }
         ],
-        "internalType": "struct PollyConfigurator.InputParam[]",
+        "internalType": "struct PollyConfigurator.Param[]",
         "name": "params_",
         "type": "tuple[]"
       },
@@ -211,11 +206,6 @@
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "string",
-            "name": "key",
-            "type": "string"
-          },
           {
             "internalType": "string",
             "name": "_string",
@@ -237,7 +227,7 @@
             "type": "address"
           }
         ],
-        "internalType": "struct PollyConfigurator.ReturnParam[]",
+        "internalType": "struct PollyConfigurator.Param[]",
         "name": "rparams_",
         "type": "tuple[]"
       }
@@ -281,11 +271,6 @@
             "components": [
               {
                 "internalType": "string",
-                "name": "key",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
                 "name": "_string",
                 "type": "string"
               },
@@ -305,7 +290,7 @@
                 "type": "address"
               }
             ],
-            "internalType": "struct PollyConfigurator.ReturnParam[]",
+            "internalType": "struct PollyConfigurator.Param[]",
             "name": "params",
             "type": "tuple[]"
           }

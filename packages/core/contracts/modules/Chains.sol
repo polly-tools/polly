@@ -405,11 +405,11 @@ contract ChainsConfigurator is PollyConfigurator {
         address aux_handler;
     }
 
-    function run(Polly polly_, address for_, PollyConfigurator.InputParam[] memory) public override returns(PollyConfigurator.ReturnParam[] memory){
+    function run(Polly polly_, address for_, PollyConfigurator.Param[] memory) public override returns(PollyConfigurator.Param[] memory){
 
-        InputParam[] memory coll_input_params_ = new InputParam[](1);
-        coll_input_params_[0] = InputParam('', 0, true, address(0));// Include aux handler
-        PollyConfigurator.ReturnParam[] memory dep_params_ = polly_.configureModule(
+        Param[] memory coll_input_params_ = new Param[](1);
+        coll_input_params_[0] = Param('', 0, true, address(0));// Include aux handler
+        PollyConfigurator.Param[] memory dep_params_ = polly_.configureModule(
           'collection',
           0,
           coll_input_params_,
@@ -430,12 +430,12 @@ contract ChainsConfigurator is PollyConfigurator {
         cat_.grantRole(MANAGER, address(chains_));
         coll_aux_.addAux(address(chains_));
 
-        PollyConfigurator.ReturnParam[] memory rparams_ = new PollyConfigurator.ReturnParam[](4);
+        PollyConfigurator.Param[] memory rparams_ = new PollyConfigurator.Param[](4);
 
-        rparams_[0] = PollyConfigurator.ReturnParam('catalogue', '', 0, false, address(cat_));
-        rparams_[1] = PollyConfigurator.ReturnParam('collection', '', 0, false, address(coll_));
-        rparams_[2] = PollyConfigurator.ReturnParam('aux_handler', '', 0, false, address(coll_aux_));
-        rparams_[3] = PollyConfigurator.ReturnParam('chains', '', 0, false, address(chains_));
+        rparams_[0] = PollyConfigurator.Param('', 0, false, address(cat_));
+        rparams_[1] = PollyConfigurator.Param('', 0, false, address(coll_));
+        rparams_[2] = PollyConfigurator.Param('', 0, false, address(coll_aux_));
+        rparams_[3] = PollyConfigurator.Param('', 0, false, address(chains_));
 
         return rparams_;
 
