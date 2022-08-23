@@ -1,0 +1,109 @@
+[
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "PMVERSION",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "configurator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum Json.Type",
+            "name": "_type",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "_key",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Json.Item[]",
+        "name": "items_",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "enum Json.Format",
+        "name": "format_",
+        "type": "uint8"
+      }
+    ],
+    "name": "get",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "moduleInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "clone",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct IPollyModule.Info",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]

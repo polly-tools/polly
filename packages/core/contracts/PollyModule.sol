@@ -34,8 +34,23 @@ interface IPollyModule {
 
 }
 
+contract BasePollyModule {
 
-contract PollyModule is AccessControl {
+  address private _configurator;
+  uint public constant PMVERSION = 1;
+
+  function _setConfigurator(address configurator_) internal {
+    _configurator = configurator_;
+  }
+
+  function configurator() public view returns(address){
+    return _configurator;
+  }
+
+}
+
+
+contract PollyModule is AccessControl, BasePollyModule {
 
   bytes32 public constant MANAGER = keccak256("MANAGER");
   bool private _did_init = false;
@@ -44,9 +59,7 @@ contract PollyModule is AccessControl {
   mapping(string => string) private _key_strings;
   mapping(string => int) private _key_ints;
   mapping(string => address) private _key_addresses;
-  address private _configurator;
 
-  uint public constant PMVERSION = 1;
 
   constructor(){
     init(msg.sender);
@@ -63,13 +76,6 @@ contract PollyModule is AccessControl {
     return _did_init;
   }
 
-  function _setConfigurator(address configurator_) internal {
-    _configurator = configurator_;
-  }
-
-  function configurator() public view returns(address){
-    return _configurator;
-  }
 
   function lockKey(string memory key_) public onlyRole(DEFAULT_ADMIN_ROLE){
     _locked_keys[key_] = true;

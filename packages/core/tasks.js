@@ -1,4 +1,5 @@
 const { task } = require("hardhat/config");
+const { types } = require("hardhat/config")
 
 require("colors");
 
@@ -16,7 +17,7 @@ task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 });
 
 
-task('polly:deploy-module', 'Deploy a module implementation', async ({name}) => {
+task('polly:deploy-module', 'Deploy a module implementation', async ({name, update}) => {
 
   await hre.run('compile');
   console.log(`Deploying module ${name} to network ${hre.network.name}`);
@@ -27,8 +28,12 @@ task('polly:deploy-module', 'Deploy a module implementation', async ({name}) => 
   const moduleAddress = moduleDeploy.address;
   console.log(`${name} deployed to:`, moduleAddress.green.bold);
 
+  if(update !== 'undefined')
+    await hre.run('polly:update-module', {implementation: moduleAddress});
+
 })
 .addParam("name", "The module contract name")
+.addOptionalParam("update", "Update module after deployment", false, types.boolean);
 
 
 task('polly:update-module', 'Update a module in Polly', async ({implementation}) => {

@@ -15,7 +15,8 @@ const Type = {
   STRING: 0,
   BOOL: 1,
   NUMBER: 2,
-  INJECT: 3
+  ARRAY: 3,
+  OBJECT: 4
 }
 
 /*********************
@@ -28,8 +29,8 @@ describe("Meta module", async function(){
 
     let
     polly,
-    Meta,
     meta,
+    json,
     owner,
     user1,
     user2,
@@ -56,10 +57,10 @@ describe("Meta module", async function(){
     })
 
 
-    it("Add module to Polly", async function () {
+    it("Add Meta module to Polly", async function () {
 
         // Meta
-        Meta = await ethers.getContractFactory("Meta");
+        const Meta = await ethers.getContractFactory("Meta");
         meta = await Meta.deploy();
         await meta.deployed();
         expect(meta.address).to.be.properAddress;
@@ -69,6 +70,21 @@ describe("Meta module", async function(){
         await polly.updateModule(meta.address);
         const meta_module = await polly.getModule('Meta', 0);
         expect(meta_module.implementation).to.be.properAddress;
+
+    })
+
+    it("Add JSON module to Polly", async function () {
+      // JSON
+      const JSON = await ethers.getContractFactory("JSON");
+      json = await JSON.deploy();
+      await json.deployed();
+      expect(json.address).to.be.properAddress;
+
+
+      // Add json handler to Polly
+      await polly.updateModule(json.address);
+      const json_module = await polly.getModule('JSON', 0);
+      expect(json_module.implementation).to.be.properAddress;
 
     })
 
@@ -90,6 +106,7 @@ describe("Meta module", async function(){
 
         const config = await polly.getConfigsForAddress(owner.address, 1, 1, true);
         expect(config[0].params[0]._address).to.be.properAddress;
+        const Meta = await ethers.getContractFactory('Meta');
         meta = await Meta.attach(config[0].params[0]._address);
 
     });
@@ -111,22 +128,30 @@ describe("Meta module", async function(){
           {_key: 'testkey1', _type: Type.STRING, _inject: ''},
           {_key: 'testkey2', _type: Type.STRING, _inject: ''},
         ],
-        Format.ARRAY
+        Format.OBJECT
       );
 
-      const json = await meta.getJSON(
+      const result = await meta.getJSON(
       'testID',
       [
         {_key: 'testkey1', _type: Type.STRING, _inject: ''},
         {_key: 'testkey2', _type: Type.STRING, _inject: ''},
         {_key: 'testkey3', _type: Type.NUMBER, _inject: ''},
         {_key: 'testkey4', _type: Type.BOOL, _inject: ''},
-        {_key: 'testkey5', _type: Type.INJECT, _inject: inject}
+        {_key: 'testkey5', _type: Type.OBJECT, _inject: inject}
       ],
       Format.OBJECT
       );
-      console.log(json)
-      console.log(JSON.parse(json))
+
+      const __json = JSON.parse(result);
+
+      expect(__json.testkey1).to.equal('testvalue1');
+      expect(__json.testkey2).to.equal('testvalue2');
+      expect(__json.testkey3).to.equal(100);
+      expect(__json.testkey4).to.equal(true);
+      expect(__json.testkey5.testkey1).to.equal('testvalue1');
+      expect(__json.testkey5.testkey2).to.equal('testvalue2');
+
     })
 
 

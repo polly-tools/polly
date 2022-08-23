@@ -216,14 +216,14 @@
       {
         "components": [
           {
+            "internalType": "enum Json.Type",
+            "name": "_type",
+            "type": "uint8"
+          },
+          {
             "internalType": "string",
             "name": "_key",
             "type": "string"
-          },
-          {
-            "internalType": "enum Meta.Type",
-            "name": "_type",
-            "type": "uint8"
           },
           {
             "internalType": "string",
@@ -231,12 +231,12 @@
             "type": "string"
           }
         ],
-        "internalType": "struct Meta.JSONKey[]",
-        "name": "keys_",
+        "internalType": "struct Meta.Item[]",
+        "name": "items_",
         "type": "tuple[]"
       },
       {
-        "internalType": "enum Meta.Format",
+        "internalType": "enum Json.Format",
         "name": "format_",
         "type": "uint8"
       }
@@ -472,6 +472,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "id_",
+        "type": "string"
+      }
+    ],
+    "name": "lockID",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

@@ -46,13 +46,12 @@ abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').ma
 
 
 function parseReturnParam(param){
-
+    console.log(param)
     return {
-        name: param[0],
-        _string: param[1],
-        _int: param[2],
-        _bool: param[3],
-        _address: param[4]
+        _string: param[0],
+        _int: param[1],
+        _bool: param[2],
+        _address: param[3]
     };
     
 }

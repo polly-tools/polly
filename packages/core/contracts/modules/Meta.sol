@@ -3,20 +3,14 @@ pragma solidity ^0.8.4;
 
 import '../Polly.sol';
 import '../PollyConfigurator.sol';
+import './Json.sol';
 
 contract Meta is PollyModule {
 
-    enum Type {
-      STRING, BOOL, NUMBER, INJECT
-    }
 
-    enum Format {
-      KEY_VALUE, VALUE, ARRAY, OBJECT
-    }
-
-    struct JSONKey {
+    struct Item {
+      Json.Type _type;
       string _key;
-      Type _type;
       string _inject;
     }
 
@@ -51,55 +45,31 @@ contract Meta is PollyModule {
 
 
     /// JSON
-    function getJSON(string memory id_, JSONKey[] memory keys_, Format format_) public view returns (string memory) {
+    function getJSON(string memory id_, Item[] memory items_, Json.Format format_) public view returns (string memory) {
 
-      bytes[] memory parts_ = new bytes[](keys_.length);
-      bytes memory append_ = ',';
-      bool include_key_;
+      Json.Item[] memory json_items_ = new Json.Item[](items_.length);
+      Item memory item;
 
-      for (uint i = 0; i < keys_.length; i++) {
+      for (uint i = 0; i < items_.length; i++) {
 
-        JSONKey memory key = keys_[i];
+        item = items_[i];
 
-        if(i+1 == keys_.length) {
-          append_ = '';
-        }
+        json_items_[i]._key = item._key;
+        json_items_[i]._type = item._type;
 
-        if((format_ == Format.OBJECT || format_ == Format.KEY_VALUE))
-          include_key_ = true;
-        else
-          include_key_ = false;
-
-        if (key._type == Type.INJECT) {
-          parts_[i] = abi.encodePacked(include_key_ ? _getKeyJson(key._key) : '', key._inject, append_);
-        } else if (key._type == Type.STRING) {
-          parts_[i] = abi.encodePacked(include_key_ ? _getKeyJson(key._key) : '', '"', _strings[id_][key._key], '"', append_);
-        } else if (key._type == Type.BOOL) {
-          parts_[i] = abi.encodePacked(include_key_ ? _getKeyJson(key._key) : '', _bools[id_][key._key] ? 'true' : 'false', append_);
-        } else if (key._type == Type.NUMBER) {
-          parts_[i] = abi.encodePacked(include_key_ ? _getKeyJson(key._key) : '', Strings.toString(_uints[id_][key._key]), append_);
+        if(item._type == Json.Type.ARRAY || item._type == Json.Type.OBJECT) {
+          json_items_[i]._string = item._inject;
+        } else if (item._type == Json.Type.STRING) {
+          json_items_[i]._string = _strings[id_][item._key];
+        } else if (item._type == Json.Type.BOOL) {
+          json_items_[i]._bool = _bools[id_][item._key];
+        } else if (item._type == Json.Type.NUMBER) {
+          json_items_[i]._uint = _uints[id_][item._key];
         }
 
       }
 
-      bytes memory open_;
-      bytes memory close_;
-
-      if(format_ == Format.ARRAY){
-        open_ = '[';
-        close_ = ']';
-      }
-      else if(format_ == Format.OBJECT){
-        open_ = '{';
-        close_ = '}';
-      }
-
-      bytes memory json_;
-      for (uint i = 0; i < parts_.length; i++) {
-        json_ = abi.encodePacked(json_, parts_[i]);
-      }
-      json_ = abi.encodePacked(open_, json_, close_);
-
+      string memory json_ = Json(getAddress('module.Json')).get(json_items_, format_);
 
       return string(json_);
 
@@ -171,7 +141,7 @@ contract MetaConfigurator is PollyConfigurator {
     outputs_[0] = "module:Meta:the meta module";
 
     return (
-      "Stores and retrieves string, bool and uint values. Provides a JSON representation of the meta in various formats.",
+      "Stores and retrieves string, bool and uint values. Provides a Json representation of the meta in various formats.",
       new string[](0),
       outputs_
     );
@@ -181,7 +151,10 @@ contract MetaConfigurator is PollyConfigurator {
   function run(Polly polly_, address for_, PollyConfigurator.Param[] memory) public override returns(PollyConfigurator.Param[] memory){
 
     // Clone a Meta module
-    Meta meta_ = Meta(polly_.cloneModule('Meta', 0));
+    Meta meta_ = Meta(polly_.cloneModule('Meta', 1));
+    Polly.Module memory json_ = polly_.getModule('Json', 1);
+
+    meta_.setAddress('module.Json', json_.implementation);
 
     // Grant roles to the address calling the configurator
     meta_.grantRole(meta_.DEFAULT_ADMIN_ROLE(), for_);

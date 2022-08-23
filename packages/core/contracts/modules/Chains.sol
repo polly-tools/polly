@@ -405,6 +405,10 @@ contract ChainsConfigurator is PollyConfigurator {
         address aux_handler;
     }
 
+    function info() public pure override returns(string memory, string[] memory, string[] memory) {
+      return ('Chains', new string[](0), new string[](0));
+    }
+
     function run(Polly polly_, address for_, PollyConfigurator.Param[] memory) public override returns(PollyConfigurator.Param[] memory){
 
         Param[] memory coll_input_params_ = new Param[](1);

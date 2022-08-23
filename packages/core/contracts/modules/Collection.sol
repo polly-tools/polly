@@ -359,6 +359,10 @@ contract CollectionConfigurator is PollyConfigurator {
         address aux_handler;
     }
 
+    function info() public pure override returns(string memory, string[] memory, string[] memory) {
+        return ('Collection', new string[](0), new string[](0));
+    }
+
 
     function run(Polly polly_, address for_, PollyConfigurator.Param[] memory params_) public override returns(PollyConfigurator.Param[] memory){
 
