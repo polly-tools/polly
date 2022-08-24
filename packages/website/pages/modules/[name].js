@@ -10,6 +10,11 @@ import Link from "next/link";
 import Button from "components/Button";
 import ModuleInput from "components/ModuleInputs/ModuleInput";
 import { ConnectIntent, useConnectIntent } from "components/ConnectButton";
+import { getProvider } from "base/provider";
+import pollyABI from '@polly-os/core/abi/Polly.json';
+import { paramCase } from "param-case";
+import { ethers } from "ethers";
+import moduleMDX from "mdx/modules"
 
 
 function etherscanLink(append_){
@@ -63,9 +68,9 @@ export default function Module({p}){
     const {query} = useRouter();
     const polly = usePolly();
     const {account} = useWeb3React();
-
     const [showDeployScreen, setShowDeployScreen] = useState(false);
     const {setConnectIntent} = useConnectIntent();
+
     async function fetchModule(){
         const name = hyphenToCC(query.name);
         const _module = await polly.read('getModule', {name_: name, version_: 0}).then(res => res.result);
@@ -73,6 +78,8 @@ export default function Module({p}){
         setModule(_module)
         setInfo(_info)
     }
+
+    const MDX = moduleMDX[module.name];
 
     useEffect(() => {
         if(query.name)
@@ -103,8 +110,51 @@ export default function Module({p}){
                 ]} module={module} show={showDeployScreen}/>
             </div>}
             </Grid.Unit>
+            <Grid.Unit>
+                <MDX/>
+            </Grid.Unit>
 
         </Grid>}
     </Page>
 
+}
+
+
+export async function getStaticProps({params}){
+
+    const provider = getProvider();
+    const contract = new ethers.Contract(process.env.POLLY_ADDRESS, pollyABI, provider);
+
+    const module = await contract.getModule(
+        hyphenToCC(params.name),
+        0
+    );
+
+    return {
+        props: {
+            module: {
+                name: module.name,
+                version: module.version.toNumber(),
+                clone: module.clone,
+                implementation: module.implementation,
+            }
+        }
+    }
+}
+
+
+export async function getStaticPaths(){
+
+    const provider = getProvider();
+    const contract = new ethers.Contract(process.env.POLLY_ADDRESS, pollyABI, provider);
+    const modules = await contract.getModules(0, 0);
+
+    return {
+        paths: modules.map(module => ({
+            params: {
+                name: paramCase(module[0])
+            }
+        })),
+        fallback: false
+    }
 }

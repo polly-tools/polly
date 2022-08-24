@@ -94,6 +94,6 @@ contract Json is BasePollyModule {
 
 contract JsonConfigurator is BasePollyConfigurator {
   function info() public pure override returns(string memory, string[] memory, string[] memory){
-    return ('Converts data into JSON strings.', new string[](0), new string[](0));
+    return ("Convert data to JSON.", new string[](0), new string[](0));
   }
 }

@@ -69,6 +69,11 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+  ol, li {
+    padding: 0;
+    margin: 0;
+  }
+
 
   input[type="text"], input[type="number"], input[type="password"], input[type="email"]{
 
