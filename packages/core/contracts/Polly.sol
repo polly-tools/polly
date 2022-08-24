@@ -59,6 +59,7 @@ contract Polly is Ownable {
 
     string[] private _module_names;
     mapping(string => mapping(uint => address)) private _modules;
+    uint private _module_count;
     mapping(string => uint) private _module_versions;
     mapping(address => mapping(uint => Config)) private _configs;
     mapping(address => uint) private _configs_count;
@@ -224,32 +225,64 @@ contract Polly is Ownable {
 
 
     /// @dev returns a list of modules available
-    function getModules(uint limit_, uint page_) public view returns(Module[] memory){
+    function getModules(uint limit_, uint page_, bool ascending_) public view returns(Module[] memory){
 
-      if(limit_ < 1 && page_ < 1){
+      uint count_ = _module_names.length;
+
+      if(limit_ < 1 || limit_ > count_)
+        limit_ = count_;
+
+      if(page_ < 1)
         page_ = 1;
-        limit_ = _module_names.length;
-      }
 
       Module[] memory modules_ = new Module[](limit_);
-      IPollyModule.Info memory module_info_;
+      // IPollyModule.Info memory module_info_;
 
-      uint i = 0;
-      uint index;
-      uint offset_ = (page_-1)*limit_;
-      while(i < limit_ && i < _module_names.length){
-        index = i+(offset_);
-        if(_module_names.length > index){
-          module_info_ = IPollyModule(_modules[_module_names[index]][_module_versions[_module_names[index]]]).moduleInfo();
-          modules_[i] = Module(
-            _module_names[index],
-            _module_versions[_module_names[index]],
-            _modules[_module_names[index]][_module_versions[_module_names[index]]],
-            module_info_.clone
-          );
+      // uint i = 0;
+      // uint index;
+      // uint offset_ = (page_-1)*limit_;
+      // while(i < limit_ && i < _module_names.length){
+      //   index = i+(offset_);
+      //   if(_module_names.length > index){
+      //     module_info_ = IPollyModule(_modules[_module_names[index]][_module_versions[_module_names[index]]]).moduleInfo();
+      //     modules_[i] = Module(
+      //       _module_names[index],
+      //       _module_versions[_module_names[index]],
+      //       _modules[_module_names[index]][_module_versions[_module_names[index]]],
+      //       module_info_.clone
+      //     );
+      //   }
+      //   ++i;
+      // }
+
+
+      uint i;
+      uint index_;
+
+      if(ascending_){
+
+        // ASCENDING
+        index_ = page_ == 1 ? 0 : (page_-1)*limit_;
+        while(index_ < count_ && i < limit_){
+            // console.log('ascending', index_);
+            modules_[i] = getModule(_module_names[index_], 0);
+            ++i;
+            ++index_;
         }
-        ++i;
+
       }
+      else {
+
+        /// DESCENDING
+        index_ = count_ - (limit_*page_-1)+1;
+        while(index_ > 0 && i < limit_){
+            modules_[i] = getModule(_module_names[index_-1], 0);
+            ++i;
+            --index_;
+        }
+
+      }
+
 
       return modules_;
 

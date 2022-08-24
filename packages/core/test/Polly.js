@@ -72,11 +72,13 @@ describe("Polly", function () {
       expect(tModule1.name).to.equal('TestModule1');
       expect(tModule1.version).to.equal(1);
       expect(tModule1.implementation).to.equal(contracts.testModule1.address);
+      expect(tModule1.clone).to.equal(false);
 
       const tModule2 = await contracts.polly.getModule('TestModule2', 0);
       expect(tModule2.name).to.equal('TestModule2');
       expect(tModule2.version).to.equal(1);
       expect(tModule2.implementation).to.equal(contracts.testModule2.address);
+      expect(tModule2.clone).to.equal(true);
 
     });
 
@@ -86,13 +88,22 @@ describe("Polly", function () {
 
     it("returns valid module list", async function(){
 
-      const page1 = await contracts.polly.getModules(1, 1);
-      const page2 = await contracts.polly.getModules(1, 2);
-      const page3 = await contracts.polly.getModules(1, 3);
+      // const page1 = await contracts.polly.getModules(1, 1, false);
+      // const page2 = await contracts.polly.getModules(1, 2, false);
 
-      expect(page1.length).to.equal(1);
-      expect(page2.length).to.equal(1);
-      expect(page3.length).to.equal(1);
+      // const allASC = await contracts.polly.getModules(0, 0, true);
+      const allDSC = await contracts.polly.getModules(0, 0, false);
+
+      // expect(page1.length).to.equal(1);
+      // expect(page2.length).to.equal(1);
+
+      // expect(allASC.length).to.equal(2);
+      // expect(allDSC[0].name).to.equal('TestModule1');
+      // expect(allDSC[1].name).to.equal('TestModule2');
+
+      expect(allDSC.length).to.equal(2);
+      expect(allDSC[0].name).to.equal('TestModule2');
+      expect(allDSC[1].name).to.equal('TestModule1');
 
     });
 

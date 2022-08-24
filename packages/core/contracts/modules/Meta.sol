@@ -141,7 +141,7 @@ contract MetaConfigurator is PollyConfigurator {
     outputs_[0] = "module:Meta:the meta module";
 
     return (
-      "Stores and retrieves string, bool and uint values. Provides a Json representation of the meta in various formats.",
+      "Storage, retrieval and formatting of metadata",
       new string[](0),
       outputs_
     );

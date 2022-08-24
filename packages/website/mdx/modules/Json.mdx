@@ -7,46 +7,45 @@ The Json module is useful for any project that needs to generate json objects fr
 
 1. Install Polly
 <SyntaxHighlighter language="node" style={docco}>
-{`npm install @polly-os`}
+{`npm install @polly-os/core`}
 </SyntaxHighlighter>
 
 2. Import the module in your Solidity contract code
 <SyntaxHighlighter language="solidity" style={docco}>
 {`import "@polly-os/core/Polly.sol;
-import "@polly-os/modules/Json.sol"
-`}
+import "@polly-os/modules/Json.sol"`}
 </SyntaxHighlighter>
 
 3. Instantiate and use the module in your contract functions
 
 <SyntaxHighlighter language="solidity" style={docco}>
-{`Polly.Module json_module = Polly(${process.env.NEXT_PUBLIC_POLLY_ADDRESS}).getModule('Json', 0);
+{`function tokenURI() public view returns(string memory){
+  
+  Polly.Module json_module = Polly(${process.env.NEXT_PUBLIC_POLLY_ADDRESS}).getModule('Json', 0);
 
-Json.Item[] memory items = new Json.Item[](2);
+  Json.Item[] memory items = new Json.Item[](2);
 
-// Item one
-items[0]._key = "key1";
-items[0]._string = "Value 1";
-items[0]._type = Json.Type.STRING;
+  // Item one
+  items[0]._key = "name";
+  items[0]._string = "Polly";
+  items[0]._type = Json.Type.STRING;
 
-// Item two
-items[0]._key = "key2";
-items[0]._uint = 2;
-items[0]._type = Json.Type.NUMBER;
+  // Item two
+  items[0]._key = "onchain_percentage";
+  items[0]._uint = 100;
+  items[0]._type = Json.Type.NUMBER;
 
-string memory json_string = json_module.getJson(items, Json.Format.OBJECT);
+  return json_module.getJson(items, Json.Format.OBJECT);
 
-return json_string;
-
-`}
+}`}
 </SyntaxHighlighter>
 
 4. Enjoy some JSON!
 
 <SyntaxHighlighter language="json" style={docco}>
 {`{
-  "key1": "Value 1",
-  "key2": 2
+  "name": "Polly",
+  "onchain_percentage": 100
 }
 `}
 </SyntaxHighlighter>
