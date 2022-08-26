@@ -12,9 +12,13 @@ import ModuleInput from "components/ModuleInputs/ModuleInput";
 import { ConnectIntent, useConnectIntent } from "components/ConnectButton";
 import { getProvider } from "base/provider";
 import pollyABI from '@polly-os/core/abi/Polly.json';
+import moduleABI from '@polly-os/core/abi/PollyModule.json';
+import configABI from '@polly-os/core/abi/PollyConfigurator.json';
 import { paramCase } from "param-case";
 import { ethers } from "ethers";
 import moduleMDX from "mdx/modules"
+import useModule from "base/hooks/useModule";
+import ModuleInterface, { ModuleInterfaceProvider, useModuleInterface } from "components/ModuleInterface/ModuleInterface";
 
 
 function etherscanLink(append_){
@@ -45,81 +49,87 @@ export async function handleClone(polly, name, version, params, store, configNam
     });
 }
 
-export function DeployModuleScreen({module, actions, ...p}){
+export function DeployModuleScreen(p){
+
+
+    const {account} = useWeb3React();
+    const [configName, setConfigName] = useState('');
+    const {module, info, inputs} = useModuleInterface();
+    const {setConnectIntent} = useConnectIntent();
 
     return <Modal show={p.show}>
-        <ModalInner>
 
-            <h1>{module.name}</h1>
-            <p>
-                This will deploy a new version of the {module.name} module.
-            </p>
-            <ModalActions actions={actions}/>
+        <ModalInner>
+            {(module && info) ? <>
+
+                <h1>Clone module</h1>
+                <p>
+                    You are about to create a configuration of the module <em>{module.name}</em> and any dependencies it might have.
+                </p>
+
+                <div style={{marginBottom: '1em'}}>
+
+                <label>Start by giving your new configuration a name</label>
+                <input placeholder={module.name} type="text" onKeyUp={e => setConfigName(e.target.value)}/>
+
+                </div>
+                
+                <ModuleInterface create/>
+
+                <ModalActions actions={[
+                    {label: 'Cancel', callback: () => p.onCancel()},
+                    {label: account ? 'Deploy' : 'Connect to deploy', cta: true, callback: () => {
+                        if(account)
+                            handleClone(p.polly, module.name, module.version, inputs, true, configName)
+                        else
+                            setConnectIntent(true);
+                    }
+                }]}/>
+
+            </>
+            : 
+            <>Loading...</>}
+
+
 
         </ModalInner>
     </Modal>
 
 }
 
-export default function Module({p}){
+export default function Module(p){
 
-    const [module, setModule] = useState(false);
-    const [info, setInfo] = useState(false);
     const [inputs, setInputs] = useState([]);
     const {query} = useRouter();
     const polly = usePolly();
     const {account} = useWeb3React();
-    const [showDeployScreen, setShowDeployScreen] = useState(false);
+    const [showCloneScreen, setShowCloneScreen] = useState(false);
     const {setConnectIntent} = useConnectIntent();
-    const [configName, setConfigName] = useState('');
 
-    async function fetchModule(){
-        const name = hyphenToCC(query.name);
-        const _module = await polly.read('getModule', {name_: name, version_: 0}).then(res => res.result);
-        const _info = await fetch(`/api/module/${name}/configurator/info`).then(res => res.json()).then(res => res.result);
-        setModule(_module)
-        setInfo(_info)
-    }
-
-    const MDX = moduleMDX[module.name];
-
-    useEffect(() => {
-        if(query.name)
-            fetchModule();
-    }, [query.name])
-
+    const MDX = moduleMDX[p.name];
 
     return <Page header>
-        {module && <Grid>
+        <Grid>
             <Grid.Unit size={1/1}>
-            <h1 className="compact">{module.name}</h1>
-            <small>v{module.version} | {module.clonable ? 'CLONABLE' : 'READ-ONLY'} | <a href={etherscanLink(module.implementation)} target="_blank">CODE</a></small>
+            <h1 className="compact">{p.name}</h1>
+            <small>v{p.version} | {p.clone ? <a href="#" onClick={() => setShowCloneScreen(true)}>CLONE</a> : 'READ-ONLY'} | <a href={etherscanLink(p.implementation)} target="_blank">CODE</a></small>
             <br/>
             <br/>
-            {info && <p>
-                {info.description}
-            </p>}
-            {info && info.inputs.map((input, index) => <ModuleInput onChange={value => setInputs(prev => {prev[index] = value; return prev;})} key={index} input={input} module={module}/>)}
+            <p>{p.description}</p>
+            {p.inputs && p.inputs.map((input, index) => <ModuleInput onChange={value => setInputs(prev => {prev[index] = value; return prev;})} key={index} input={input} module={module}/>)}
             </Grid.Unit>
             <Grid.Unit size={1/1}>
-            {module.clonable && <Grid.Unit size={1/2}>
-                <label>Config name:</label><input placeholder={module.name} type="text" onKeyUp={e => setConfigName(e.target.value)}/>
-                <br/>
-                <br/>
-                <Button onClick={() => account ? setShowDeployScreen(true) : setConnectIntent(true)}>
-                    {account ? 'Deploy' : 'Connect to deploy'}
-                </Button>
-                <DeployModuleScreen actions={[
-                    {label: 'Cancel', callback: () => setShowDeployScreen(false)},
-                    {label: 'Deploy', cta: true, callback: () => handleClone(polly, module.name, module.version, inputs, true, configName)}
-                ]} module={module} show={showDeployScreen}/>
-            </Grid.Unit>}
+            {p.clone &&
+            <ModuleInterfaceProvider name={p.name}>
+                <DeployModuleScreen polly={polly} onCancel={() => setShowCloneScreen(false)} show={showCloneScreen}/>
+            </ModuleInterfaceProvider>
+            }
             </Grid.Unit>
             <Grid.Unit>
-                <MDX module={module}/>
+                {module && <MDX module={module}/>}
             </Grid.Unit>
 
-        </Grid>}
+        </Grid>
     </Page>
 
 }
@@ -135,14 +145,19 @@ export async function getStaticProps({params}){
         0
     );
 
+    const moduleContract = new ethers.Contract(module.implementation, moduleABI, provider);
+    const configContract = new ethers.Contract(await moduleContract.configurator(), configABI, provider);
+    const info = await configContract.info();
+
     return {
         props: {
-            module: {
-                name: module.name,
-                version: module.version.toNumber(),
-                clone: module.clone,
-                implementation: module.implementation,
-            }
+            name: module.name,
+            version: module.version.toNumber(),
+            clone: module.clone,
+            implementation: module.implementation,
+            description: info[0],
+            inputs: info[1],
+            outputs: info[2],
         }
     }
 }

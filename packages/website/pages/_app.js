@@ -85,13 +85,19 @@ const GlobalStyle = createGlobalStyle`
     padding: 1vw 0;
     color: inherit;
     width: 100%;
+    box-sizing: border-box;
+
     ${breakpoint('sm', 'md')`
-      padding: 2vw 3vw;
+      padding: 2vw 0;
     `}
     border-radius: 0;
 
     &:focus {
       outline: 0;
+    }
+    &::placeholder {
+      opacity: 0.5;
+      color: ${theme.colors.text};
     }
 
   }
