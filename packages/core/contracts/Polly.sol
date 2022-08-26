@@ -30,7 +30,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PollyModule.sol";
 import "./PollyConfigurator.sol";
 
-
 contract Polly is Ownable {
 
     /// @dev struct fo an uninstantiated polly module
@@ -51,6 +50,7 @@ contract Polly is Ownable {
     /// @dev struct for a configuration of a polly module
     struct Config {
       string name;
+      string module;
       PollyConfigurator.Param[] params;
     }
 
@@ -68,6 +68,13 @@ contract Polly is Ownable {
 
 
 
+    /// MODIFIERS ///
+
+    modifier onlyConfigOwner(uint id_) {
+      require(_configs_count[msg.sender] >= id_, 'ONLY_CONFIG_OWNER');
+      _;
+    }
+
 
     /// EVENTS ///
 
@@ -82,6 +89,7 @@ contract Polly is Ownable {
     event moduleConfigured(
       string indexedName, string name, uint version, PollyConfigurator.Param[] params
     );
+
 
     /// MODULES ///
 
@@ -112,6 +120,63 @@ contract Polly is Ownable {
       IPollyModule.Info memory module_info_ = IPollyModule(_modules[name_][version_]).moduleInfo();
 
       return Module(name_, version_, _modules[name_][version_], module_info_.clone);
+
+    }
+
+    /// @dev returns a list of modules available
+    function getModules(uint limit_, uint page_, bool ascending_) public view returns(Module[] memory){
+
+      uint count_ = _module_names.length;
+
+      if(limit_ < 1 || limit_ > count_)
+        limit_ = count_;
+
+      if(page_ < 1)
+        page_ = 1;
+
+      uint i;
+      uint index_;
+
+
+      if(ascending_)
+        index_ = page_ == 1 ? 0 : (page_-1)*limit_;
+      else
+        index_ = page_ == 1 ? count_ : count_ - (limit_*(page_-1));
+
+
+      if(
+        (ascending_ && index_ >= count_)
+        ||
+        (!ascending_ && index_ == 0)
+      )
+        return new Module[](0); // no modules available - bail early
+
+
+      Module[] memory modules_ = new Module[](limit_);
+
+      if(ascending_){
+
+        // ASCENDING
+        while(index_ < limit_){
+            modules_[i] = getModule(_module_names[index_], 0);
+            ++i;
+            ++index_;
+        }
+
+      }
+      else {
+
+        /// DESCENDING
+        while(index_ > 0 && i < limit_){
+            modules_[i] = getModule(_module_names[index_-1], 0);
+            ++i;
+            --index_;
+        }
+
+      }
+
+
+      return modules_;
 
     }
 
@@ -152,7 +217,7 @@ contract Polly is Ownable {
 
 
     /// @dev if a module is configurable run the configurator
-    function configureModule(string memory name_, uint version_, PollyConfigurator.Param[] memory params_, bool store_) public returns(PollyConfigurator.Param[] memory rparams_) {
+    function configureModule(string memory name_, uint version_, PollyConfigurator.Param[] memory params_, bool store_, string memory config_name_) public returns(PollyConfigurator.Param[] memory rparams_) {
 
       if(version_ == 0)
         version_ = getLatestModuleVersion(name_);
@@ -166,10 +231,14 @@ contract Polly is Ownable {
       PollyConfigurator config_ = PollyConfigurator(configurator_);
       rparams_ = config_.run(this, msg.sender, params_);
 
+      uint new_count_ = _configs_count[msg.sender] + 1;
       if(store_){
-        _configs[msg.sender][_configs_count[msg.sender] + 1].name = name_;
+
+        _configs[msg.sender][new_count_].name = config_name_;
+        _configs[msg.sender][new_count_].module = name_;
+
         for (uint i = 0; i < rparams_.length; i++) {
-          _configs[msg.sender][_configs_count[msg.sender] + 1].params.push(rparams_[i]);
+          _configs[msg.sender][new_count_].params.push(rparams_[i]);
         }
         ++_configs_count[msg.sender];
       }
@@ -185,21 +254,35 @@ contract Polly is Ownable {
 
       uint count_ = _configs_count[address_];
 
-      if(limit_ < 1 && page_ < 1){
+      if(limit_ < 1 || limit_ > count_)
         limit_ = count_;
+
+      if(page_ < 1)
         page_ = 1;
-      }
-
-
-      Config[] memory configs_ = new Config[](limit_);
 
       uint i;
       uint id_;
 
+      if(ascending_)
+        id_ = page_ == 1 ? 1 : ((page_-1)*limit_)+1;
+      else
+        id_ = page_ == 1 ? count_ : count_ - (limit_*(page_-1));
+
+
+      if(
+        (ascending_ && id_ >= count_)
+        ||
+        (!ascending_ && id_ == 0)
+      )
+        return new Config[](0); // no modules available - bail early
+
+
+      Config[] memory configs_ = new Config[](limit_);
+
+
       if(ascending_){
 
         // ASCENDING
-        id_ = page_ == 1 ? 1 : ((page_-1)*limit_)+1;
         while(id_ <= count_ && i < limit_){
             configs_[i] = _configs[address_][id_];
             ++i;
@@ -210,7 +293,6 @@ contract Polly is Ownable {
       else {
 
         /// DESCENDING
-        id_ = page_ == 1 ? count_ : count_ - (limit_*(page_-1));
         while(id_ > 0 && i < limit_){
             configs_[i] = _configs[address_][id_];
             ++i;
@@ -224,68 +306,11 @@ contract Polly is Ownable {
     }
 
 
-    /// @dev returns a list of modules available
-    function getModules(uint limit_, uint page_, bool ascending_) public view returns(Module[] memory){
-
-      uint count_ = _module_names.length;
-
-      if(limit_ < 1 || limit_ > count_)
-        limit_ = count_;
-
-      if(page_ < 1)
-        page_ = 1;
-
-      Module[] memory modules_ = new Module[](limit_);
-      // IPollyModule.Info memory module_info_;
-
-      // uint i = 0;
-      // uint index;
-      // uint offset_ = (page_-1)*limit_;
-      // while(i < limit_ && i < _module_names.length){
-      //   index = i+(offset_);
-      //   if(_module_names.length > index){
-      //     module_info_ = IPollyModule(_modules[_module_names[index]][_module_versions[_module_names[index]]]).moduleInfo();
-      //     modules_[i] = Module(
-      //       _module_names[index],
-      //       _module_versions[_module_names[index]],
-      //       _modules[_module_names[index]][_module_versions[_module_names[index]]],
-      //       module_info_.clone
-      //     );
-      //   }
-      //   ++i;
-      // }
-
-
-      uint i;
-      uint index_;
-
-      if(ascending_){
-
-        // ASCENDING
-        index_ = page_ == 1 ? 0 : (page_-1)*limit_;
-        while(index_ < count_ && i < limit_){
-            // console.log('ascending', index_);
-            modules_[i] = getModule(_module_names[index_], 0);
-            ++i;
-            ++index_;
-        }
-
-      }
-      else {
-
-        /// DESCENDING
-        index_ = count_ - (limit_*page_-1)+1;
-        while(index_ > 0 && i < limit_){
-            modules_[i] = getModule(_module_names[index_-1], 0);
-            ++i;
-            --index_;
-        }
-
-      }
-
-
-      return modules_;
-
+    /// @dev change the name of a config
+    function changeConfigName(uint id_, string memory name_) public onlyConfigOwner(id_) {
+      require(id_ > 0 && id_ <= _configs_count[msg.sender], 'INVALID_CONFIG_ID');
+      _configs[msg.sender][id_].name = name_;
     }
+
 
 }

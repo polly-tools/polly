@@ -34,13 +34,14 @@ function hyphenToCC(string){
     }));
 }
 
-export async function handleClone(polly, name, version, params, store){
-    console.log('handleClone', name, version, params, store, polly);
+export async function handleClone(polly, name, version, params, store, configName){
+    // console.log('handleClone', name, version, params, store, polly);
     await polly.write('configureModule', {
         name_: name,
         version_: version,
         params_: params,
-        store_: store
+        store_: store,
+        configName_: configName
     });
 }
 
@@ -70,6 +71,7 @@ export default function Module({p}){
     const {account} = useWeb3React();
     const [showDeployScreen, setShowDeployScreen] = useState(false);
     const {setConnectIntent} = useConnectIntent();
+    const [configName, setConfigName] = useState('');
 
     async function fetchModule(){
         const name = hyphenToCC(query.name);
@@ -100,18 +102,21 @@ export default function Module({p}){
             {info && info.inputs.map((input, index) => <ModuleInput onChange={value => setInputs(prev => {prev[index] = value; return prev;})} key={index} input={input} module={module}/>)}
             </Grid.Unit>
             <Grid.Unit size={1/1}>
-            {module.clonable && <div>
+            {module.clonable && <Grid.Unit size={1/2}>
+                <label>Config name:</label><input placeholder={module.name} type="text" onKeyUp={e => setConfigName(e.target.value)}/>
+                <br/>
+                <br/>
                 <Button onClick={() => account ? setShowDeployScreen(true) : setConnectIntent(true)}>
                     {account ? 'Deploy' : 'Connect to deploy'}
                 </Button>
                 <DeployModuleScreen actions={[
                     {label: 'Cancel', callback: () => setShowDeployScreen(false)},
-                    {label: 'Deploy', cta: true, callback: () => handleClone(polly, module.name, module.version, inputs, true)}
+                    {label: 'Deploy', cta: true, callback: () => handleClone(polly, module.name, module.version, inputs, true, configName)}
                 ]} module={module} show={showDeployScreen}/>
-            </div>}
+            </Grid.Unit>}
             </Grid.Unit>
             <Grid.Unit>
-                <MDX/>
+                <MDX module={module}/>
             </Grid.Unit>
 
         </Grid>}
@@ -147,7 +152,7 @@ export async function getStaticPaths(){
 
     const provider = getProvider();
     const contract = new ethers.Contract(process.env.POLLY_ADDRESS, pollyABI, provider);
-    const modules = await contract.getModules(0, 0);
+    const modules = await contract.getModules(0, 0, false);
 
     return {
         paths: modules.map(module => ({

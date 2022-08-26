@@ -88,18 +88,21 @@ describe("Polly", function () {
 
     it("returns valid module list", async function(){
 
-      // const page1 = await contracts.polly.getModules(1, 1, false);
-      // const page2 = await contracts.polly.getModules(1, 2, false);
+      const page1 = await contracts.polly.getModules(1, 1, false);
+      const page2 = await contracts.polly.getModules(1, 2, false);
 
-      // const allASC = await contracts.polly.getModules(0, 0, true);
+      const allASC = await contracts.polly.getModules(0, 0, true);
       const allDSC = await contracts.polly.getModules(0, 0, false);
 
-      // expect(page1.length).to.equal(1);
-      // expect(page2.length).to.equal(1);
+      // console.log(allASC)
+      // console.log(allDSC)
 
-      // expect(allASC.length).to.equal(2);
-      // expect(allDSC[0].name).to.equal('TestModule1');
-      // expect(allDSC[1].name).to.equal('TestModule2');
+      expect(page1.length).to.equal(1);
+      expect(page2.length).to.equal(1);
+
+      expect(allASC.length).to.equal(2);
+      expect(allASC[0].name).to.equal('TestModule1');
+      expect(allASC[1].name).to.equal('TestModule2');
 
       expect(allDSC.length).to.equal(2);
       expect(allDSC[0].name).to.equal('TestModule2');
@@ -114,17 +117,25 @@ describe("Polly", function () {
 
     it("create a configuration", async function(){
 
-      await expect(contracts.polly.configureModule('TestModule2', 0, [], false))
+      await expect(contracts.polly.configureModule('TestModule2', 0, [], false, ''))
       .to.emit(contracts.polly, 'moduleConfigured');
 
     })
 
     it("create a configuration and store it for the owner", async function(){
 
-      await expect(contracts.polly.configureModule('TestModule2', 0, [], true))
+      await expect(contracts.polly.configureModule('TestModule2', 0, [], true, 'My config!'))
       .to.emit(contracts.polly, 'moduleConfigured');
 
-      const configs = await contracts.polly.getConfigsForAddress(owner.address, 5, 1, false);
+      await expect(contracts.polly.configureModule('TestModule2', 1, [], true, 'My config2'))
+      .to.emit(contracts.polly, 'moduleConfigured');
+
+      await expect(contracts.polly.configureModule('TestModule2', 2, [], true, ''))
+      .to.be.revertedWith('INVALID_MODULE_OR_VERSION');
+
+      const configs = await contracts.polly.getConfigsForAddress(owner.address, 10, 1, true);
+      // console.log(configs)
+      expect(configs.length).to.equal(2);
       expect(configs[0].params[0]._address).to.be.properAddress;
 
     })

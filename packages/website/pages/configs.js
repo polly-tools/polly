@@ -54,9 +54,6 @@ export default function Configs(p){
                                 </a>
                             </Link>
                         </div>
-                        <div>
-                            {config.params.length} parameter{config.params.length > 1 ? 's' : ''}
-                        </div>
                     </div>
                 })}
             

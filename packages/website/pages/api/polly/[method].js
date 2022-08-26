@@ -59,7 +59,8 @@ function parseReturnParam(param){
 function parseConfig(config){
     return {
         name: config[0],
-        params: config[1].map(parseReturnParam)
+        module: config[1],
+        params: config[2].map(parseReturnParam)
     }
 
 }

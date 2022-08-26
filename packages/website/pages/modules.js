@@ -24,7 +24,7 @@ export default function Modules(p){
         
         if(polly){
             setModules(-1);
-            polly.read('getModules', {page_: 1, limit_: 50}).then(response => {
+            polly.read('getModules', {page_: 1, limit_: 50, ascending_: false}).then(response => {
                 const mods = response.result;
                 setModules(mods);
             }).catch(err => {
@@ -43,11 +43,14 @@ export default function Modules(p){
                     ________________________________
                     <br/><br/>
                     <div>
-                    <Link href={`/modules/${paramCase(module.name)}`}>
-                        <a>
-                            {module.name} <small>v{module.version}</small>
-                        </a>
-                    </Link> 
+                        <Link href={`/modules/${paramCase(module.name)}`}>
+                            <a>
+                                {module.name}
+                            </a>                        
+                        </Link>
+                        <br/>
+                        <small>v{module.version} | {module.clonable ? 'CLONABLE' : 'READ-ONLY'}</small>
+                        
                     </div>
                 </div>
             })}

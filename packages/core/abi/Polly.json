@@ -136,6 +136,24 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "name_",
+        "type": "string"
+      }
+    ],
+    "name": "changeConfigName",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "name_",
         "type": "string"
@@ -200,6 +218,11 @@
         "internalType": "bool",
         "name": "store_",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "config_name_",
+        "type": "string"
       }
     ],
     "name": "configureModule",
@@ -265,6 +288,11 @@
           {
             "internalType": "string",
             "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "module",
             "type": "string"
           },
           {

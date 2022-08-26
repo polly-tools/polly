@@ -417,7 +417,8 @@ contract ChainsConfigurator is PollyConfigurator {
           'collection',
           0,
           coll_input_params_,
-          false /*Don't store*/
+          false, /*Don't store*/
+          '' /*No custom name*/
         );
 
         Catalogue cat_ = Catalogue(dep_params_[0]._address);
