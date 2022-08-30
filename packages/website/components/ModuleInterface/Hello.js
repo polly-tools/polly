@@ -10,7 +10,7 @@ export function HelloCreate(p){
 }
 
 export function HelloEdit(p){
-    return <div style={{marginBottom: '1em'}}>
+    return <>
         HelloEdit
-    </div>
+    </>
 }

@@ -47,12 +47,12 @@ export function useModuleInterface() {
 
 
 
-export default function ModuleInterface({create}){
+export default function ModuleInterface({create, ...p}){
 
     const {name} = useModuleInterface();
     const iname = name + (create ? 'Create' : 'Edit');
     const Interface = interfaces[iname] ? interfaces[iname] : false;
     
-    return <>{Interface && <Interface/>}</>
+    return <>{Interface && <Interface {...p}/>}</>
     
 }

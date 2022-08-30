@@ -1,3 +1,81 @@
-A module designed to be container for on-chain metadata. Managers can store, update and retrieve metadata assosicated with a string ID and a key.
+import Link from 'next/link'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import { docco } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
+
+A module designed to be container for on-chain metadata.
+Managers can store, update and retrieve metadata associated with a string ID and a key.
+Uses the <Link href="/modules/json"><a>Json module</a></Link> to generate and format json data.
 
 ### Usage
+
+Install Polly
+<SyntaxHighlighter language="node" style={docco}>
+{`npm install @polly-os/core`}
+</SyntaxHighlighter>
+
+Import the module in your contract code
+<SyntaxHighlighter language="solidity" style={docco}>
+{`import "@polly-os/core/Polly.sol;
+import "@polly-os/modules/Meta.sol"`}
+</SyntaxHighlighter>
+
+Configure a new Meta clone in the constructor of your contract
+<SyntaxHighlighter language="solidity" style={docco}>
+{`Meta private _meta;
+
+constructor() {
+  Polly.Config config = Polly(${process.env.NEXT_PUBLIC_POLLY_ADDRESS}).configureModule(
+    'Meta', // Module name
+    ${props.version}, // Version
+    [], // No params for this module
+    true // store configuration in Polly
+    );
+
+    _meta = Meta(config.params[0]._address);
+
+}`}
+</SyntaxHighlighter>
+
+Use it to store key => value pairs for a string ID
+<SyntaxHighlighter language="solidity" style={docco}>
+{`function logPerson(string memory name) public {
+
+    // Store metadata in the Meta module
+    Meta.setString("person1", "name", name);
+    Meta.getBool("person1", "member", true);
+    Meta.setUint("person1", "since", block.timestamp);
+
+
+}`}
+</SyntaxHighlighter>
+
+Retrieve key values for a string ID 
+<SyntaxHighlighter language="solidity" style={docco}>
+{`function getPerson(string memory personID) public view returns (string memory name, bool member, uint since){
+
+    // Store metadata in the Meta module
+    return (
+        Meta.getString("person1", "name"),
+        Meta.getBool("person1", "member"),
+        Meta.getUint("person1", "since")
+    );
+
+}`}
+</SyntaxHighlighter>
+
+Locking values to make them immutable is also possible
+<SyntaxHighlighter language="solidity" style={docco}>
+{`function lockPerson(string memory personID) public {
+
+    // Lock single piece of meta...
+    Meta.lockKey("person1", "name");
+    Meta.lockKey("person1", "member");
+    Meta.lockKey("person1", "since");
+
+    // ... or entire meta for ID - no more reading and writing for string ID
+    Meta.lockID("person1");
+    
+
+}`}
+</SyntaxHighlighter>
+

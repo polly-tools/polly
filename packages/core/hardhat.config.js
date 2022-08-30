@@ -3,6 +3,8 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
+require('hardhat-docgen');
+
 require("./tasks.js");
 
 const accounts = require('./hhaccounts.js');
@@ -47,11 +49,16 @@ module.exports = {
     except: ['@openzeppelin', 'TestModule'],
     flat: true
   },
+  docgen: {
+    path: './docs',
+    clear: true,
+    runOnCompile: true,
+  },
   networks: {
     hardhat: {
       accounts: accounts,
       forking: {
-        blockNumber: 7453554,
+        blockNumber: 7492308,
         url: process.env.GOERLI_RPC_URL
       },
     },

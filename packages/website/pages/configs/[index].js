@@ -42,9 +42,7 @@ export default function Config({p}){
         {!account && <>Connect to view your configuration</>}
         {(account && config && info) && <Grid.Unit>
             <h1>{config.name}</h1>
-            {info.outputs.map((_info, index) => {
-                return <ModuleOutput param={config.params[index]} info={_info}/>
-            })}
+            {info.outputs.map((_info, index) => <ModuleOutput key={index} info={_info} param={config.params[index]}/>)}
         </Grid.Unit>}
     </Page>
 

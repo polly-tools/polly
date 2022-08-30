@@ -99,12 +99,8 @@ export function DeployModuleScreen(p){
 
 export default function Module(p){
 
-    const [inputs, setInputs] = useState([]);
-    const {query} = useRouter();
     const polly = usePolly();
-    const {account} = useWeb3React();
     const [showCloneScreen, setShowCloneScreen] = useState(false);
-    const {setConnectIntent} = useConnectIntent();
 
     const MDX = moduleMDX[p.name];
 
@@ -126,7 +122,7 @@ export default function Module(p){
             }
             </Grid.Unit>
             <Grid.Unit>
-                {module && <MDX module={module}/>}
+                {module && <MDX {...p}/>}
             </Grid.Unit>
 
         </Grid>
