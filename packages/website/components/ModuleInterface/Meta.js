@@ -5,9 +5,7 @@ export function MetaCreate(p){
     const {module, info} = useModuleInterface();
 
     return <>
-        {info && <>
-            {info.inputs.map()}
-        </>}
+        
     </>
 }
 
