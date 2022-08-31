@@ -1,0 +1,124 @@
+[
+  {
+    "inputs": [],
+    "name": "DEFAULT_ADMIN_ROLE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "MANAGER",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "info",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract Polly",
+        "name": "polly_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "for_",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct PollyConfigurator.Param[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "run",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct PollyConfigurator.Param[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

@@ -25,10 +25,10 @@ interface IPollyModule {
   // Utility functions
   function lockKey(string memory key_) external;
   function isLockedKey(string memory key_) external view returns(bool);
-  function setInt(string memory key_, int value_) external;
+  function setUint(string memory key_, uint value_) external;
   function setString(string memory key_, string memory value_) external;
   function setAddress(string memory key_, address value_) external;
-  function getInt(string memory key_) external view returns(int);
+  function getUint(string memory key_) external view returns(uint);
   function getString(string memory key_) external view returns(string memory);
   function getAddress(string memory key_) external view returns(address);
 
@@ -57,7 +57,7 @@ contract PollyModule is AccessControl, BasePollyModule {
 
   mapping(string => bool) private _locked_keys;
   mapping(string => string) private _key_strings;
-  mapping(string => int) private _key_ints;
+  mapping(string => uint) private _key_uints;
   mapping(string => address) private _key_addresses;
 
 
@@ -89,9 +89,9 @@ contract PollyModule is AccessControl, BasePollyModule {
     require(!isLockedKey((key_)), 'KEY_IS_LOCKED');
   }
 
-  function setInt(string memory key_, int value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setUint(string memory key_, uint value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
     _reqUnlockedKey(key_);
-    _key_ints[key_] = value_;
+    _key_uints[key_] = value_;
   }
 
 
@@ -105,8 +105,8 @@ contract PollyModule is AccessControl, BasePollyModule {
     _key_addresses[key_] = value_;
   }
 
-  function getInt(string memory key_) public view returns(int) {
-    return _key_ints[key_];
+  function getUint(string memory key_) public view returns(uint) {
+    return _key_uints[key_];
   }
 
   function getString(string memory key_) public view returns(string memory) {

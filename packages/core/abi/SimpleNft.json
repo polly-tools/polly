@@ -9,6 +9,56 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "approved",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "Approval",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -80,6 +130,31 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
     "inputs": [],
     "name": "DEFAULT_ADMIN_ROLE",
     "outputs": [
@@ -121,12 +196,17 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
-        "name": "chain_id_",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
-    "name": "_rejectNodeSubmission",
+    "name": "approve",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -134,30 +214,17 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "chain_id_",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
       }
     ],
-    "name": "approveNodeSubmission",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "chain_id_",
-        "type": "uint256"
-      }
-    ],
-    "name": "chainCompleted",
+    "name": "balanceOf",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "uint256",
         "name": "",
-        "type": "bool"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -178,125 +245,25 @@
   },
   {
     "inputs": [],
-    "name": "didInit",
+    "name": "contractUri",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "string",
         "name": "",
-        "type": "bool"
+        "type": "string"
       }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "creator",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "supply",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "recipient",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "items",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "bool",
-            "name": "released",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "finalized",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct ICollection.Edition",
-        "name": "edition_",
-        "type": "tuple"
-      }
-    ],
-    "name": "filterGetEdition",
+    "inputs": [],
+    "name": "didInit",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "creator",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "price",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "supply",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "recipient",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "items",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "bool",
-            "name": "released",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "finalized",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct ICollection.Edition",
+        "internalType": "bool",
         "name": "",
-        "type": "tuple"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -325,159 +292,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "chain_id_",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
-    "name": "getChain",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "admin",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "edition",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "node",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "contributor",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "nodes",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "node_supply",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "admin_supply",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "moderation",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct Chains.Chain",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getChainCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "chain_id_",
-        "type": "uint256"
-      }
-    ],
-    "name": "getCurrentChainRecipient",
+    "name": "getApproved",
     "outputs": [
       {
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getHooks",
-    "outputs": [
-      {
-        "internalType": "string[]",
-        "name": "hooks_",
-        "type": "string[]"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "chain_id_",
-        "type": "uint256"
-      }
-    ],
-    "name": "getNodeSubmission",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "chain",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "creator",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "url",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "checksum",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "next",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct Chains.Node",
-        "name": "",
-        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -598,49 +422,25 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "creator_",
-        "type": "string"
-      },
-      {
         "internalType": "address",
-        "name": "initiator_",
+        "name": "owner",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "admin_",
+        "name": "operator",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nodes_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "node_supply_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "admin_supply_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "price_",
-        "type": "uint256"
-      },
+      }
+    ],
+    "name": "isApprovedForAll",
+    "outputs": [
       {
         "internalType": "bool",
-        "name": "moderation_",
+        "name": "",
         "type": "bool"
       }
     ],
-    "name": "initChain",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -696,6 +496,26 @@
   },
   {
     "inputs": [],
+    "name": "mint",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "mint",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "moduleInfo",
     "outputs": [
       {
@@ -720,21 +540,35 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "chain_id_",
+        "name": "tokenId",
         "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "take_over_",
-        "type": "bool"
       }
     ],
-    "name": "rejectNodeSubmission",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "ownerOf",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -776,6 +610,57 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "safeTransferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "safeTransferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "key_",
         "type": "string"
@@ -794,17 +679,17 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "chain_id_",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "contributor_",
-        "type": "address"
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
       }
     ],
-    "name": "setContributor",
+    "name": "setApprovalForAll",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -830,6 +715,75 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_value",
+        "type": "address"
+      }
+    ],
+    "name": "setTokenAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_value",
+        "type": "string"
+      }
+    ],
+    "name": "setTokenString",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTokenUint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "key_",
         "type": "string"
@@ -848,53 +802,8 @@
   {
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "chain",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "creator",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "url",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "checksum",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "next",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct Chains.Node",
-        "name": "node_",
-        "type": "tuple"
-      }
-    ],
-    "name": "submitNode",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes4",
-        "name": "interfaceId",
+        "name": "interface_",
         "type": "bytes4"
       }
     ],
@@ -910,14 +819,89 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
       {
         "internalType": "string",
-        "name": "hook_",
+        "name": "",
         "type": "string"
       }
     ],
-    "name": "usesHook",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "tokenAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenMax",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenPublic",
     "outputs": [
       {
         "internalType": "bool",
@@ -926,6 +910,134 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenRecipient",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "tokenString",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenURI",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "tokenUint",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenUri",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "transferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
