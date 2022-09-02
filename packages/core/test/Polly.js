@@ -154,7 +154,24 @@ describe("Polly", function () {
       await expect(users[2].cloneModule('fakeModule', 1)).to.be.revertedWith('INVALID_MODULE_OR_VERSION: fakeModule');
     });
 
+    it("use other peoples's modules", async function(){
+
+      const configs = await contracts.polly.getConfigsForAddress(owner.address, 10, 1, true);
+
+      const TestModule2 = await ethers.getContractFactory("TestModule2");
+      const testModule2 = await TestModule2.attach(configs[0].params[0]._address);
+
+      await testModule2.setString('test', 'should work');
+      const test = await testModule2.getString('test');
+      await expect(test).to.equal('should work');
+
+      await expect(testModule2.connect(wallet2).setString('test', 'should fail')).to.be.revertedWith('AccessControl');
+
+    })
+
   });
+
+
 
 
 });

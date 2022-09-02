@@ -136,24 +136,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "id_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "name_",
-        "type": "string"
-      }
-    ],
-    "name": "changeConfigName",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "string",
         "name": "name_",
         "type": "string"
