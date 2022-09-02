@@ -118,12 +118,12 @@
         "type": "string"
       }
     ],
-    "name": "getInt",
+    "name": "getString",
     "outputs": [
       {
-        "internalType": "int256",
+        "internalType": "string",
         "name": "",
-        "type": "int256"
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -137,12 +137,12 @@
         "type": "string"
       }
     ],
-    "name": "getString",
+    "name": "getUint",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -294,12 +294,12 @@
         "type": "string"
       },
       {
-        "internalType": "int256",
+        "internalType": "string",
         "name": "value_",
-        "type": "int256"
+        "type": "string"
       }
     ],
-    "name": "setInt",
+    "name": "setString",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -312,12 +312,12 @@
         "type": "string"
       },
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "value_",
-        "type": "string"
+        "type": "uint256"
       }
     ],
-    "name": "setString",
+    "name": "setUint",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
