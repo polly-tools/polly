@@ -92,7 +92,7 @@
           }
         ],
         "internalType": "struct Polly.Param[]",
-        "name": "inputs_",
+        "name": "",
         "type": "tuple[]"
       }
     ],

@@ -11,6 +11,7 @@
     "node": "cd packages/core && npx hardhat node",
     "link-env": "ln -f .env packages/core/.env; ln -f .env packages/website/.env; ",
     "website:dev": "vercel dev",
-    "core:compile": "cd packages/core && npx hardhat compile --force"
+    "core:compile": "cd packages/core && npx hardhat compile --force",
+    "polly:test": "cd packages/core && npx hardhat test test/polly.js"
   }
 }

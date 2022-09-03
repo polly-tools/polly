@@ -5,22 +5,13 @@ pragma solidity ^0.8.4;
 import './Polly.sol';
 import './PollyModule.sol';
 
-abstract contract BasePollyConfigurator {
-  function info() public pure virtual returns(string memory, string[] memory, string[] memory);
-}
+interface PollyConfigurator {
 
-abstract contract PollyConfigurator is BasePollyConfigurator {
+  function FOR_PMNAME() external pure returns (string memory);
+  function FOR_PMVERSION() external pure returns (uint);
 
-  struct Param {
-    string _string;
-    int _int;
-    bool _bool;
-    address _address;
-  }
-
-  bytes32 public constant DEFAULT_ADMIN_ROLE = keccak256("DEFAULT_ADMIN_ROLE");
-  bytes32 public constant MANAGER = keccak256("MANAGER");
-
-  function run(Polly polly_, address for_, PollyConfigurator.Param[] memory params_) public virtual returns(Param[] memory);
+  function inputs() external pure returns (string[] memory);
+  function outputs() external pure returns (string[] memory);
+  function run(Polly polly_, address for_, Polly.Param[] memory params_) external returns(Polly.Param[] memory);
 
 }

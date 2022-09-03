@@ -32,7 +32,7 @@ import "./PollyConfigurator.sol";
 
 /// @title Polly
 /// @author polly.tools
-/// @dev Stores and enables deployment of registered Polly module smart
+/// @dev Stores and enables deployment of registered Polly module smart contracts
 /// @notice Polly allows anyone to deploy registered modules as proxy contracts onchain
 
 /**
@@ -43,10 +43,20 @@ import "./PollyConfigurator.sol";
 
 contract Polly is Ownable {
 
+
+    enum ModuleType {
+        READONLY, CLONE
+    }
+
+    enum ParamType {
+      UINT, INT, BOOL, STRING, ADDRESS
+    }
+
     /// @dev struct for an uninstantiated module
     struct Module {
       string name;
       uint version;
+      string info;
       address implementation;
       bool clone;
     }
@@ -62,7 +72,15 @@ contract Polly is Ownable {
     struct Config {
       string name;
       string module;
-      PollyConfigurator.Param[] params;
+      Param[] params;
+    }
+
+    struct Param {
+      uint _uint;
+      int _int;
+      bool _bool;
+      string _string;
+      address _address;
     }
 
 
@@ -90,7 +108,7 @@ contract Polly is Ownable {
     );
 
     event moduleConfigured(
-      string indexedName, string name, uint version, PollyConfigurator.Param[] params
+      string indexedName, string name, uint version, Polly.Param[] params
     );
 
 
@@ -100,17 +118,19 @@ contract Polly is Ownable {
     /// @param implementation_ address of the module implementation
     function updateModule(address implementation_) public onlyOwner {
 
-      IPollyModule.Info memory info_ = IPollyModule(implementation_).moduleInfo(); // get module info from implementation
+      string memory name_ = PollyModule(implementation_).PMNAME();
+      uint version_ = PollyModule(implementation_).PMVERSION();
 
-      uint version_ = _module_versions[info_.name]+1; // generate next version number
+      require(_modules[name_][version_] == address(0), "MODULE_VERSION_EXISTS");
+      require(version_ == _module_versions[name_]+1, "MODULE_VERSION_INVALID");
 
-      _modules[info_.name][version_] = implementation_; // add module implementation address
-      _module_versions[info_.name] = version_; // update module latest version
+      _modules[name_][version_] = implementation_; // add module implementation address
+      _module_versions[name_] = version_; // update module latest version
 
       if(version_ == 1)
-        _module_names.push(info_.name); // This is a new module, add to module names mapping
+        _module_names.push(name_); // This is a new module, add to module names mapping
 
-      emit moduleUpdated(info_.name, info_.name, version_, implementation_);
+      emit moduleUpdated(name_, name_, version_, implementation_);
 
     }
 
@@ -124,9 +144,11 @@ contract Polly is Ownable {
       if(version_ < 1)
         version_ = _module_versions[name_]; // version_ is 0, get latest version
 
-      IPollyModule.Info memory module_info_ = IPollyModule(_modules[name_][version_]).moduleInfo(); // get module info from stored implementation
+      Polly.ModuleType type_ = PollyModule(_modules[name_][version_]).PMTYPE(); // get module info from stored implementation
+      string memory info_ = PollyModule(_modules[name_][version_]).PMINFO(); // get module info from stored implementation
+      bool clone_ = type_ == Polly.ModuleType.CLONE;
 
-      return Module(name_, version_, _modules[name_][version_], module_info_.clone); // return module
+      return Module(name_, version_, info_, _modules[name_][version_], clone_); // return module
 
     }
 
@@ -222,12 +244,11 @@ contract Polly is Ownable {
         version_ = getLatestModuleVersion(name_); // version_ is 0, get latest version
 
       require(moduleExists(name_, version_), string(abi.encodePacked('INVALID_MODULE_OR_VERSION: ', name_, '@', Strings.toString(version_))));
-      IPollyModule.Info memory base_info_ = IPollyModule(_modules[name_][version_]).moduleInfo(); // get module info from stored implementation
-      require(base_info_.clone, 'MODULE_NOT_CLONABLE'); // module is not clonable
+      require(PollyModule(_modules[name_][version_]).PMTYPE() == Polly.ModuleType.CLONE, 'MODULE_NOT_CLONABLE'); // module is not clonable
 
       address implementation_ = _modules[name_][version_]; // get module implementation address
 
-      IPollyModule module_ = IPollyModule(Clones.clone(implementation_)); // clone module implementation
+      PollyModule module_ = PollyModule(Clones.clone(implementation_)); // clone module implementation
       module_.init(msg.sender); // initialize module
 
       emit moduleCloned(name_, name_, version_, address(module_)); // emit module cloned event
@@ -239,9 +260,9 @@ contract Polly is Ownable {
     /// @dev if a module is configurable run the configurator
     /// @param name_ string name of the module
     /// @param version_ uint version of the module
-    /// @param params_ PollyConfigurator.Param[] array of configuration input parameters
-    /// @return rparams_ PollyConfigurator.Param[] array of configuration return parameters
-    function configureModule(string memory name_, uint version_, PollyConfigurator.Param[] memory params_, bool store_, string memory config_name_) public returns(PollyConfigurator.Param[] memory rparams_) {
+    /// @param params_ Polly.Param[] array of configuration input parameters
+    /// @return rparams_ Polly.Param[] array of configuration return parameters
+    function configureModule(string memory name_, uint version_, Polly.Param[] memory params_, bool store_, string memory config_name_) public returns(Polly.Param[] memory rparams_) {
 
       if(version_ == 0)
         version_ = getLatestModuleVersion(name_); // version_ is 0, get latest version
@@ -249,7 +270,7 @@ contract Polly is Ownable {
       require(moduleExists(name_, version_), string(abi.encodePacked('INVALID_MODULE_OR_VERSION: ', name_, '@', Strings.toString(version_))));
 
       Module memory module_ = getModule(name_, version_); // get module
-      address configurator_ = IPollyModule(module_.implementation).configurator(); // get module configurator address
+      address configurator_ = PollyModule(module_.implementation).configurator(); // get module configurator address
       require(configurator_ != address(0), 'NO_MODULE_CONFIGURATOR'); // module is not configurable - revert
 
       PollyConfigurator config_ = PollyConfigurator(configurator_); // get configurator instance

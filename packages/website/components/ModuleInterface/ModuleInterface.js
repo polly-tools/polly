@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import useModule from 'base/hooks/useModule.js';
-import { inputParam } from '@polly-os/utils/js/PollyConfigurator.js';
+import { parseParam } from '@polly-os/utils/js/Polly.js';
 
 import * as Hello from './Hello.js';
 import * as Meta from './Meta.js';
@@ -11,22 +11,23 @@ const interfaces = {
 }
 
 function createModuleInterface(name, version){
-    
-    const {module, fetching, info} = useModule({
+
+    const {module, fetching, inputs, outputs} = useModule({
         name, version
     });
-    const [inputs, setInputs] = useState([]);
 
-    function setInput(index, value){
-        setInputs(inputs => {
-            const _new = [...inputs];
-            _new[index] = inputParam(value);
+    const [userInputs, setUserInputs] = useState([]);
+
+    function setUserInput(index, value){
+        setUserInputs(userInputs => {
+            const _new = [...userInputs];
+            _new[index] = parseParam(value);
             return _new;
         })
     }
 
-    return {name, version, fetching, module, info, inputs, setInput};
-    
+    return {name, version, fetching, module, inputs, outputs, userInputs, setUserInput};
+
 }
 
 const ModuleInterfaceCtx = React.createContext();
@@ -52,7 +53,7 @@ export default function ModuleInterface({create}){
     const {name} = useModuleInterface();
     const iname = name + (create ? 'Create' : 'Edit');
     const Interface = interfaces[iname] ? interfaces[iname] : false;
-    
+
     return <>{Interface && <Interface/>}</>
-    
+
 }

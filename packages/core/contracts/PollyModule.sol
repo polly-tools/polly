@@ -5,17 +5,14 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/IAccessControl.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "./Polly.sol";
 
+interface PollyModule {
 
-interface IPollyModule {
-
-  struct Info {
-    string name;
-    bool clone;
-  }
-
-  // Read-only
-  function moduleInfo() external view returns(Info memory module_);
+  function PMTYPE() external view returns(Polly.ModuleType);
+  function PMNAME() external view returns(string memory);
+  function PMVERSION() external view returns(uint);
+  function PMINFO() external view returns(string memory);
 
   // Clonable
   function init(address for_) external;
@@ -23,44 +20,39 @@ interface IPollyModule {
   function configurator() external view returns(address);
   function isManager(address address_) external view returns(bool);
 
-  // Utility functions
+  // Keystore
   function lockKey(string memory key_) external;
   function isLockedKey(string memory key_) external view returns(bool);
-  function setUint(string memory key_, uint value_) external;
-  function setString(string memory key_, string memory value_) external;
-  function setAddress(string memory key_, address value_) external;
-  function getUint(string memory key_) external view returns(uint);
-  function getString(string memory key_) external view returns(string memory);
-  function getAddress(string memory key_) external view returns(address);
+  function set(Polly.ParamType type_, string memory key_, Polly.Param memory value_) external;
+  function get(string memory key_) external view returns(Polly.Param memory value_);
 
 }
 
-contract BasePollyModule {
+
+abstract contract PMBase {
+
+  function PMTYPE() external view virtual returns(Polly.ModuleType);
+  function PMNAME() external view virtual returns(string memory);
+  function PMVERSION() external view virtual returns(uint);
+  function PMINFO() external view virtual returns(string memory);
+
+}
+
+
+abstract contract PMReadOnly is PMBase {
+
+  Polly.ModuleType public constant override PMTYPE = Polly.ModuleType.READONLY;
+
+}
+
+
+abstract contract PMClone is AccessControl, PMBase {
+
+  Polly.ModuleType public constant override PMTYPE = Polly.ModuleType.CLONE;
 
   address private _configurator;
-  uint public constant PMVERSION = 1;
-
-  function _setConfigurator(address configurator_) internal {
-    _configurator = configurator_;
-  }
-
-  function configurator() public view returns(address){
-    return _configurator;
-  }
-
-}
-
-
-contract PollyModule is AccessControl, BasePollyModule {
-
   bytes32 public constant MANAGER = keccak256("MANAGER");
   bool private _did_init = false;
-
-  mapping(string => bool) private _locked_keys;
-  mapping(string => string) private _key_strings;
-  mapping(string => uint) private _key_uints;
-  mapping(string => address) private _key_addresses;
-
 
   constructor(){
     init(msg.sender);
@@ -78,47 +70,75 @@ contract PollyModule is AccessControl, BasePollyModule {
   }
 
 
-  function lockKey(string memory key_) public onlyRole(DEFAULT_ADMIN_ROLE){
-    _locked_keys[key_] = true;
+  function _setConfigurator(address configurator_) internal {
+    _configurator = configurator_;
   }
 
-  function isLockedKey(string memory key_) public view returns(bool) {
-    return _locked_keys[key_];
+  function configurator() public view returns(address){
+    return _configurator;
   }
 
-  function _reqUnlockedKey(string memory key_) private view {
-    require(!isLockedKey((key_)), 'KEY_IS_LOCKED');
-  }
-
-  function setUint(string memory key_, uint value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _reqUnlockedKey(key_);
-    _key_uints[key_] = value_;
-  }
-
-  function setString(string memory key_, string memory value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _reqUnlockedKey(key_);
-    _key_strings[key_] = value_;
-  }
-
-  function setAddress(string memory key_, address value_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _reqUnlockedKey(key_);
-    _key_addresses[key_] = value_;
-  }
-
-  function getUint(string memory key_) public view returns(uint) {
-    return _key_uints[key_];
-  }
-
-  function getString(string memory key_) public view returns(string memory) {
-    return _key_strings[key_];
-  }
-
-  function getAddress(string memory key_) public view returns(address) {
-    return _key_addresses[key_];
-  }
 
   function isManager(address address_) public view returns(bool){
     return hasRole(MANAGER, address_);
   }
+
+}
+
+
+abstract contract PMCloneKeystore is PMClone {
+
+  /// @dev arbitrary key-value parameters
+  struct Param {
+    uint _uint;
+    int _int;
+    bool _bool;
+    string _string;
+    address _address;
+  }
+
+  /// @dev locked keys
+  mapping(string => bool) private _locked_keys;
+  /// @dev parameters
+  mapping(string => Polly.Param) private _params;
+
+  /// @dev Locks a given key so that it can not be changed
+  /// @param key_ The key to lock
+  function lockKey(string memory key_) public onlyRole(DEFAULT_ADMIN_ROLE){
+    _locked_keys[key_] = true;
+  }
+
+  /// @dev Check if key is locked
+  /// @param key_ Key to check
+  /// @return bool true if key is locked, false otherwise
+  function isLockedKey(string memory key_) public view returns(bool) {
+    return _locked_keys[key_];
+  }
+
+  /// @dev set param for key
+  /// @param key_ key
+  /// @param value_ value
+  function set(Polly.ParamType type_, string memory key_, Polly.Param memory value_) public onlyRole(MANAGER){
+    require(!isLockedKey(key_), 'LOCKED_KEY');
+    if(type_ == Polly.ParamType.UINT){
+      _params[key_]._uint = value_._uint;
+    } else if(type_ == Polly.ParamType.INT){
+      _params[key_]._int = value_._int;
+    } else if(type_ == Polly.ParamType.BOOL){
+      _params[key_]._bool = value_._bool;
+    } else if(type_ == Polly.ParamType.STRING){
+      _params[key_]._string = value_._string;
+    } else if(type_ == Polly.ParamType.ADDRESS){
+      _params[key_]._address = value_._address;
+    }
+  }
+
+  /// @dev get param for key
+  /// @param key_ key
+  /// @return value
+  function get(string memory key_) public view returns(Polly.Param memory){
+    return _params[key_];
+  }
+
 
 }

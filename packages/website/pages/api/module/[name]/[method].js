@@ -1,9 +1,10 @@
-import moduleABI from '@polly-os/core/abi/IPollyModule.json';
+import moduleABI from '@polly-os/core/abi/PollyModule.json';
 import { ethers } from "ethers";
 import ABIAPI from 'abiapi';
 import { getProvider } from "base/provider";
 import { isArray, isArrayLikeObject, isObject, isObjectLike } from 'lodash';
 import getBaseUrl from 'base/url';
+import { parseConfig } from "base/utils";
 
 const abi = new ABIAPI(moduleABI);
 abi.supportedMethods = abi.getReadMethods();
@@ -24,7 +25,7 @@ function bigNumbersToNumber(value){
             if (Object.hasOwnProperty.call(value, key)) {
                 value[key] = bigNumbersToNumber(value[key])
             }
-        }    
+        }
         return value;
     }
 
@@ -38,34 +39,14 @@ function moduleParser(module){
     return {
         name: module[0],
         version: module[1],
-        implementation: module[2],
-        clonable: module[3]
+        info: module[2],
+        implementation: module[3],
+        clonable: module[4]
     }
+
 }
 abi.addParser('getModule', moduleParser)
 abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').map(moduleParser))
-
-
-function parseReturnParam(param){
-
-    return {
-        name: param[0],
-        _string: param[1],
-        _int: param[2],
-        _bool: param[3],
-        _address: param[4]
-    };
-    
-}
-
-function parseConfig(config){
-    return {
-        name: config[0],
-        params: config[1].map(parseReturnParam)
-    }
-
-}
-
 abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => config[0] !== '').map(parseConfig));
 
 export default async (req, res) => {
@@ -80,7 +61,7 @@ export default async (req, res) => {
         const provider = getProvider();
 
         const contract = new ethers.Contract(module.implementation, moduleABI, provider);
-        
+
         try {
             data.result = await contract[method](...abi.methodParamsFromQuery(method, query));
             data.result = abi.parse(method, data.result);

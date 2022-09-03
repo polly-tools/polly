@@ -73,9 +73,9 @@
       {
         "components": [
           {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
           },
           {
             "internalType": "int256",
@@ -88,13 +88,18 @@
             "type": "bool"
           },
           {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
             "internalType": "address",
             "name": "_address",
             "type": "address"
           }
         ],
         "indexed": false,
-        "internalType": "struct PollyConfigurator.Param[]",
+        "internalType": "struct Polly.Param[]",
         "name": "params",
         "type": "tuple[]"
       }
@@ -172,9 +177,9 @@
       {
         "components": [
           {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
           },
           {
             "internalType": "int256",
@@ -187,12 +192,17 @@
             "type": "bool"
           },
           {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
             "internalType": "address",
             "name": "_address",
             "type": "address"
           }
         ],
-        "internalType": "struct PollyConfigurator.Param[]",
+        "internalType": "struct Polly.Param[]",
         "name": "params_",
         "type": "tuple[]"
       },
@@ -212,9 +222,9 @@
       {
         "components": [
           {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
           },
           {
             "internalType": "int256",
@@ -227,12 +237,17 @@
             "type": "bool"
           },
           {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
             "internalType": "address",
             "name": "_address",
             "type": "address"
           }
         ],
-        "internalType": "struct PollyConfigurator.Param[]",
+        "internalType": "struct Polly.Param[]",
         "name": "rparams_",
         "type": "tuple[]"
       }
@@ -280,9 +295,9 @@
           {
             "components": [
               {
-                "internalType": "string",
-                "name": "_string",
-                "type": "string"
+                "internalType": "uint256",
+                "name": "_uint",
+                "type": "uint256"
               },
               {
                 "internalType": "int256",
@@ -295,12 +310,17 @@
                 "type": "bool"
               },
               {
+                "internalType": "string",
+                "name": "_string",
+                "type": "string"
+              },
+              {
                 "internalType": "address",
                 "name": "_address",
                 "type": "address"
               }
             ],
-            "internalType": "struct PollyConfigurator.Param[]",
+            "internalType": "struct Polly.Param[]",
             "name": "params",
             "type": "tuple[]"
           }
@@ -360,6 +380,11 @@
             "type": "uint256"
           },
           {
+            "internalType": "string",
+            "name": "info",
+            "type": "string"
+          },
+          {
             "internalType": "address",
             "name": "implementation",
             "type": "address"
@@ -409,6 +434,11 @@
             "internalType": "uint256",
             "name": "version",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "info",
+            "type": "string"
           },
           {
             "internalType": "address",

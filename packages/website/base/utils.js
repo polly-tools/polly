@@ -15,3 +15,25 @@ export function truncate(input, length, append = '...') {
 export function chainToName(id){
     return chains[id];
 }
+
+
+export function parseReturnParam(param){
+  return {
+      _uint: param[0],
+      _int: param[1],
+      _bool: param[2],
+      _string: param[3],
+      _address: param[4]
+  };
+
+}
+
+
+export function parseConfig(config){
+  return {
+      name: config[0],
+      module: config[1],
+      params: config[2].map(parseReturnParam)
+  }
+
+}
