@@ -7,7 +7,6 @@ import { parseConfig } from "base/utils";
 
 const abi = new ABIAPI(pollyABI);
 abi.supportedMethods = abi.getReadMethods();
-console.log(abi.supportedMethods)
 abi.cacheTTL = 60*60;
 
 // NUMBER PARSER

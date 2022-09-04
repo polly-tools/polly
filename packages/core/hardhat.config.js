@@ -57,7 +57,7 @@ module.exports = {
     hardhat: {
       accounts: accounts,
       forking: {
-        blockNumber: 7453554,
+        blockNumber: 7523569,
         url: process.env.GOERLI_RPC_URL
       },
     },

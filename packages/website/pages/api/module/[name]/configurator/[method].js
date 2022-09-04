@@ -2,7 +2,7 @@ import configABI from '@polly-os/core/abi/PollyConfigurator.json';
 import { ethers } from "ethers";
 import ABIAPI from 'abiapi';
 import { getProvider } from "base/provider";
-import { isArray, isArrayLikeObject, isObject, isObjectLike } from 'lodash';
+import { isArray, isObject } from 'lodash';
 import getBaseUrl from 'base/url';
 
 const abi = new ABIAPI(configABI);
@@ -35,7 +35,7 @@ abi.addGlobalParser(bigNumbersToNumber)
 
 function parseInputsOutputs(param){
 
-    const parts = param.split(':');
+    const parts = param.split('|').map(part => part.trim());
 
     if(parts.length < 2){
         return false;
