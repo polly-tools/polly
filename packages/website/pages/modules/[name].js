@@ -54,13 +54,13 @@ export function DeployModuleScreen(p){
 
     const {account} = useWeb3React();
     const [configName, setConfigName] = useState('');
-    const {module, info, inputs} = useModuleInterface();
+    const {module, inputs, outputs, userInputs} = useModuleInterface();
     const {setConnectIntent} = useConnectIntent();
 
     return <Modal show={p.show}>
 
         <ModalInner>
-            {(module && info) ? <>
+            {(module) ? <>
 
                 <h1>Clone module</h1>
                 <p>
@@ -73,21 +73,21 @@ export function DeployModuleScreen(p){
                 <input placeholder={module.name} type="text" onKeyUp={e => setConfigName(e.target.value)}/>
 
                 </div>
-                
+
                 <ModuleInterface create/>
 
                 <ModalActions actions={[
                     {label: 'Cancel', callback: () => p.onCancel()},
                     {label: account ? 'Deploy' : 'Connect to deploy', cta: true, callback: () => {
                         if(account)
-                            handleClone(p.polly, module.name, module.version, inputs, true, configName)
+                            handleClone(p.polly, module.name, module.version, userInputs, true, configName)
                         else
                             setConnectIntent(true);
                     }
                 }]}/>
 
             </>
-            : 
+            :
             <>Loading...</>}
 
 
@@ -107,12 +107,13 @@ export default function Module(p){
     return <Page header>
         <Grid>
             <Grid.Unit size={1/1}>
+
             <h1 className="compact">{p.name}</h1>
             <small>v{p.version} | {p.clone ? <a href="#" onClick={() => setShowCloneScreen(true)}>CLONE</a> : 'READ-ONLY'} | <a href={etherscanLink(p.implementation)} target="_blank">CODE</a></small>
             <br/>
             <br/>
-            <p>{p.description}</p>
-            {p.inputs && p.inputs.map((input, index) => <ModuleInput onChange={value => setInputs(prev => {prev[index] = value; return prev;})} key={index} input={input} module={module}/>)}
+            <p>{p.info}</p>
+
             </Grid.Unit>
             <Grid.Unit size={1/1}>
             {p.clone &&
@@ -143,17 +144,18 @@ export async function getStaticProps({params}){
 
     const moduleContract = new ethers.Contract(module.implementation, moduleABI, provider);
     const configContract = new ethers.Contract(await moduleContract.configurator(), configABI, provider);
-    const info = await configContract.info();
+    const inputs = await configContract.inputs();
+    const outputs = await configContract.outputs();
 
     return {
         props: {
             name: module.name,
+            info: module.info,
             version: module.version.toNumber(),
             clone: module.clone,
             implementation: module.implementation,
-            description: info[0],
-            inputs: info[1],
-            outputs: info[2],
+            inputs: inputs,
+            outputs: outputs,
         }
     }
 }

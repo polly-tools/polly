@@ -44,15 +44,14 @@ describe("Meta module", async function(){
       [owner, user1, user2, user3] = await ethers.getSigners();
 
       // DEPLOY POLLY
-
-      // const Polly = await ethers.getContractFactory("Polly");
-      // polly = await Polly.deploy();
-      // console.log('Polly deployed to -> ', polly.address.green);
+      const Polly = await ethers.getContractFactory("Polly");
+      polly = await Polly.deploy();
+      console.log('Polly deployed to -> ', polly.address.green);
 
 
       // FORKED POLLY
-      polly = await hre.ethers.getContractAt('Polly', process.env.POLLY_ADDRESS, owner);
-      console.log('Using forked Polly at -> ', polly.address.green);
+      // polly = await hre.ethers.getContractAt('Polly', process.env.POLLY_ADDRESS, owner);
+      // console.log('Using forked Polly at -> ', polly.address.green);
 
     })
 
@@ -68,14 +67,14 @@ describe("Meta module", async function(){
 
         // Add meta handler to Polly
         await polly.updateModule(meta.address);
-        const meta_module = await polly.getModule('Meta', 0);
+        const meta_module = await polly.getModule("Meta", 1);
         expect(meta_module.implementation).to.be.properAddress;
 
     })
 
     it("Add JSON module to Polly", async function () {
       // JSON
-      const JSON = await ethers.getContractFactory("JSON");
+      const JSON = await ethers.getContractFactory("Json");
       json = await JSON.deploy();
       await json.deployed();
       expect(json.address).to.be.properAddress;
@@ -83,7 +82,7 @@ describe("Meta module", async function(){
 
       // Add json handler to Polly
       await polly.updateModule(json.address);
-      const json_module = await polly.getModule('JSON', 0);
+      const json_module = await polly.getModule("Json", 1);
       expect(json_module.implementation).to.be.properAddress;
 
     })
@@ -95,7 +94,8 @@ describe("Meta module", async function(){
           'Meta', // Name
           0, // Latest version
           [], // No params
-          true // Store config in Polly
+          true, // Store config in Polly
+          '' // No config name
         );
 
         const receipt = await tx.wait();
@@ -105,6 +105,7 @@ describe("Meta module", async function(){
         await expect(tx).to.emit(polly, 'moduleConfigured');
 
         const config = await polly.getConfigsForAddress(owner.address, 1, 1, true);
+        console.log(config)
         expect(config[0].params[0]._address).to.be.properAddress;
         const Meta = await ethers.getContractFactory('Meta');
         meta = await Meta.attach(config[0].params[0]._address);

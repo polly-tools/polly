@@ -107,6 +107,45 @@
   },
   {
     "inputs": [],
+    "name": "PMINFO",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "PMNAME",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "PMTYPE",
+    "outputs": [
+      {
+        "internalType": "enum Polly.ModuleType",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "PMVERSION",
     "outputs": [
       {
@@ -116,6 +155,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "address_",
+        "type": "address"
+      }
+    ],
+    "name": "allowAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -147,28 +199,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "getAddress",
-    "outputs": [
-      {
         "internalType": "address",
-        "name": "",
+        "name": "address_",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
       },
       {
         "internalType": "string",
@@ -176,12 +209,39 @@
         "type": "string"
       }
     ],
-    "name": "getBool",
+    "name": "getAddressKey",
     "outputs": [
       {
-        "internalType": "bool",
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Polly.Param",
         "name": "",
-        "type": "bool"
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -189,30 +249,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "getInt",
-    "outputs": [
-      {
-        "internalType": "int256",
-        "name": "",
-        "type": "int256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
-      },
       {
         "components": [
           {
@@ -224,6 +260,11 @@
             "internalType": "string",
             "name": "_key",
             "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
           },
           {
             "internalType": "string",
@@ -255,6 +296,52 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "getKey",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Polly.Param",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes32",
         "name": "role",
         "type": "bytes32"
@@ -266,73 +353,6 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "getString",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "getString",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "getUint",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -396,12 +416,12 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
+        "internalType": "address",
+        "name": "address_",
+        "type": "address"
       }
     ],
-    "name": "isLocked",
+    "name": "isLockedAddress",
     "outputs": [
       {
         "internalType": "bool",
@@ -415,9 +435,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
+        "internalType": "address",
+        "name": "address_",
+        "type": "address"
       },
       {
         "internalType": "string",
@@ -425,7 +445,7 @@
         "type": "string"
       }
     ],
-    "name": "isLocked",
+    "name": "isLockedAddressKey",
     "outputs": [
       {
         "internalType": "bool",
@@ -477,12 +497,12 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
+        "internalType": "address",
+        "name": "address_",
+        "type": "address"
       }
     ],
-    "name": "lockID",
+    "name": "lockAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -490,9 +510,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
+        "internalType": "address",
+        "name": "address_",
+        "type": "address"
       },
       {
         "internalType": "string",
@@ -500,7 +520,7 @@
         "type": "string"
       }
     ],
-    "name": "lockKey",
+    "name": "lockAddressKey",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -516,31 +536,6 @@
     "name": "lockKey",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "moduleInfo",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "clone",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct IPollyModule.Info",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -582,40 +577,62 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "address_",
+        "type": "address"
+      },
+      {
         "internalType": "string",
         "name": "key_",
         "type": "string"
       },
       {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Polly.Param",
+        "name": "param_",
+        "type": "tuple"
+      }
+    ],
+    "name": "setAddressKey",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
-        "name": "value_",
+        "name": "json_parser",
         "type": "address"
       }
     ],
-    "name": "setAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "internalType": "bool",
-        "name": "value_",
-        "type": "bool"
-      }
-    ],
-    "name": "setBool",
+    "name": "setJsonParser",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -628,76 +645,39 @@
         "type": "string"
       },
       {
-        "internalType": "int256",
-        "name": "value_",
-        "type": "int256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Polly.Param",
+        "name": "param_",
+        "type": "tuple"
       }
     ],
-    "name": "setInt",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "value_",
-        "type": "string"
-      }
-    ],
-    "name": "setString",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "value_",
-        "type": "string"
-      }
-    ],
-    "name": "setString",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "id_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "value_",
-        "type": "uint256"
-      }
-    ],
-    "name": "setUint",
+    "name": "setKey",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

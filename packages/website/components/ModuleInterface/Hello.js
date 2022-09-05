@@ -1,16 +1,18 @@
 import ModuleInput from "components/ModuleInputs/ModuleInput";
+import { useEffect } from "react";
 import { useModuleInterface } from "./ModuleInterface";
 
 export function HelloCreate(p){
-    
-    const {module, info, setInput} = useModuleInterface();
+
+    const {module, inputs, setUserInput} = useModuleInterface();
+
     return <>
-        {info && info.inputs.map((input, index) => <ModuleInput key={index} input={input} onChange={(value) => setInput(index, value)} />)}
+        {inputs && inputs.map((input, index) => <ModuleInput key={index} input={input} onChange={(value) => setUserInput(index, value)} />)}
     </>
 }
 
 export function HelloEdit(p){
-    return <>
+    return <div style={{marginBottom: '1em'}}>
         HelloEdit
-    </>
+    </div>
 }

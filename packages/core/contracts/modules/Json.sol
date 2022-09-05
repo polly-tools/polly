@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import '../Polly.sol';
 
-contract Json is BasePollyModule {
+contract Json is PMReadOnly {
 
   enum Type {
     STRING, BOOL, NUMBER, OBJECT, ARRAY
@@ -21,18 +21,11 @@ contract Json is BasePollyModule {
     uint _uint;
   }
 
+  string public constant override PMNAME = 'Json';
+  uint public constant override PMVERSION = 1;
+  string public constant override PMINFO = 'JSON | on-chain JSON parser';
 
-  constructor() {
-    _setConfigurator(address(new JsonConfigurator()));
-  }
-
-
-  function moduleInfo() public pure returns(IPollyModule.Info memory){
-    return IPollyModule.Info('Json', false);
-  }
-
-
-  function get(Item[] memory items_, Format format_) public pure returns(string memory){
+  function encode(Item[] memory items_, Format format_) public pure returns(string memory){
 
       bytes[] memory parts_ = new bytes[](items_.length);
       bytes memory append_ = ',';
@@ -89,11 +82,4 @@ contract Json is BasePollyModule {
     return string(abi.encodePacked('"', key_,'":'));
   }
 
-}
-
-
-contract JsonConfigurator is BasePollyConfigurator {
-  function info() public pure override returns(string memory, string[] memory, string[] memory){
-    return ("Format data as JSON", new string[](0), new string[](0));
-  }
 }
