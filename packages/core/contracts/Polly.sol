@@ -320,9 +320,10 @@ contract Polly is Ownable {
       else
         id_ = page_ == 1 ? count_ : count_ - (limit_*(page_-1)); // calculate descending start id
 
+      // console.log('id_', id_);
 
       if(
-        (ascending_ && id_ >= count_) // ascending and id is greater than total number of configs
+        (ascending_ && id_ > count_) // ascending and id is greater than total number of configs
         ||
         (!ascending_ && id_ == 1) // descending and id is 0
       )
