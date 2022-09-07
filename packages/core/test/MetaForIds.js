@@ -23,7 +23,7 @@ const Type = {
  * CHAINS
  */
 
-describe("Meta module", async function(){
+describe("MetaForIds module", async function(){
 
     const nullAddress = '0x'+'0'.repeat(40);
 
@@ -44,30 +44,30 @@ describe("Meta module", async function(){
       [owner, user1, user2, user3] = await ethers.getSigners();
 
       // DEPLOY POLLY
-      const Polly = await ethers.getContractFactory("Polly");
-      polly = await Polly.deploy();
-      console.log('Polly deployed to -> ', polly.address.green);
+      // const Polly = await ethers.getContractFactory("Polly");
+      // polly = await Polly.deploy();
+      // console.log('Polly deployed to -> ', polly.address.green);
 
 
       // FORKED POLLY
-      // polly = await hre.ethers.getContractAt('Polly', process.env.POLLY_ADDRESS, owner);
-      // console.log('Using forked Polly at -> ', polly.address.green);
+      polly = await hre.ethers.getContractAt('Polly', process.env.POLLY_ADDRESS, owner);
+      console.log('Using forked Polly at -> ', polly.address.green);
 
     })
 
 
-    it("Add Meta module to Polly", async function () {
+    it("Add MetaForIds module to Polly", async function () {
 
-        // Meta
-        const Meta = await ethers.getContractFactory("Meta");
-        meta = await Meta.deploy();
+        // MetaForIds
+        const MetaForIds = await ethers.getContractFactory("MetaForIds");
+        meta = await MetaForIds.deploy();
         await meta.deployed();
         expect(meta.address).to.be.properAddress;
 
 
         // Add meta handler to Polly
         await polly.updateModule(meta.address);
-        const meta_module = await polly.getModule("Meta", 1);
+        const meta_module = await polly.getModule("MetaForIds", 1);
         expect(meta_module.implementation).to.be.properAddress;
 
     })
@@ -89,9 +89,9 @@ describe("Meta module", async function(){
 
     it('Configure module', async function(){
 
-        // Configure Meta
+        // Configure MetaForIds
         const tx = await polly.configureModule(
-          'Meta', // Name
+          'MetaForIds', // Name
           0, // Latest version
           [], // No params
           true, // Store config in Polly
@@ -104,27 +104,28 @@ describe("Meta module", async function(){
 
         await expect(tx).to.emit(polly, 'moduleConfigured');
 
-        const config = await polly.getConfigsForAddress(owner.address, 1, 1, true);
-        console.log(config)
+        const config = await polly.getConfigsForAddress(owner.address, 1, 1, false);
         expect(config[0].params[0]._address).to.be.properAddress;
-        const Meta = await ethers.getContractFactory('Meta');
-        meta = await Meta.attach(config[0].params[0]._address);
+        const MetaForIds = await ethers.getContractFactory('MetaForIds');
+        meta = await MetaForIds.attach(config[0].params[0]._address);
 
     });
 
 
     it('Accepts meta', async function(){
 
-      await meta['setString(string,string,string)']('testID', 'testkey1', 'testvalue1');
-      await meta['setString(string,string,string)']('testID', 'testkey2', 'testvalue2');
-      await meta['setUint(string,string,uint256)']('testID', 'testkey3', 100);
-      await meta['setBool(string,string,bool)']('testID', 'testkey4', true);
+      await meta['setString(uint256,string,string)'](1, 'testkey1', 'testvalue1');
+      await meta['setString(uint256,string,string)'](1, 'testkey2', 'testvalue2');
+      await meta['setInt(uint256,string,int256)'](1, 'testkey3', -100);
+      await meta['setUint(uint256,string,uint256)'](1, 'testkey3', 100);
+      await meta['setBool(uint256,string,bool)'](1, 'testkey4', true);
+      await meta['setAddress(uint256,string,address)'](1, 'testkey4', owner.address);
 
-      const value = await meta['getString(string,string)']('testID', 'testkey1');
-      expect (value).to.equal('testvalue1');
+      const value = await meta.get(1, 'testkey1');
+      expect (value._string).to.equal('testvalue1');
 
       const inject = await meta.getJSON(
-        'testID',
+        1,
         [
           {_key: 'testkey1', _type: Type.STRING, _inject: ''},
           {_key: 'testkey2', _type: Type.STRING, _inject: ''},
@@ -133,7 +134,7 @@ describe("Meta module", async function(){
       );
 
       const result = await meta.getJSON(
-      'testID',
+      1,
       [
         {_key: 'testkey1', _type: Type.STRING, _inject: ''},
         {_key: 'testkey2', _type: Type.STRING, _inject: ''},
