@@ -1,44 +1,47 @@
 [
   {
     "inputs": [],
-    "name": "DEFAULT_ADMIN_ROLE",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "MANAGER",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "info",
+    "name": "FOR_PMNAME",
     "outputs": [
       {
         "internalType": "string",
         "name": "",
         "type": "string"
-      },
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "FOR_PMVERSION",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "inputs",
+    "outputs": [
       {
         "internalType": "string[]",
         "name": "",
         "type": "string[]"
-      },
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "outputs",
+    "outputs": [
       {
         "internalType": "string[]",
         "name": "",
@@ -63,9 +66,9 @@
       {
         "components": [
           {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
           },
           {
             "internalType": "int256",
@@ -78,12 +81,17 @@
             "type": "bool"
           },
           {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
             "internalType": "address",
             "name": "_address",
             "type": "address"
           }
         ],
-        "internalType": "struct PollyConfigurator.Param[]",
+        "internalType": "struct Polly.Param[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -93,9 +101,9 @@
       {
         "components": [
           {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
           },
           {
             "internalType": "int256",
@@ -108,12 +116,17 @@
             "type": "bool"
           },
           {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
             "internalType": "address",
             "name": "_address",
             "type": "address"
           }
         ],
-        "internalType": "struct PollyConfigurator.Param[]",
+        "internalType": "struct Polly.Param[]",
         "name": "",
         "type": "tuple[]"
       }

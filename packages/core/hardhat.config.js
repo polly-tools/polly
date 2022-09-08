@@ -3,6 +3,7 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
+require("@polly-os/hardhat-polly");
 require("./tasks.js");
 
 const accounts = require('./hhaccounts.js');
@@ -32,6 +33,18 @@ module.exports = {
       runs: 200
     },
   },
+  polly: {
+    verbose: true,
+    fork: {
+      hardhat: process.env.POLLY_ADDRESS
+    }
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts"
+  },
   gasReporter: {
     enabled: true,
     // gasPrice: 70,
@@ -51,7 +64,7 @@ module.exports = {
     hardhat: {
       accounts: accounts,
       forking: {
-        blockNumber: 7453554,
+        blockNumber: 7523569,
         url: process.env.GOERLI_RPC_URL
       },
     },

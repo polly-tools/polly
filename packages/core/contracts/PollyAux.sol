@@ -30,7 +30,7 @@ abstract contract PollyAux {
 
 
 
-interface IPollyAuxHandler is IPollyModule {
+interface IPollyAuxHandler is PollyModule {
 
   function addAux(address aux_address_) external;
   function removeAux(address remove_) external;
@@ -40,7 +40,7 @@ interface IPollyAuxHandler is IPollyModule {
 }
 
 
-abstract contract PollyAuxHandler is PollyModule {
+abstract contract PollyAuxHandler is PMClone {
 
     address[] private _aux;
     mapping(address => uint) private _aux_index;

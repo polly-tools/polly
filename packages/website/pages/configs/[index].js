@@ -23,13 +23,14 @@ export default function Config({p}){
     const {query} = useRouter();
     const polly = usePolly();
     const {account} = useWeb3React();
-    const [info, setInfo] = useState(false);
+    const [outputs, setOutputs] = useState(false);
 
     async function fetchConfig(address, index){
         const _config = await polly.read('getConfigsForAddress', {address_: address, limit_: 1, page_: index, ascending_: false}).then(res => res.result[0]);
-        const _info = await fetch(`/api/module/${_config.module}/configurator/info`).then(res => res.json()).then(res => res.result);
+        const version = await fetch(`/api/module/${_config.module}/at/${_config.params[0]._address}/PMVERSION`).then(res => res.json()).then(res => res.result);
+        const _outputs = await fetch(`/api/module/${_config.module}/configurator/outputs?version=${version}`).then(res => res.json()).then(res => res.result);
         setConfig(_config)
-        setInfo(_info)
+        setOutputs(_outputs)
     }
 
     useEffect(() => {
@@ -40,10 +41,11 @@ export default function Config({p}){
 
     return <Page header>
         {!account && <>Connect to view your configuration</>}
-        {(account && config && info) && <Grid.Unit>
+        {(account && !config && !outputs) && <>Loading...</>}
+        {(account && config && outputs) && <Grid.Unit>
             <h1>{config.name}</h1>
-            {info.outputs.map((_info, index) => {
-                return <ModuleOutput param={config.params[index]} info={_info}/>
+            {outputs && outputs.map((output, index) => {
+                return <ModuleOutput param={config.params[index]} output={output}/>
             })}
         </Grid.Unit>}
     </Page>

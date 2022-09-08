@@ -2,7 +2,7 @@ import configABI from '@polly-os/core/abi/PollyConfigurator.json';
 import { ethers } from "ethers";
 import ABIAPI from 'abiapi';
 import { getProvider } from "base/provider";
-import { isArray, isArrayLikeObject, isObject, isObjectLike } from 'lodash';
+import { isArray, isObject } from 'lodash';
 import getBaseUrl from 'base/url';
 
 const abi = new ABIAPI(configABI);
@@ -24,7 +24,7 @@ function bigNumbersToNumber(value){
             if (Object.hasOwnProperty.call(value, key)) {
                 value[key] = bigNumbersToNumber(value[key])
             }
-        }    
+        }
         return value;
     }
 
@@ -33,9 +33,9 @@ function bigNumbersToNumber(value){
 }
 abi.addGlobalParser(bigNumbersToNumber)
 
-function parseInfoParam(param){
-    
-    const parts = param.split(':');
+function parseInputsOutputs(param){
+
+    const parts = param.split('|').map(part => part.trim());
 
     if(parts.length < 2){
         return false;
@@ -48,25 +48,24 @@ function parseInfoParam(param){
     }
 }
 
-abi.addParser('info', (info) => {
-    return {
-        description: info[0],
-        inputs: info[1].map(parseInfoParam).filter(res => res),
-        outputs: info[2].map(parseInfoParam).filter(res => res)
-    }
+abi.addParser('inputs', (inputs) => {
+  return inputs.map(parseInputsOutputs).filter(res => res);
+})
+abi.addParser('outputs', (outputs) => {
+  return outputs.map(parseInputsOutputs).filter(res => res);
 })
 
 
 function parseReturnParam(param){
 
     return {
-        name: param[0],
-        _string: param[1],
+        _string: param[0],
+        _uint: param[1],
         _int: param[2],
         _bool: param[3],
         _address: param[4]
     };
-    
+
 }
 
 function parseConfig(config){
@@ -90,7 +89,7 @@ export default async (req, res) => {
 
         const provider = getProvider();
         const contract = new ethers.Contract(configurator, configABI, provider);
-        
+
         try {
             data.result = await contract[method](...abi.methodParamsFromQuery(method, query));
             data.result = abi.parse(method, data.result);
