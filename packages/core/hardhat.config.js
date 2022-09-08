@@ -3,6 +3,7 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
+require("@polly-os/hardhat-polly");
 require("./tasks.js");
 
 const accounts = require('./hhaccounts.js');
@@ -31,6 +32,12 @@ module.exports = {
       enabled: true,
       runs: 200
     },
+  },
+  polly: {
+    verbose: true,
+    fork: {
+      hardhat: process.env.POLLY_ADDRESS
+    }
   },
   paths: {
     sources: "./contracts",
