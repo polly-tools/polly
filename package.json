@@ -13,8 +13,7 @@
     "website:dev": "vercel dev",
     "core:compile": "cd packages/core && npx hardhat compile --force",
     "polly:test": "cd packages/core && npx hardhat test test/polly.js",
-    "module:test": "cd packages/core && npx hardhat test test/$npm_config_name.js",
-    "module:watch": "npx nodemon --watch packages/core/contracts --watch packages/core packages/core/test -e sol,js --exec \"npm run polly:test\"",
-    "module:compile": "cd packages/core && npx hardhat compile contracts/modules/$npm_config_name.sol"
+    "module:test": "cd packages/core && npx hardhat test test/modules/$npm_config_name.js",
+    "module:watch": "npx nodemon --watch packages/core/contracts --watch packages/core/test -e sol,js --exec \"npm run module:test --name=$npm_config_name\""
   }
 }
