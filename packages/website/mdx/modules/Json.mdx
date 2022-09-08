@@ -21,7 +21,7 @@ import "@polly-os/modules/Json.sol"`}
 <SyntaxHighlighter language="solidity" style={docco}>
 {`function tokenURI() public view returns(string memory){
   
-  Polly.Module json_module = Polly(${process.env.NEXT_PUBLIC_POLLY_ADDRESS}).getModule('Json', ${props.module.version});
+  Polly.Module json_module = Polly(${process.env.NEXT_PUBLIC_POLLY_ADDRESS}).getModule('Json', ${props.version});
 
   Json.Item[] memory items = new Json.Item[](2);
 

@@ -1,16 +1,12 @@
 import { useModuleInterface } from "./ModuleInterface";
 
-export function MetaCreate(p){
-    
-    const {module, info} = useModuleInterface();
-
-    return <>
-        
-    </>
-}
 
 export function MetaEdit(p){
-    return <div style={{marginBottom: '1em'}}>
-        MetaEdit
-    </div>
+
+    const {module, info, setInput} = useModuleInterface();
+    const {address} = p;
+    
+    return <>
+        <h5>Deployed at {address}</h5>
+    </>
 }

@@ -23,7 +23,7 @@ contract Hello is PMCloneKeystore {
 contract HelloConfigurator is PollyConfigurator {
 
   string public constant override FOR_PMNAME = 'Hello';
-  uint public constant override FOR_PMVERSION = 2;
+  uint public constant override FOR_PMVERSION = 1;
 
   function inputs() public pure override returns (string[] memory) {
     /// Inputs
@@ -48,9 +48,14 @@ contract HelloConfigurator is PollyConfigurator {
 
     // Set the string with key "to" to "World"
 
-    if(bytes(inputs_[0]._string).length < 1)
-      inputs_[0]._string = 'World';
-    hello_.set(Polly.ParamType.STRING, 'to', inputs_[0]);
+    if(inputs_.length < 1){
+      Polly.Param memory to_;
+      to_._string = "World";
+      hello_.set(Polly.ParamType.STRING, 'to', to_);
+    }
+    else{
+      hello_.set(Polly.ParamType.STRING, 'to', inputs_[0]);
+    }
 
     // Grant roles to the address calling the configurator
     hello_.grantRole(hello_.DEFAULT_ADMIN_ROLE(), for_);

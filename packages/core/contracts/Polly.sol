@@ -276,9 +276,9 @@ contract Polly is Ownable {
       PollyConfigurator config_ = PollyConfigurator(configurator_); // get configurator instance
       rparams_ = config_.run(this, msg.sender, params_); // run configurator with params
 
-      uint new_count_ = _configs_count[msg.sender] + 1; // get new config count for storing
       if(store_){
 
+        uint new_count_ = _configs_count[msg.sender] + 1; // get new config count for storing
         _configs[msg.sender][new_count_].name = config_name_; // store config name
         _configs[msg.sender][new_count_].module = name_; // store module name
 
@@ -320,11 +320,12 @@ contract Polly is Ownable {
       else
         id_ = page_ == 1 ? count_ : count_ - (limit_*(page_-1)); // calculate descending start id
 
+      // console.log('id_', id_);
 
       if(
-        (ascending_ && id_ >= count_) // ascending and id is greater than total number of configs
+        (ascending_ && id_ > count_) // ascending and id is greater than total number of configs
         ||
-        (!ascending_ && id_ == 0) // descending and id is 0
+        (!ascending_ && id_ == 1) // descending and id is 0
       )
         return new Config[](0); // no modules available - bail early
 
