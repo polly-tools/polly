@@ -3,108 +3,53 @@ pragma solidity ^0.8.4;
 
 import "./Polly.sol";
 
-interface IPollyAux {
-
-  function getHooks() external returns(string[] memory);
-  function usesHook(string memory hook_) external view returns(bool);
-
-}
-
-
 abstract contract PollyAux {
 
-    function getHooks() public view virtual returns(string[] memory hooks_);
+  struct Msg {
+    address _sender;
+    uint _value;
+    bytes _data;
+    bytes4 _sig;
+  }
 
-    /// @dev check if a given hook is used by this aux
-    function usesHook(string memory hook_) public view returns(bool){
-        string[] memory hooks_ = getHooks();
-        for (uint i = 0; i < hooks_.length; i++) {
-            if(keccak256(bytes(hooks_[i])) == keccak256(bytes(hook_)))
-                return true;
-        }
-        return false;
-    }
+  struct Hook {
+    string _name;
+    bool _use;
+  }
 
+  address internal _parent;
 
-}
-
-
-
-interface IPollyAuxHandler is PollyModule {
-
-  function addAux(address aux_address_) external;
-  function removeAux(address remove_) external;
-  function setAuxAddress(uint index_, address address_) external;
-  function getAuxForHook(string memory name_) external view returns(IPollyAux[] memory);
+  function hooks() public view virtual returns (Hook[] memory);
 
 }
 
 
-abstract contract PollyAuxHandler is PMClone {
 
-    address[] private _aux;
-    mapping(address => uint) private _aux_index;
-    mapping(string => address[]) private _hooks;
+abstract contract PollyAuxParent {
 
-    modifier canManageAux(){
-      require(hasRole(MANAGER, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender), 'UNATHORIZED_TO_MANAGE_AUX');
-      _;
+  address internal _aux;
+  mapping(string => bool) internal _aux_hooks;
+  bool internal _aux_locked;
+  PollyAux.Hook[] internal _aux_registered_hooks;
+
+  function _registerHooks(string[] memory hooks_) internal {
+    for(uint i = 0; i < hooks_.length; i++) {
+      _aux_registered_hooks[i] = PollyAux.Hook(hooks_[i], false);
+    }
+  }
+
+  function _setAux(address aux_address_) internal {
+
+    require(_aux_locked == false, 'AUX_LOCKED');
+
+    PollyAux aux_ = PollyAux(aux_address_);
+    _aux = aux_address_;
+    PollyAux.Hook[] memory aux_hooks_ = aux_.hooks();
+
+    for(uint i = 0; i < aux_hooks_.length; i++) {
+      _aux_hooks[aux_hooks_[i]._name] = aux_hooks_[i]._use;
     }
 
-    function _addAux(address aux_address_) private {
-
-        string[] memory hooks_ = IPollyAux(aux_address_).getHooks();
-        if(hooks_.length > 0){
-          for(uint i = 0; i < hooks_.length; i++){
-            _hooks[hooks_[i]].push(aux_address_);
-          }
-        }
-
-    }
-
-    function addAux(address aux_address_) public canManageAux {
-        _addAux(aux_address_);
-    }
-
-    function removeAux(address aux_address_) public canManageAux {
-
-        string[] memory aux_hooks_ = IPollyAux(aux_address_).getHooks();
-        if(aux_hooks_.length > 0){
-
-          address[] memory saved_auxs_;
-          string memory hook_;
-          uint saved_i_;
-
-          for(uint aux_i_ = 0; aux_i_ < aux_hooks_.length; aux_i_++) {
-
-            hook_ = aux_hooks_[aux_i_]; // Store the name of the current hook;
-            saved_auxs_ = _hooks[hook_]; // Loop all saved hooks to create a new entry;
-            delete _hooks[hook_]; // Delete all existing hooks;
-
-            saved_i_ = 0;
-            while(saved_i_ < saved_auxs_.length){
-              if(saved_auxs_[saved_i_] != aux_address_){
-                _hooks[hook_].push(saved_auxs_[saved_i_]);
-                ++saved_i_;
-              }
-            }
-
-          }
-
-        }
-
-    }
-
-    function setAuxAddress(uint index_, address address_) public canManageAux {
-        delete _aux_index[address(_aux[index_])];
-        _aux[index_] = address_;
-        _aux_index[address_] = index_;
-    }
-
-    function getAuxForHook(string memory hook_) public view returns(address[] memory){
-
-        return _hooks[hook_];
-
-    }
+  }
 
 }
