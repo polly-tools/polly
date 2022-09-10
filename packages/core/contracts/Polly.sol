@@ -29,6 +29,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PollyModule.sol";
 import "./PollyConfigurator.sol";
+import "hardhat/console.sol";
 
 /// @title Polly
 /// @author polly.tools
@@ -249,7 +250,7 @@ contract Polly is Ownable {
       address implementation_ = _modules[name_][version_]; // get module implementation address
 
       PollyModule module_ = PollyModule(Clones.clone(implementation_)); // clone module implementation
-      module_.init(msg.sender); // initialize module
+      module_.init(msg.sender, implementation_); // initialize module
 
       emit moduleCloned(name_, name_, version_, address(module_)); // emit module cloned event
       return address(module_); // return cloned module address
@@ -325,7 +326,7 @@ contract Polly is Ownable {
       if(
         (ascending_ && id_ > count_) // ascending and id is greater than total number of configs
         ||
-        (!ascending_ && id_ == 1) // descending and id is 0
+        (!ascending_ && id_ == 0) // descending and id is 0
       )
         return new Config[](0); // no modules available - bail early
 
