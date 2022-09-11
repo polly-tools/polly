@@ -15,23 +15,33 @@ contract PollyToken is PollyAuxParent {
 
   MetaForIds internal _meta;
 
+  mapping(uint => bool) private _created;
+  mapping(uint => uint) internal _supply;
   uint internal _token_count;
-
 
   function _setMetaHandler(address handler_) internal {
     _meta = MetaForIds(handler_);
+  }
+
+  function getMetaHandler() public view returns (MetaForIds) {
+    return _meta;
   }
 
   /// @dev create a new token
   function _createToken(Meta[] memory meta_) internal returns (uint) {
 
     uint id_ = _token_count+1;
-    _token_count = id_;
+
+    if(_hasHook('beforeCreateToken')){
+      id_ = _getAux('beforeCreateToken').beforeCreateToken(address(this), id_);
+    }
 
     _batchSetMetaForId(id_, meta_);
+    _created[id_] = true;
+    _token_count++;
 
-    if(_aux_hooks['createToken']){
-      _getAux().afterCreateToken(id_);
+    if(_hasHook('afterCreateToken')){
+      _getAux('afterCreateToken').afterCreateToken(address(this), id_);
     }
 
     emit TokenCreated(id_);
@@ -40,19 +50,34 @@ contract PollyToken is PollyAuxParent {
   }
 
 
-  function _getAux() internal view returns(PollyTokenAux) {
-    return PollyTokenAux(_aux);
+  function _getAux(string memory hook_) internal view returns(PollyTokenAux) {
+    return PollyTokenAux(_aux_hooks[hook_]);
   }
 
 
-
   function _uri(uint id_) internal view returns (string memory) {
-    if(_aux_hooks['tokenURI']) {
-      return _getAux().tokenURI(id_);
+
+    if(_hasHook('tokenURI')) {
+      return _getAux('tokenURI').tokenURI(address(this), id_);
     }
     else {
       return _meta.getString(id_, 'tokenURI');
     }
+
+  }
+
+
+  function image(uint id_) public view returns (string memory) {
+    if(_hasHook('tokenImage')) {
+      return _getAux('tokenImage').tokenImage(address(this), id_);
+    }
+    else {
+      return _meta.getString(id_, 'tokenImage');
+    }
+  }
+
+  function tokenExists(uint id_) public view returns (bool) {
+    return _created[id_];
   }
 
 
@@ -69,8 +94,8 @@ contract PollyToken is PollyAuxParent {
 
   /// @dev get the contract metadata uri
   function contractURI() public view returns(string memory) {
-    if(_aux_hooks['contractURI']) {
-      return _getAux().contractURI();
+    if(_hasHook('contractURI')) {
+      return _getAux('contractURI').contractURI(address(this));
     }
     else {
       return _meta.getString(0, 'contractURI');
@@ -103,30 +128,28 @@ contract PollyToken is PollyAuxParent {
 abstract contract PollyTokenAux is PollyAux {
 
   string[] private _aux_available_hooks = [
+    "beforeCreateToken",
     "afterCreateToken",
     "beforeMint1155",
     "afterMint1155",
     "beforeMint721",
     "afterMint721",
     "getToken",
+    "tokenImage",
     "tokenURI",
     "contractURI"
   ];
 
-  function _availableHooks() internal view returns(Hook[] memory) {
-    Hook[] memory hooks_ = new Hook[](_aux_available_hooks.length);
-    for(uint i = 0; i < _aux_available_hooks.length; i++) {
-      hooks_[i] = Hook(_aux_available_hooks[i], false);
-    }
-    return hooks_;
-  }
-  function afterCreateToken(uint id_) external virtual {}
-  function beforeMint721(uint id_, Msg memory msg_) external virtual {} // For ERC721
-  function afterMint721(uint id_, Msg memory msg_) external virtual {} // For ERC721
-  function beforeMint1155(uint id_, uint amount_, Msg memory msg_) external virtual {} // For ERC1155
-  function afterMint1155(uint id_, uint amount_, Msg memory msg_) external virtual{} // For ERC1155
-  function tokenURI(uint id_) external view virtual returns (string memory){}
-  function contractURI() external view virtual returns (string memory){}
+
+  function beforeCreateToken(address parent_, uint id_) external virtual returns(uint) {return id_;}
+  function afterCreateToken(address parent_, uint id_) external virtual {}
+  function beforeMint721(address parent_, uint id_, Msg memory msg_) external virtual {} // For ERC721
+  function afterMint721(address parent_, uint id_, Msg memory msg_) external virtual {} // For ERC721
+  function beforeMint1155(address parent_, uint id_, uint amount_, Msg memory msg_) external virtual {} // For ERC1155
+  function afterMint1155(address parent_, uint id_, uint amount_, Msg memory msg_) external virtual{} // For ERC1155
+  function tokenImage(address parent_, uint id_) external view virtual returns (string memory){}
+  function tokenURI(address parent_, uint id_) external view virtual returns (string memory){}
+  function contractURI(address parent_) external view virtual returns (string memory){}
 
 }
 

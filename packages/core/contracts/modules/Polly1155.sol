@@ -11,7 +11,7 @@ import './Json.sol';
 import './MetaForIds.sol';
 
 
-contract Polly1155 is PollyToken, ERC1155, PMCloneKeystore {
+contract Polly1155 is PollyToken, ERC1155, PMClone, ReentrancyGuard {
 
 
   mapping(uint => uint) private _token_supply;
@@ -34,75 +34,40 @@ contract Polly1155 is PollyToken, ERC1155, PMCloneKeystore {
   */
 
   /// @dev create a new token
-  function createToken(PollyToken.Meta[] memory meta_) public onlyRole(DEFAULT_ADMIN_ROLE) returns (uint) {
-   return _createToken(meta_);
+  function createToken(PollyToken.Meta[] memory meta_, address[] memory mint_, uint[] memory amounts_) public onlyRole('manager') returns (uint) {
+
+    require(mint_.length == amounts_.length, 'ARRAY_MISMATCH');
+    uint id_ = _createToken(meta_);
+
+    for (uint i = 0; i < mint_.length; i++) {
+      _mint(mint_[i], id_, amounts_[i], '');
+    }
+
+    return id_;
   }
 
 
   /// @dev mint a token
   /// @param id_ the id of the token
   /// @param amount_ the amount of tokens to mint
-  function mint(uint id_, uint amount_) public payable {
+  function mint(uint id_, uint amount_) public payable nonReentrant {
 
-    if(_aux_hooks['beforeMint1155'])
-      getAux().beforeMint1155(id_, amount_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
+    if(_hasHook('beforeMint1155'))
+      getAux('beforeMint1155').beforeMint1155(address(this), id_, amount_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
 
     _mint(msg.sender, id_, amount_, "");
+    _supply[id_] += amount_;
 
-    if(_aux_hooks['afterMint1155'])
-      getAux().afterMint1155(id_, amount_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
+    if(_hasHook('afterMint1155'))
+      getAux('afterMint1155').afterMint1155(address(this), id_, amount_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
 
-  }
-
-
-  function safeTransferFrom(
-    address from_,
-    address to_,
-    uint256 id_,
-    uint256 amount_,
-    bytes calldata data_
-  ) public override {
-
-    super.safeTransferFrom(from_, to_, id_, amount_, data_);
-    _token_supply[id_] = _token_supply[id_] + amount_;
-
-  }
-
-  function safeBatchTransferFrom(
-      address from_,
-      address to_,
-      uint256[] calldata ids_,
-      uint256[] calldata amounts_,
-      bytes calldata data_
-  ) public override {
-
-    super.safeBatchTransferFrom(from_, to_, ids_, amounts_, data_);
-
-    uint id_;
-    for (uint i = 0; i < ids_.length;) {
-
-      id_ = ids_[i];
-      _token_supply[id_] = _token_supply[id_] + amounts_[i];
-
-      unchecked {
-        ++i;
-      }
-
-    }
-
-  }
-
-
-
-  function totalSupply(uint id_) public view returns (uint) {
-    return _token_supply[id_];
   }
 
 
   /// @dev get the token uri
   /// @param id_ the id of the token
   function uri(uint id_) public view override returns(string memory) {
-    _uri(id_);
+    return _uri(id_);
   }
 
 
@@ -110,16 +75,16 @@ contract Polly1155 is PollyToken, ERC1155, PMCloneKeystore {
   AUX
   */
 
-  function lockAux() public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _aux_locked = true;
+  function lockHook(string memory hook_) public onlyRole('admin') {
+    _aux_locked[hook_] = true;
   }
 
-  function setAux(address aux_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _setAux(aux_);
+  function addAux(address[] memory auxs_) public onlyRole('admin') {
+    _addAux(auxs_);
   }
 
-  function getAux() public view returns (PollyTokenAux) {
-    return PollyTokenAux(_aux);
+  function getAux(string memory hook_) public view returns (PollyTokenAux) {
+    return PollyTokenAux(_aux_hooks[hook_]);
   }
 
 
@@ -127,11 +92,11 @@ contract Polly1155 is PollyToken, ERC1155, PMCloneKeystore {
   META
   */
 
-  function setMetaHandler(address handler_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setMetaHandler(address handler_) public onlyRole('admin') {
     _setMetaHandler(handler_);
   }
 
-  function setMetaForId(uint id_, PollyToken.Meta[] memory meta_) public onlyRole(MANAGER) {
+  function setMetaForId(uint id_, PollyToken.Meta[] memory meta_) public onlyRole('manager') {
     _batchSetMetaForId(id_, meta_);
   }
 
@@ -142,9 +107,9 @@ contract Polly1155 is PollyToken, ERC1155, PMCloneKeystore {
 
 
   /// OVERRIDES
-  function supportsInterface(bytes4 interface_) public view override(AccessControl, ERC1155) returns (bool) {
-    return super.supportsInterface(interface_);
-  }
+  // function supportsInterface(bytes4 interface_) public view override(AccessControl, ERC1155) returns (bool) {
+  //   return super.supportsInterface(interface_);
+  // }
 
 }
 
@@ -154,10 +119,6 @@ contract Polly1155 is PollyToken, ERC1155, PMCloneKeystore {
 
 
 contract Polly1155Configurator is PollyConfigurator {
-
-
-  string public constant override FOR_PMNAME = 'Polly1155';
-  uint public constant override FOR_PMVERSION = 1;
 
 
   function inputs() public pure override virtual returns (string[] memory) {
@@ -179,16 +140,19 @@ contract Polly1155Configurator is PollyConfigurator {
 
   }
 
-  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override virtual returns(Polly.Param[] memory){
+  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override payable virtual returns(Polly.Param[] memory){
 
     Polly.Param[] memory rparams_ = new Polly.Param[](3);
 
     // Clone the Polly1155 module
-    Polly1155 mt_ = Polly1155(polly_.cloneModule('Polly1155', 1));
-    rparams_[0]._address = address(mt_);
+    Polly1155 p1155_ = Polly1155(polly_.cloneModule('Polly1155', 1));
+    rparams_[0]._address = address(p1155_);
 
     // Configure a MetaForIds module
-    Polly.Param[] memory meta_params_ = polly_.configureModule(
+    uint meta_fee_ = polly_.getConfiguratorFee(for_, 'MetaForIds', 1, new Polly.Param[](0));
+    console.log('meta fee', meta_fee_);
+    Polly.Param[] memory meta_params_ = polly_.configureModule{value: meta_fee_}(
+      address(this),
       'MetaForIds', // module name
       1, // version
       new Polly.Param[](0), // No inputs
@@ -196,18 +160,31 @@ contract Polly1155Configurator is PollyConfigurator {
       '' // No config name
     );
 
-    mt_.setMetaHandler(meta_params_[0]._address);
-    mt_.grantRole(mt_.MANAGER(), for_);
-    mt_.grantRole(mt_.MANAGER(),  meta_params_[0]._address);
-
+    // Store return param and init the module
     rparams_[1]._address = meta_params_[0]._address;
+    MetaForIds meta_ = MetaForIds(meta_params_[0]._address);
 
+    // Connect p1155 to meta
+    _grantManager(address(p1155_), address(meta_));
+    p1155_.setMetaHandler(meta_params_[0]._address);
 
     /// Configure a Polly1155Aux module if a valid one is passed to the contract
-    if(inputs_.length > 0 && inputs_[0]._address != address(0)) {
-      mt_.setAux(inputs_[0]._address);
-      rparams_[2]._address = inputs_[0]._address;
+    if(inputs_.length > 0){
+
+      address[] memory auxs_ = new address[](inputs_.length);
+
+      for(uint i = 0; i < inputs_.length; i++){
+        auxs_[i] = inputs_[i]._address;
+      }
+
+      p1155_.addAux(auxs_);
+
     }
+
+    // Transfer to sender
+    _transfer(address(p1155_), for_);
+    _transfer(address(meta_), for_);
+
 
     return rparams_;
 

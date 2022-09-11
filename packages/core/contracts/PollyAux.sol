@@ -12,14 +12,9 @@ abstract contract PollyAux {
     bytes4 _sig;
   }
 
-  struct Hook {
-    string _name;
-    bool _use;
-  }
-
   address internal _parent;
 
-  function hooks() public view virtual returns (Hook[] memory);
+  function hooks() public view virtual returns (string[] memory);
 
 }
 
@@ -27,29 +22,36 @@ abstract contract PollyAux {
 
 abstract contract PollyAuxParent {
 
-  address internal _aux;
-  mapping(string => bool) internal _aux_hooks;
-  bool internal _aux_locked;
-  PollyAux.Hook[] internal _aux_registered_hooks;
+  mapping(string => address) internal _aux_hooks;
+  mapping(string => bool) internal _aux_locked;
 
-  function _registerHooks(string[] memory hooks_) internal {
-    for(uint i = 0; i < hooks_.length; i++) {
-      _aux_registered_hooks[i] = PollyAux.Hook(hooks_[i], false);
+
+  function _lockHook(string memory hook_) internal {
+    _aux_locked[hook_] = true;
+  }
+
+  function _addAux(address[] memory auxs_) internal {
+
+    PollyAux aux_;
+    string[] memory hooks_;
+
+    for(uint i = 0; i < auxs_.length; i++) {
+      aux_ = PollyAux(auxs_[i]);
+      hooks_ = aux_.hooks();
+      for(uint j = 0; j < hooks_.length; j++) {
+        if(!_aux_locked[hooks_[j]])
+          _aux_hooks[hooks_[j]] = address(aux_);
+      }
     }
   }
 
-  function _setAux(address aux_address_) internal {
+  function _setAux(string memory hook_, address aux_) internal {
+    require(_aux_locked[hook_] == false, 'AUX_LOCKED');
+    _aux_hooks[hook_] = aux_;
+  }
 
-    require(_aux_locked == false, 'AUX_LOCKED');
-
-    PollyAux aux_ = PollyAux(aux_address_);
-    _aux = aux_address_;
-    PollyAux.Hook[] memory aux_hooks_ = aux_.hooks();
-
-    for(uint i = 0; i < aux_hooks_.length; i++) {
-      _aux_hooks[aux_hooks_[i]._name] = aux_hooks_[i]._use;
-    }
-
+  function _hasHook(string memory hook_) internal view returns (bool) {
+    return _aux_hooks[hook_] != address(0);
   }
 
 }

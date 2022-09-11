@@ -35,6 +35,31 @@ function parseParam(type, input){
   return param;
 }
 
+function param(input){
+  let type;
+  if(typeof input == 'string' && input.match(/^0x/)){
+    type = Enums.ParamType.ADDRESS;
+  }
+  else
+  if(typeof input == 'integer'){
+    if(input < 0)
+      type = Enums.ParamType.INT;
+    else
+      type = Enums.ParamType.UINT
+  }
+  else
+  if(typeof input == 'bool'){
+    type = Enums.ParamType.BOOL;
+  }
+  else
+  if(typeof input == 'string'){
+    type = Enums.ParamType.STRING;
+  }
+
+  return parseParam(type, input);
+
+}
+
 module.exports = {
-  Enums, parseParam, Param
+  Enums, parseParam, param, Param
 }

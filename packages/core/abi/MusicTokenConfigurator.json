@@ -1,20 +1,55 @@
 [
   {
     "inputs": [],
-    "name": "FOR_PMNAME",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "nonpayable",
+    "type": "constructor"
   },
   {
-    "inputs": [],
-    "name": "FOR_PMVERSION",
+    "inputs": [
+      {
+        "internalType": "contract Polly",
+        "name": "polly_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "for_",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Polly.Param[]",
+        "name": "params_",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "fee",
     "outputs": [
       {
         "internalType": "uint256",
@@ -35,7 +70,7 @@
         "type": "string[]"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -48,7 +83,7 @@
         "type": "string[]"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -92,7 +127,7 @@
           }
         ],
         "internalType": "struct Polly.Param[]",
-        "name": "inputs_",
+        "name": "params_",
         "type": "tuple[]"
       }
     ],
@@ -131,7 +166,7 @@
         "type": "tuple[]"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   }
 ]

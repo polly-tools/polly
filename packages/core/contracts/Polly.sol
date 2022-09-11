@@ -93,7 +93,8 @@ contract Polly is Ownable {
     mapping(string => uint) private _module_versions; // mapping of registered modules and their latest version - name => version
     mapping(address => mapping(uint => Config)) private _configs; // mapping of module configs - owner => (id => config)
     mapping(address => uint) private _configs_count; // mapping of owner module configs
-
+    mapping(address => bool) private _configurators; // mapping of configurators
+    uint private _fee_points = 10;
     //////////////////
 
 
@@ -131,8 +132,19 @@ contract Polly is Ownable {
       if(version_ == 1)
         _module_names.push(name_); // This is a new module, add to module names mapping
 
+      address configurator_ = getConfigurator(name_, version_);
+      console.log('configurator_', name_, Strings.toHexString(uint160(configurator_), 20));
+      if(configurator_ != address(0))
+        _configurators[configurator_] = true;
+
       emit moduleUpdated(name_, name_, version_, implementation_);
 
+    }
+
+
+    function fee(address for_) public pure returns(uint) {
+      /// Implement fee logic here
+      return 0.0005 ether;
     }
 
 
@@ -235,6 +247,28 @@ contract Polly is Ownable {
     }
 
 
+    /// @dev get the configurator for a given module
+    /// @param name_ string name of the module
+    /// @param version_ uint version of the module
+    /// @return address of the module configurator
+    function getConfigurator(string memory name_, uint version_) public view returns(address){
+      return PollyModule(_modules[name_][version_]).configurator();
+    }
+
+    /// @dev get the configurator fee for a given module
+    /// @param name_ string name of the module
+    /// @param version_ uint version of the module
+    /// @return fee_ uint fee in points
+    function getConfiguratorFee(address for_, string memory name_, uint version_, Polly.Param[] memory params_) public view returns(uint){
+
+      address conf_address_ = getConfigurator(name_, version_);
+      if(conf_address_ == address(0))
+        return 0;
+      return PollyConfigurator(conf_address_).fee(this, for_, params_);
+
+    }
+
+
     /// @dev clone a given module
     /// @param name_ string name of the module
     /// @param version_ uint version of the module
@@ -252,6 +286,7 @@ contract Polly is Ownable {
       PollyModule module_ = PollyModule(Clones.clone(implementation_)); // clone module implementation
       module_.init(msg.sender, implementation_); // initialize module
 
+
       emit moduleCloned(name_, name_, version_, address(module_)); // emit module cloned event
       return address(module_); // return cloned module address
 
@@ -263,7 +298,7 @@ contract Polly is Ownable {
     /// @param version_ uint version of the module
     /// @param params_ Polly.Param[] array of configuration input parameters
     /// @return rparams_ Polly.Param[] array of configuration return parameters
-    function configureModule(string memory name_, uint version_, Polly.Param[] memory params_, bool store_, string memory config_name_) public returns(Polly.Param[] memory rparams_) {
+    function configureModule(address for_, string memory name_, uint version_, Polly.Param[] memory params_, bool store_, string memory config_name_) public payable returns(Polly.Param[] memory rparams_) {
 
       if(version_ == 0)
         version_ = getLatestModuleVersion(name_); // version_ is 0, get latest version
@@ -275,22 +310,33 @@ contract Polly is Ownable {
       require(configurator_ != address(0), 'NO_MODULE_CONFIGURATOR'); // module is not configurable - revert
 
       PollyConfigurator config_ = PollyConfigurator(configurator_); // get configurator instance
-      rparams_ = config_.run(this, msg.sender, params_); // run configurator with params
 
+      // Fee
+      uint fee_ = config_.fee(this, for_, params_); // get configurator fee info
+      if(!_configurators[msg.sender]){
+        console.log('address is not configurator', Strings.toHexString(uint160(for_), 20));
+        fee_ = fee_+fee(for_);
+      }
+      console.log(name_, fee_, msg.value);
+      require(fee_ == msg.value, 'INVALID_FEE');
+
+      // Configure
+      rparams_ = config_.run{value: fee_}(this, for_, params_); // run configurator with params
+
+      // Store
       if(store_){
 
-        uint new_count_ = _configs_count[msg.sender] + 1; // get new config count for storing
-        _configs[msg.sender][new_count_].name = config_name_; // store config name
-        _configs[msg.sender][new_count_].module = name_; // store module name
+        uint new_count_ = _configs_count[for_] + 1; // get new config count for storing
+        _configs[for_][new_count_].name = config_name_; // store config name
+        _configs[for_][new_count_].module = name_; // store module name
 
         for (uint i = 0; i < rparams_.length; i++){ // store each config params
-          _configs[msg.sender][new_count_].params.push(rparams_[i]);
+          _configs[for_][new_count_].params.push(rparams_[i]);
         }
 
-        _configs_count[msg.sender] = new_count_; // update config count
+        _configs_count[for_] = new_count_; // update config count
 
       }
-
 
       emit moduleConfigured(name_, name_, version_, rparams_); // emit module configured event
       return rparams_;  // return configuration params
@@ -359,6 +405,15 @@ contract Polly is Ownable {
 
     }
 
+
+    /// @dev retrieve a stored configuration for a given address and config index
+    /// @param address_ address of the user
+    /// @param index_ index of the configuration
+    /// @return Polly.Config configuration
+    function getConfigForAddress(address address_, uint index_) public view returns(Config memory){
+      require(index_ > 0 && index_ <= _configs_count[address_], 'INVALID_CONFIG_INDEX'); // invalid config index
+      return _configs[address_][index_]; // return config
+    }
 
 
 }

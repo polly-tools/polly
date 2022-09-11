@@ -36,7 +36,7 @@ module.exports = {
   polly: {
     verbose: true,
     fork: {
-      hardhat: process.env.POLLY_ADDRESS
+      // hardhat: process.env.POLLY_ADDRESS
     }
   },
   paths: {

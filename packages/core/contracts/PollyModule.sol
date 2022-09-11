@@ -17,7 +17,7 @@ interface PollyModule {
   // Clonable
   function DEFAULT_ADMIN_ROLE() external view returns(bytes32);
   function MANAGER() external view returns(bytes32);
-  function init(address for_) external;
+  function init(address for_, address implementation_) external;
   function didInit() external view returns(bool);
   function configurator() external view returns(address);
   function isManager(address address_) external view returns(bool);
@@ -33,10 +33,21 @@ interface PollyModule {
 
 abstract contract PMBase {
 
+  address private _configurator;
+
   function PMTYPE() external view virtual returns(Polly.ModuleType);
   function PMNAME() external view virtual returns(string memory);
   function PMVERSION() external view virtual returns(uint);
   function PMINFO() external view virtual returns(string memory);
+
+  // Configuration
+  function _setConfigurator(address configurator_) internal {
+    _configurator = configurator_;
+  }
+
+  function configurator() public view returns(address){
+    return _configurator;
+  }
 
 }
 
@@ -48,23 +59,31 @@ abstract contract PMReadOnly is PMBase {
 }
 
 
-abstract contract PMClone is AccessControl, PMBase {
+abstract contract PMClone is PMBase {
 
   Polly.ModuleType public constant override PMTYPE = Polly.ModuleType.CLONE;
 
-  address private _configurator;
-  bytes32 public constant MANAGER = keccak256("MANAGER");
   bool private _did_init = false;
 
-  constructor(){
-    init(msg.sender);
+  address private _owner;
+  mapping(address => mapping(string => bool)) private _roles;
+
+  modifier onlyRole(string memory role_){
+    require(hasRole(role_, msg.sender), string(abi.encodePacked('MISSING_ROLE: ', role_, ' - ', Strings.toHexString(uint160(msg.sender), 20))));
+    _;
   }
 
-  function init(address for_) public virtual {
+
+  // Initialization
+  constructor(){
+    init(msg.sender, address(this));
+  }
+
+  function init(address for_, address) public virtual {
     require(!_did_init, 'CAN_NOT_INIT');
     _did_init = true;
-    _grantRole(DEFAULT_ADMIN_ROLE, for_);
-    _grantRole(MANAGER, for_);
+    _grantRole('admin', for_);
+    _grantRole('manager', for_);
   }
 
   function didInit() public view returns(bool){
@@ -72,18 +91,40 @@ abstract contract PMClone is AccessControl, PMBase {
   }
 
 
-  function _setConfigurator(address configurator_) internal {
-    _configurator = configurator_;
+  /// Access control
+  function owner() public view returns(address){
+    return _owner;
   }
 
-  function configurator() public view returns(address){
-    return _configurator;
+  function _setOwner(address new_owner_) internal {
+    _owner = new_owner_;
+    _grantRole('admin', new_owner_);
   }
 
-
-  function isManager(address address_) public view returns(bool){
-    return hasRole(MANAGER, address_);
+  function setOwner(address new_owner_) public onlyRole('admin'){
+    _setOwner(new_owner_);
   }
+
+  function hasRole(string memory role_, address check_) public view returns(bool){
+    return _roles[check_][role_];
+  }
+
+  function _grantRole(string memory role_, address to_) internal {
+    _roles[to_][role_] = true;
+  }
+
+  function grantRole(string memory role_, address to_) public onlyRole('admin') {
+    _grantRole(role_, to_);
+  }
+
+  function revokeRole(string memory role_, address to_) public onlyRole('admin') {
+    _roles[to_][role_] = false;
+  }
+
+  function renounceRole(string memory role_) public onlyRole(role_){
+    _roles[msg.sender][role_] = false;
+  }
+
 
 }
 
@@ -107,12 +148,12 @@ abstract contract PMCloneKeystore is PMClone {
 
   /// @dev Locks a given key so that it can not be changed
   /// @param key_ The key to lock
-  function lockKey(string memory key_) public onlyRole(DEFAULT_ADMIN_ROLE){
+  function lockKey(string memory key_) public onlyRole('admin'){
     _locked_keys[key_] = true;
   }
 
   /// @dev Lock all keys so that they can not be changed
-  function lock() public onlyRole(DEFAULT_ADMIN_ROLE){
+  function lock() public onlyRole('admin'){
     _locked = true;
   }
 
@@ -132,7 +173,7 @@ abstract contract PMCloneKeystore is PMClone {
   /// @dev set param for key
   /// @param key_ key
   /// @param value_ value
-  function set(Polly.ParamType type_, string memory key_, Polly.Param memory value_) public onlyRole(MANAGER){
+  function set(Polly.ParamType type_, string memory key_, Polly.Param memory value_) public onlyRole('manager'){
     require(!isLocked(), 'ALL_KEYS_LOCKED');
     require(!isLockedKey(key_), 'LOCKED_KEY');
     if(type_ == Polly.ParamType.UINT){

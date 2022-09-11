@@ -178,7 +178,7 @@ describe("Polly", function () {
   describe("No one can...", async function(){
 
     it("init a module", async function(){
-      await expect(contracts.testClone['init(address)'](users[3].address)).to.be.revertedWith('CAN_NOT_INIT');
+      await expect(contracts.testClone['init(address,address)'](users[3].address, users[3].address)).to.be.revertedWith('CAN_NOT_INIT');
     });
 
     it("use a non-existing module", async function(){
@@ -195,7 +195,7 @@ describe("Polly", function () {
       const test = await testCloneKeystore.get('test');
       await expect(test._string).to.equal('should work');
 
-      await expect(testCloneKeystore.connect(wallet2).set(Enums.ParamType.STRING, 'test', parseParam(Enums.ParamType.STRING, 'should fail'))).to.be.revertedWith('AccessControl');
+      await expect(testCloneKeystore.connect(wallet2).set(Enums.ParamType.STRING, 'test', parseParam(Enums.ParamType.STRING, 'should fail'))).to.be.revertedWith('MISSING_ROLE');
 
     })
 

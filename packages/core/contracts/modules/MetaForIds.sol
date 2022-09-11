@@ -25,7 +25,7 @@ contract MetaForIds is PMClone {
   mapping(uint => bool) private _locked_ids;
 
   modifier onlyManager() {
-    require(isManager(msg.sender), 'ONLY_MANAGER');
+    require(hasRole('manager', msg.sender), 'ONLY_MANAGER');
     _;
   }
 
@@ -204,9 +204,6 @@ contract MetaForIds is PMClone {
 
 contract MetaForIdsConfigurator is PollyConfigurator {
 
-  string public constant override FOR_PMNAME = 'MetaForIds';
-  uint public constant override FOR_PMVERSION = 1;
-
   function inputs() public pure override returns (string[] memory) {
 
     string[] memory outputs_ = new string[](1);
@@ -225,7 +222,7 @@ contract MetaForIdsConfigurator is PollyConfigurator {
 
   }
 
-  function run(Polly polly_, address for_, Polly.Param[] memory) public override returns(Polly.Param[] memory){
+  function run(Polly polly_, address for_, Polly.Param[] memory) public override payable returns(Polly.Param[] memory){
 
     // Clone a MetaForIds module)
     MetaForIds meta_ = MetaForIds(polly_.cloneModule('MetaForIds', 1));
@@ -234,12 +231,7 @@ contract MetaForIdsConfigurator is PollyConfigurator {
     meta_.setJsonParser(polly_.getModule('Json', 1).implementation);
 
     // Grant roles to the address calling the configurator
-    meta_.grantRole(meta_.DEFAULT_ADMIN_ROLE(), for_);
-    meta_.grantRole(meta_.MANAGER(), for_);
-
-    // Revoke all privilegies for the configurator
-    meta_.revokeRole(meta_.MANAGER(), address(this));
-    meta_.revokeRole(meta_.DEFAULT_ADMIN_ROLE(), address(this));
+    _transfer(address(meta_), for_);
 
     // Return the cloned module as part of the return parameters
     Polly.Param[] memory return_ = new Polly.Param[](1);

@@ -45,9 +45,6 @@ contract TestClone is PMClone {
 
 contract TestCloneConfigurator is PollyConfigurator {
 
-  string public constant override FOR_PMNAME = 'TestClone';
-  uint public constant override FOR_PMVERSION = 1;
-
   function inputs() public pure override returns (string[] memory) {
     /// Inputs
     string[] memory inputs_ = new string[](1);
@@ -62,18 +59,13 @@ contract TestCloneConfigurator is PollyConfigurator {
     return outputs_;
   }
 
-  function run(Polly polly_, address for_, Polly.Param[] memory) public override returns(Polly.Param[] memory){
+  function run(Polly polly_, address for_, Polly.Param[] memory) public override payable returns(Polly.Param[] memory){
 
     // Clone a TestClone module
     TestClone testClone_ = TestClone(polly_.cloneModule('TestClone', 1));
 
     // Grant roles to the address calling the configurator
-    testClone_.grantRole(testClone_.DEFAULT_ADMIN_ROLE(), for_);
-    testClone_.grantRole(testClone_.MANAGER(), for_);
-
-    // Revoke all privilegies for the configurator
-    testClone_.revokeRole(testClone_.MANAGER(), address(this));
-    testClone_.revokeRole(testClone_.DEFAULT_ADMIN_ROLE(), address(this));
+    _transfer(address(testClone_), for_);
 
     // Return the cloned module as part of the return parameters
     Polly.Param[] memory return_ = new Polly.Param[](1);
@@ -111,9 +103,6 @@ contract TestCloneKeystore is PMCloneKeystore {
 
 contract TestCloneKeystoreConfigurator is PollyConfigurator {
 
-  string public constant override FOR_PMNAME = 'TestCloneKeystore';
-  uint public constant override FOR_PMVERSION = 1;
-
   function inputs() public pure override returns (string[] memory) {
     /// Inputs
     string[] memory inputs_ = new string[](1);
@@ -128,7 +117,7 @@ contract TestCloneKeystoreConfigurator is PollyConfigurator {
     return outputs_;
   }
 
-  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override returns(Polly.Param[] memory){
+  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override payable returns(Polly.Param[] memory){
 
     // Clone a TestClone module
     TestCloneKeystore testCloneKeystore_ = TestCloneKeystore(polly_.cloneModule('TestCloneKeystore', 1));
@@ -136,12 +125,7 @@ contract TestCloneKeystoreConfigurator is PollyConfigurator {
     testCloneKeystore_.set(Polly.ParamType.UINT, 'value', inputs_[0]);
 
     // Grant roles to the address calling the configurator
-    testCloneKeystore_.grantRole(testCloneKeystore_.DEFAULT_ADMIN_ROLE(), for_);
-    testCloneKeystore_.grantRole(testCloneKeystore_.MANAGER(), for_);
-
-    // Revoke all privilegies for the configurator
-    testCloneKeystore_.revokeRole(testCloneKeystore_.MANAGER(), address(this));
-    testCloneKeystore_.revokeRole(testCloneKeystore_.DEFAULT_ADMIN_ROLE(), address(this));
+    _transfer(address(testCloneKeystore_), for_);
 
     // Return the cloned module as part of the return parameters
     Polly.Param[] memory return_ = new Polly.Param[](1);

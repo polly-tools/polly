@@ -22,9 +22,6 @@ contract Hello is PMCloneKeystore {
 
 contract HelloConfigurator is PollyConfigurator {
 
-  string public constant override FOR_PMNAME = 'Hello';
-  uint public constant override FOR_PMVERSION = 1;
-
   function inputs() public pure override returns (string[] memory) {
     /// Inputs
     string[] memory inputs_ = new string[](1);
@@ -41,10 +38,10 @@ contract HelloConfigurator is PollyConfigurator {
   }
 
 
-  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override returns(Polly.Param[] memory){
+  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override payable returns(Polly.Param[] memory){
 
     // Clone a Hello module
-    Hello hello_ = Hello(polly_.cloneModule(FOR_PMNAME, FOR_PMVERSION));
+    Hello hello_ = Hello(polly_.cloneModule('Hello', 1));
 
     // Set the string with key "to" to "World"
 
@@ -58,12 +55,7 @@ contract HelloConfigurator is PollyConfigurator {
     }
 
     // Grant roles to the address calling the configurator
-    hello_.grantRole(hello_.DEFAULT_ADMIN_ROLE(), for_);
-    hello_.grantRole(hello_.MANAGER(), for_);
-
-    // Revoke all privilegies for the configurator
-    hello_.revokeRole(hello_.MANAGER(), address(this));
-    hello_.revokeRole(hello_.DEFAULT_ADMIN_ROLE(), address(this));
+    _transfer(address(hello_), for_);
 
     // Return the cloned module as part of the return parameters
     Polly.Param[] memory return_ = new Polly.Param[](1);

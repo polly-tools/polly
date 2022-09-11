@@ -58,81 +58,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "previousAdminRole",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "newAdminRole",
-        "type": "bytes32"
-      }
-    ],
-    "name": "RoleAdminChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
-    ],
-    "name": "RoleGranted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
-    ],
-    "name": "RoleRevoked",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": false,
         "internalType": "uint256",
         "name": "id",
@@ -166,32 +91,6 @@
     ],
     "name": "Transfer",
     "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "DEFAULT_ADMIN_ROLE",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "MANAGER",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "inputs": [],
@@ -353,6 +252,11 @@
         "internalType": "struct PollyToken.Meta[]",
         "name": "meta_",
         "type": "tuple[]"
+      },
+      {
+        "internalType": "address",
+        "name": "mint_",
+        "type": "address"
       }
     ],
     "name": "createToken",
@@ -399,7 +303,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "hook_",
+        "type": "string"
+      }
+    ],
     "name": "getAux",
     "outputs": [
       {
@@ -412,19 +322,13 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getRoleAdmin",
+    "inputs": [],
+    "name": "getMetaHandler",
     "outputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "contract MetaForIds",
         "name": "",
-        "type": "bytes32"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -496,13 +400,13 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "string",
+        "name": "role_",
+        "type": "string"
       },
       {
         "internalType": "address",
-        "name": "account",
+        "name": "to_",
         "type": "address"
       }
     ],
@@ -514,13 +418,13 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "string",
+        "name": "role_",
+        "type": "string"
       },
       {
         "internalType": "address",
-        "name": "account",
+        "name": "check_",
         "type": "address"
       }
     ],
@@ -538,8 +442,32 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "image",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "for_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
         "type": "address"
       }
     ],
@@ -575,25 +503,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
+        "internalType": "string",
+        "name": "hook_",
+        "type": "string"
       }
     ],
-    "name": "isManager",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "lockAux",
+    "name": "lockHook",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -625,6 +540,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -646,14 +574,9 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
+        "internalType": "string",
+        "name": "role_",
+        "type": "string"
       }
     ],
     "name": "renounceRole",
@@ -664,13 +587,13 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "string",
+        "name": "role_",
+        "type": "string"
       },
       {
         "internalType": "address",
-        "name": "account",
+        "name": "to_",
         "type": "address"
       }
     ],
@@ -750,6 +673,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "string",
+        "name": "hook_",
+        "type": "string"
+      },
       {
         "internalType": "address",
         "name": "aux_",
@@ -834,8 +762,21 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "new_owner_",
+        "type": "address"
+      }
+    ],
+    "name": "setOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bytes4",
-        "name": "interface_",
+        "name": "interfaceId",
         "type": "bytes4"
       }
     ],
@@ -858,6 +799,25 @@
         "internalType": "string",
         "name": "",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenExists",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

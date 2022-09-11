@@ -1,0 +1,42 @@
+[
+  {
+    "inputs": [],
+    "name": "get",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "enum Json.Type",
+            "name": "_type",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "_key",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Json.Item[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  }
+]

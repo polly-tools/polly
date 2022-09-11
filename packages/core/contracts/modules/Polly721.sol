@@ -10,12 +10,12 @@ import './shared/PollyToken.sol';
 import './Json.sol';
 import './MetaForIds.sol';
 
-contract Polly721 is PollyToken, ERC721, PMClone {
+contract Polly721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
 
 
   string public constant override PMNAME = 'Polly721';
   uint public constant override PMVERSION = 1;
-  string public constant override PMINFO = 'Polly721 | create and allow mint for music tokens';
+  string public constant override PMINFO = 'Polly721 | create and mint ERC721 tokens';
 
 
   constructor() ERC721("", "") {
@@ -30,22 +30,31 @@ contract Polly721 is PollyToken, ERC721, PMClone {
   */
 
   /// @dev create a new token
-  function createToken(PollyToken.Meta[] memory meta_) public onlyRole(DEFAULT_ADMIN_ROLE) returns (uint) {
-   return _createToken(meta_);
+  function createToken(PollyToken.Meta[] memory meta_, address mint_) public onlyRole('manager') returns (uint) {
+
+    uint id_ = _createToken(meta_);
+
+    if(mint_ != address(0))
+      _mint(mint_, id_);
+
+    return id_;
   }
 
 
   /// @dev mint a token
   /// @param id_ the id of the token
-  function mint(uint id_) public payable {
+  function mint(uint id_) public payable nonReentrant {
 
-    if(_aux_hooks['beforeMint721'])
-      getAux().beforeMint721(id_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
+    require(_supply[id_] == 0, 'TOKEN_MINTED');
+
+    if(_hasHook('beforeMint721'))
+      getAux('beforeMint721').beforeMint721(address(this), id_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
 
     _mint(msg.sender, id_);
+    _supply[id_]++;
 
-    if(_aux_hooks['afterMint721'])
-      getAux().afterMint721(id_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
+    if(_hasHook('afterMint721'))
+      getAux('afterMint721').afterMint721(address(this), id_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
 
   }
 
@@ -60,20 +69,21 @@ contract Polly721 is PollyToken, ERC721, PMClone {
     return _uri(id_);
   }
 
+
   /*
   AUX
   */
 
-  function lockAux() public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _aux_locked = true;
+  function lockHook(string memory hook_) public onlyRole('admin') {
+    _aux_locked[hook_]= true;
   }
 
-  function setAux(address aux_) public onlyRole(DEFAULT_ADMIN_ROLE) {
-    _setAux(aux_);
+  function setAux(string memory hook_, address aux_) public onlyRole('admin') {
+    _setAux(hook_, aux_);
   }
 
-  function getAux() public view returns (PollyTokenAux) {
-    return PollyTokenAux(_aux);
+  function getAux(string memory hook_) public view returns (PollyTokenAux) {
+    return PollyTokenAux(_aux_hooks[hook_]);
   }
 
 
@@ -81,20 +91,20 @@ contract Polly721 is PollyToken, ERC721, PMClone {
   META
   */
 
-  function setMetaHandler(address handler_) public onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setMetaHandler(address handler_) public onlyRole('admin') {
     _setMetaHandler(handler_);
   }
 
-  function setMetaForId(uint id_, PollyToken.Meta[] memory meta_) public onlyRole(MANAGER) {
+  function setMetaForId(uint id_, PollyToken.Meta[] memory meta_) public onlyRole('manager') {
     _batchSetMetaForId(id_, meta_);
   }
 
 
 
   /// OVERRIDES
-  function supportsInterface(bytes4 interface_) public view override(AccessControl, ERC721) returns (bool) {
-    return super.supportsInterface(interface_);
-  }
+  // function supportsInterface(bytes4 interface_) public view override(AccessControl, ERC721) returns (bool) {
+  //   return super.supportsInterface(interface_);
+  // }
 
 
 
@@ -107,9 +117,6 @@ contract Polly721 is PollyToken, ERC721, PMClone {
 
 
 contract Polly721Configurator is PollyConfigurator, ReentrancyGuard {
-
-  string public constant override FOR_PMNAME = 'Polly721';
-  uint public constant override FOR_PMVERSION = 1;
 
   function inputs() public pure override returns (string[] memory) {
 
@@ -130,16 +137,17 @@ contract Polly721Configurator is PollyConfigurator, ReentrancyGuard {
 
   }
 
-  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override returns(Polly.Param[] memory){
+  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override payable returns(Polly.Param[] memory){
 
     Polly.Param[] memory rparams_ = new Polly.Param[](3);
 
     // Clone the Polly721 module
-    Polly721 mt_ = Polly721(polly_.cloneModule(FOR_PMNAME, FOR_PMVERSION));
-    rparams_[0]._address = address(mt_);
+    Polly721 p721_ = Polly721(polly_.cloneModule('Polly721', 1));
+    rparams_[0]._address = address(p721_);
 
     // Configure a MetaForIds module
     Polly.Param[] memory meta_params_ = polly_.configureModule(
+      for_,
       'MetaForIds', // module name
       1, // version
       new Polly.Param[](0), // No inputs
@@ -147,17 +155,16 @@ contract Polly721Configurator is PollyConfigurator, ReentrancyGuard {
       '' // No config name
     );
 
-    mt_.setMetaHandler(meta_params_[0]._address);
-    mt_.grantRole(mt_.MANAGER(), for_);
-    mt_.grantRole(mt_.MANAGER(),  meta_params_[0]._address);
+    p721_.setMetaHandler(meta_params_[0]._address);
+    p721_.grantRole('manager', for_);
+    p721_.grantRole('manager', meta_params_[0]._address);
 
     rparams_[1]._address = meta_params_[0]._address;
 
 
     /// Configure a Polly721Aux module if a valid one is passed to the contract
-    if(inputs_.length > 0 && inputs_[0]._address != address(0)) {
-      mt_.setAux(inputs_[0]._address);
-      rparams_[2]._address = inputs_[0]._address;
+    for(uint i = 0; i < inputs_.length; i++) {
+      p721_.setAux(inputs_[i]._string, inputs_[i]._address);
     }
 
     return rparams_;

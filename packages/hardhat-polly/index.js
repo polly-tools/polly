@@ -37,11 +37,11 @@ extendEnvironment(async (hre) => {
   hre.polly.contract = polly;
 
 
-  hre.polly.addModule = async (name) => {
+  hre.polly.addModule = async (name, ...args) => {
 
     // Module
     const Module = await hre.ethers.getContractFactory(name);
-    const module = await Module.deploy();
+    const module = await Module.deploy(...args);
     await module.deployed();
 
     // Add module handler to Polly
@@ -53,20 +53,15 @@ extendEnvironment(async (hre) => {
   }
 
 
-  hre.polly.configureModule = async (name, options = {}) => {
+  hre.polly.configureModule = async (name, options = {}, msg = {}) => {
 
     const [owner] = await hre.ethers.getSigners();
 
-
     const {
       signer,
-      version,
-      params,
-      store,
-      configName,
       ...o
     } = Object.assign({
-
+      for: owner.address,
       version: 0, // Latest version
       params: [], // No params
       store: true, // Store config in Polly
@@ -78,19 +73,21 @@ extendEnvironment(async (hre) => {
 
     // Configure MetaForIds
     const tx = await polly.connect(signer).configureModule(
+      o.for, // For
       name, // Name
-      version, // Latest version
-      params, // No params
-      store, // Store config in Polly
-      configName // No config name
+      o.version, // Latest version
+      o.params, // No params
+      o.store, // Store config in Polly
+      o.configName, // No config name
+      msg
     );
 
     const receipt = await tx.wait();
     const args = receipt.events.filter(x => x.event === "moduleConfigured").map(event => event.args[2]);
     const index = args[args.length-1];
-    const config = await polly.getConfigsForAddress(signer.address, 1, index, false);
-    module = await ethers.getContractAt(name, config[0].params[0]._address);
-    return module;
+    const config = await polly.getConfigForAddress(signer.address, index);
+    module = await ethers.getContractAt(name, config.params[0]._address);
+    return [module, config];
 
   }
 

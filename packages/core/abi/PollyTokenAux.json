@@ -2,6 +2,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "id_",
         "type": "uint256"
@@ -14,6 +19,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
       {
         "internalType": "uint256",
         "name": "id_",
@@ -60,6 +70,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "id_",
         "type": "uint256"
@@ -99,6 +114,35 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "beforeCreateToken",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
       {
         "internalType": "uint256",
         "name": "id_",
@@ -145,6 +189,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "id_",
         "type": "uint256"
@@ -183,7 +232,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      }
+    ],
     "name": "contractURI",
     "outputs": [
       {
@@ -200,21 +255,9 @@
     "name": "hooks",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "_name",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "_use",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PollyAux.Hook[]",
+        "internalType": "string[]",
         "name": "",
-        "type": "tuple[]"
+        "type": "string[]"
       }
     ],
     "stateMutability": "view",
@@ -222,6 +265,35 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "tokenImage",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
       {
         "internalType": "uint256",
         "name": "id_",

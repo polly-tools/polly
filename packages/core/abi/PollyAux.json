@@ -4,21 +4,9 @@
     "name": "hooks",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "_name",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "_use",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PollyAux.Hook[]",
+        "internalType": "string[]",
         "name": "",
-        "type": "tuple[]"
+        "type": "string[]"
       }
     ],
     "stateMutability": "view",

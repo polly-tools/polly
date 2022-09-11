@@ -165,6 +165,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "for_",
+        "type": "address"
+      },
+      {
         "internalType": "string",
         "name": "name_",
         "type": "string"
@@ -252,7 +257,94 @@
         "type": "tuple[]"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "for_",
+        "type": "address"
+      }
+    ],
+    "name": "fee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index_",
+        "type": "uint256"
+      }
+    ],
+    "name": "getConfigForAddress",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "module",
+            "type": "string"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "_uint",
+                "type": "uint256"
+              },
+              {
+                "internalType": "int256",
+                "name": "_int",
+                "type": "int256"
+              },
+              {
+                "internalType": "bool",
+                "name": "_bool",
+                "type": "bool"
+              },
+              {
+                "internalType": "string",
+                "name": "_string",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+              }
+            ],
+            "internalType": "struct Polly.Param[]",
+            "name": "params",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct Polly.Config",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -328,6 +420,91 @@
         "internalType": "struct Polly.Config[]",
         "name": "",
         "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name_",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "version_",
+        "type": "uint256"
+      }
+    ],
+    "name": "getConfigurator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "for_",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name_",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "version_",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Polly.Param[]",
+        "name": "params_",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "getConfiguratorFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
