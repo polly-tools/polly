@@ -29,6 +29,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PollyModule.sol";
 import "./PollyConfigurator.sol";
+import "./PollyFeeHandler.sol";
 import "hardhat/console.sol";
 
 /// @title Polly
@@ -94,7 +95,7 @@ contract Polly is Ownable {
     mapping(address => mapping(uint => Config)) private _configs; // mapping of module configs - owner => (id => config)
     mapping(address => uint) private _configs_count; // mapping of owner module configs
     mapping(address => bool) private _configurators; // mapping of configurators
-    uint private _fee_points = 10;
+    PollyFeeHandler private _fee_handler;
     //////////////////
 
 
@@ -112,6 +113,19 @@ contract Polly is Ownable {
     event moduleConfigured(
       string indexedName, string name, uint version, Polly.Param[] params
     );
+
+
+    // CONSTRUCTOR ///
+
+    constructor() {
+      _fee_handler = new PollyFeeHandler();
+    }
+
+
+    /// FEE ///
+    function fee(address for_, uint value_) public view returns (uint) {
+      return _fee_handler.get(for_, value_);
+    }
 
 
     /// MODULES ///
@@ -142,10 +156,10 @@ contract Polly is Ownable {
     }
 
 
-    function fee(address for_) public pure returns(uint) {
-      /// Implement fee logic here
-      return 0.0005 ether;
-    }
+    // function fee(address for_, uint value_) public pure returns(uint) {
+    //   /// Implement fee logic here
+    //   return _fee_handler.get(for_, value_);
+    // }
 
 
     /// @dev retrieves a specific module version base
@@ -314,8 +328,7 @@ contract Polly is Ownable {
       // Fee
       uint fee_ = config_.fee(this, msg.sender, params_); // get configurator fee info
       if(!_configurators[msg.sender]){
-
-        fee_ = fee_+fee(msg.sender);
+        fee_ = fee_+_fee_handler.get(msg.sender, fee_);
       }
 
       require(fee_ == msg.value, 'INVALID_FEE');

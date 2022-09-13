@@ -39,12 +39,13 @@ contract Polly1155 is PollyToken, ERC1155, PMClone, ReentrancyGuard {
     require(mint_.length == amounts_.length, 'ARRAY_MISMATCH');
     uint id_ = _createToken(meta_);
 
-    for (uint i = 0; i < mint_.length; i++) {
+    for (uint i = 0; i < mint_.length; i++){
       _mint(mint_[i], id_, amounts_[i], '');
     }
 
     return id_;
   }
+
 
 
   /// @dev mint a token
@@ -100,16 +101,6 @@ contract Polly1155 is PollyToken, ERC1155, PMClone, ReentrancyGuard {
     _batchSetMetaForId(id_, meta_);
   }
 
-
-
-
-
-
-
-  /// OVERRIDES
-  // function supportsInterface(bytes4 interface_) public view override(AccessControl, ERC1155) returns (bool) {
-  //   return super.supportsInterface(interface_);
-  // }
 
 }
 

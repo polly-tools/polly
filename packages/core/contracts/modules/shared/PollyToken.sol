@@ -20,6 +20,7 @@ contract PollyToken is PollyAuxParent {
   uint internal _token_count;
 
   function _setMetaHandler(address handler_) internal {
+    require(address(_meta) == address(0), 'META_HANDLER_SET');
     _meta = MetaForIds(handler_);
   }
 
@@ -33,7 +34,7 @@ contract PollyToken is PollyAuxParent {
     uint id_ = _token_count+1;
 
     if(_hasHook('beforeCreateToken')){
-      id_ = _getAux('beforeCreateToken').beforeCreateToken(address(this), id_);
+      (id_, meta_) = _getAux('beforeCreateToken').beforeCreateToken(address(this), id_, meta_);
     }
 
     _batchSetMetaForId(id_, meta_);
@@ -141,7 +142,7 @@ abstract contract PollyTokenAux is PollyAux {
   ];
 
 
-  function beforeCreateToken(address parent_, uint id_) external virtual returns(uint) {return id_;}
+  function beforeCreateToken(address parent_, uint id_, PollyToken.Meta[] memory meta_) external virtual returns(uint, PollyToken.Meta[] memory) {return (id_, meta_);}
   function afterCreateToken(address parent_, uint id_) external virtual {}
   function beforeMint721(address parent_, uint id_, Msg memory msg_) external virtual {} // For ERC721
   function afterMint721(address parent_, uint id_, Msg memory msg_) external virtual {} // For ERC721

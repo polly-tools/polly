@@ -30,14 +30,16 @@ contract Polly721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
   */
 
   /// @dev create a new token
-  function createToken(PollyToken.Meta[] memory meta_, address mint_) public onlyRole('manager') returns (uint) {
+  function createToken(PollyToken.Meta[] memory meta_, address[] memory mint_) public onlyRole('manager') returns (uint) {
 
     uint id_ = _createToken(meta_);
 
-    if(mint_ != address(0))
-      _mint(mint_, id_);
+    for (uint i = 0; i < mint_.length; i++){
+      _mint(mint_[i], id_);
+    }
 
     return id_;
+
   }
 
 

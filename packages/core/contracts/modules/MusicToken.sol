@@ -22,6 +22,7 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
   Json private _json;
 
   string[] private _hooks = [
+    "beforeCreateToken",
     "beforeMint1155",
     "tokenURI"
   ];
@@ -41,6 +42,11 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
   }
 
 
+  function _stringIsEmpty(string memory string_) private pure returns (bool) {
+    return keccak256(abi.encodePacked(string_)) == keccak256(abi.encodePacked(''));
+  }
+
+
   function hooks() public view override returns (string[] memory) {
     return _hooks;
   }
@@ -49,7 +55,24 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
   function beforeMint1155(address parent_, uint id_, uint amount_, PollyAux.Msg memory msg_) public view override {
 
     require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
+    MetaForIds meta_ = PollyToken(parent_).getMetaHandler();
+    require(msg_._value >= meta_.getUint(id_, 'mt.min_price'), 'INVALID_PRICE');
+    if(meta_.getUint(id_, 'mt.max_mint') > 0)
+      require(amount_ <= meta_.getUint(id_, 'mt.max_mint'), 'MAX_MINT_EXCEEDED');
 
+  }
+
+  function beforeMint721(address parent_, uint id_, PollyAux.Msg memory) public view override {
+    require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
+
+  }
+
+  function beforeCreateToken(address, uint id_, PollyToken.Meta[] memory meta_) public view override returns(uint, PollyToken.Meta[] memory){
+    require(meta_.length > 0, 'EMPTY_META');
+    for(uint i = 0; i < meta_.length; i++){
+      meta_[i]._key = string(abi.encodePacked('mt.', meta_[i]._key));
+    }
+    return (id_, meta_);
   }
 
 
@@ -59,94 +82,19 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
 
     MetaForIds meta_ = PollyToken(parent_).getMetaHandler();
 
-    Json.Item[] memory items_ = _schema.get();
-    string memory image_ = PollyToken(parent_).image(id_);
+    if(!_stringIsEmpty(meta_.getString(id_, 'mt.metadata_uri')))
+      return meta_.getString(id_, 'mt.metadata_uri');
 
-    // version
-    items_[0]._key = 'version';
-    items_[0]._type = Json.Type.STRING;
-    items_[0]._string = 'mnft-20220202';
+    MusicTokenSchema schema_ = _schema;
+    if(meta_.getAddress(id_, 'mt.schema') != address(0)){
+      schema_ = MusicTokenSchema(meta_.getAddress(id_, 'mt.schema'));
+    }
+    else
+    if(meta_.getAddress(0, 'mt.schema') != address(0)){
+      schema_ = MusicTokenSchema(meta_.getAddress(0, 'mt.schema'));
+    }
 
-    // title
-    items_[1]._string = meta_.getString(id_, 'title');
-
-    // artist
-    items_[2]._string = meta_.getString(id_, 'artist');
-
-    // description
-    items_[3]._string = meta_.getString(id_, 'description');
-
-    // duration
-    items_[4]._uint = meta_.getUint(id_, 'duration');
-
-    // mimeType
-    items_[5]._string = meta_.getString(id_, 'mimeType');
-
-    // trackNumber
-    items_[6]._uint = meta_.getUint(id_, 'trackNumber');
-
-    // project
-    items_[7]._string = meta_.getString(id_, 'project');
-
-    // artwork
-    items_[8]._string = image_;
-
-    // visualizer
-    items_[9]._string = meta_.getString(id_, 'visualizer');
-
-    // genre
-    items_[10]._string = meta_.getString(id_, 'genre');
-
-    // tags
-    items_[11]._string = meta_.getString(id_, 'tags');
-
-    // lyrics
-    items_[12]._string = meta_.getString(id_, 'lyrics');
-
-    // bpm
-    items_[13]._uint = meta_.getUint(id_, 'bpm');
-
-    // key
-    items_[14]._string = meta_.getString(id_, 'key');
-
-    // license
-    items_[15]._string = meta_.getString(id_, 'license');
-
-    // isrc
-    items_[16]._string = meta_.getString(id_, 'isrc');
-
-    // locationCreated
-    items_[17]._string = meta_.getString(id_, 'locationCreated');
-
-    // originalReleaseDate
-    items_[18]._string = meta_.getString(id_, 'originalReleaseDate');
-
-    // recordLabel
-    items_[19]._string = meta_.getString(id_, 'recordLabel');
-
-    // publisher
-    items_[20]._string = meta_.getString(id_, 'publisher');
-
-    // credits
-    items_[21]._string = meta_.getString(id_, 'credits');
-
-    // losslessAudio
-    items_[22]._string = meta_.getString(id_, 'losslessAudio');
-
-    // image
-    items_[23]._string = image_;
-
-    // name
-    items_[24]._string = string(abi.encodePacked(meta_.getString(id_, 'title'), ' - ', meta_.getString(id_, 'artist')));
-
-    // external_url
-    items_[25]._string = meta_.getString(id_, 'external_url');
-
-    // animation_url
-    items_[26]._string = meta_.getString(id_, 'animation_url');
-
-    // attributes
-    items_[27]._string = meta_.getString(id_, 'attributes');
+    Json.Item[] memory items_ = schema_.populate(id_, PollyToken(parent_), meta_);
 
     return string(
       abi.encodePacked(
@@ -163,6 +111,16 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
 
 contract MusicTokenSchema {
 
+  string public constant SCHEMA_ID = 'mnft-20220202';
+
+  function _stringIs(string memory a_, string memory b_) private pure returns (bool) {
+    return keccak256(abi.encodePacked(a_)) == keccak256(abi.encodePacked(b_));
+  }
+
+  function _stringIsEmpty(string memory string_) private pure returns (bool) {
+    return keccak256(abi.encodePacked(string_)) == keccak256(abi.encodePacked(''));
+  }
+
   function get() public pure returns(Json.Item[] memory){
 
     Json.Item[] memory items_ = new Json.Item[](28);
@@ -170,6 +128,7 @@ contract MusicTokenSchema {
     // version
     items_[0]._key = 'version';
     items_[0]._type = Json.Type.STRING;
+    items_[0]._string = 'mnft-20220202';
 
     // title
     items_[1]._key = 'title';
@@ -283,6 +242,41 @@ contract MusicTokenSchema {
 
   }
 
+  function populate(uint id_, PollyToken token_, MetaForIds meta_) public view returns(Json.Item[] memory){
+
+    Json.Item[] memory items_ = get();
+
+    string memory image_ = token_.image(id_);
+    if(_stringIsEmpty(image_))
+      image_ = meta_.getString(id_, 'mt.artwork');
+
+    string memory mt_key_;
+    for(uint256 i = 0; i < items_.length; i++){
+
+      mt_key_ = string(abi.encodePacked('mt.', items_[i]._key));
+
+      if(_stringIs(items_[i]._key, 'name')){
+        items_[i]._string = string(abi.encodePacked(meta_.getString(id_, 'mt.title'), ' - ', meta_.getString(id_, 'mt.artist')));
+      }
+      else
+      if(_stringIs(items_[i]._key, 'artwork') || _stringIs(items_[i]._key, 'image')){
+        items_[i]._string = image_;
+      }
+      else
+      if(items_[i]._type == Json.Type.STRING && !_stringIsEmpty(meta_.getString(id_, mt_key_))){
+        items_[i]._string = meta_.getString(id_, mt_key_);
+      }
+      else
+      if(items_[i]._type == Json.Type.NUMBER){
+        items_[i]._uint = meta_.getUint(id_, mt_key_);
+      }
+
+    }
+
+    return items_;
+  }
+
+
 }
 
 
@@ -323,11 +317,12 @@ contract MusicTokenConfigurator is PollyConfigurator {
       MusicToken mt_ = MusicToken(polly_.getModule('MusicToken', 1).implementation);
       rparams_[0]._address = address(mt_); // Return MusicToken address
 
-      uint polly_token_fee_ = polly_.getConfiguratorFee(msg.sender, params_[0]._string, 1, new Polly.Param[](0));
-      Polly.Param[] memory config_ = Polly(polly_).configureModule{value: polly_token_fee_}(
+      Polly.Param[] memory token_params_ = new Polly.Param[](1);
+      token_params_[0]._address = address(mt_);
+      Polly.Param[] memory config_ = Polly(polly_).configureModule(
         params_[0]._string,
         1,
-        new Polly.Param[](0),
+        token_params_,
         false,
         ''
       );

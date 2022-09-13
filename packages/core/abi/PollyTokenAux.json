@@ -123,6 +123,50 @@
         "internalType": "uint256",
         "name": "id_",
         "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "_key",
+            "type": "string"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "_uint",
+                "type": "uint256"
+              },
+              {
+                "internalType": "int256",
+                "name": "_int",
+                "type": "int256"
+              },
+              {
+                "internalType": "bool",
+                "name": "_bool",
+                "type": "bool"
+              },
+              {
+                "internalType": "string",
+                "name": "_string",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+              }
+            ],
+            "internalType": "struct Polly.Param",
+            "name": "_value",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct PollyToken.Meta[]",
+        "name": "meta_",
+        "type": "tuple[]"
       }
     ],
     "name": "beforeCreateToken",
@@ -131,6 +175,50 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "_key",
+            "type": "string"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "_uint",
+                "type": "uint256"
+              },
+              {
+                "internalType": "int256",
+                "name": "_int",
+                "type": "int256"
+              },
+              {
+                "internalType": "bool",
+                "name": "_bool",
+                "type": "bool"
+              },
+              {
+                "internalType": "string",
+                "name": "_string",
+                "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+              }
+            ],
+            "internalType": "struct Polly.Param",
+            "name": "_value",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct PollyToken.Meta[]",
+        "name": "",
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "nonpayable",

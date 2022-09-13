@@ -254,9 +254,9 @@
         "type": "tuple[]"
       },
       {
-        "internalType": "address",
+        "internalType": "address[]",
         "name": "mint_",
-        "type": "address"
+        "type": "address[]"
       }
     ],
     "name": "createToken",

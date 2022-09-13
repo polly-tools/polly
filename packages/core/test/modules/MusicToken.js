@@ -4,6 +4,14 @@ const keccak256 = require('keccak256')
 const colors = require('colors');
 const {parseParam, param, Enums} = require('@polly-os/utils/js/Polly.js')
 
+
+function base64DataUrlToJson(base64) {
+  const data = base64.split(',')[1];
+  const buff = Buffer.from(data, 'base64')
+  const text = buff.toString('ascii')
+  return JSON.parse(text)
+}
+
 const Format = {
   KEY_VALUE: 0,
   VALUE: 1,
@@ -53,7 +61,7 @@ describe("MusicToken module", async function(){
       ];
 
       let fee = await polly.getConfiguratorFee(owner.address, 'MusicToken', 1, params);
-      fee = fee.add(await polly.fee(owner.address));
+      fee = fee.add(await polly.fee(owner.address, fee));
 
       [mt, config] = await hre.polly.configureModule('MusicToken', {
         version: 1,
@@ -71,10 +79,8 @@ describe("MusicToken module", async function(){
         ['title', param('My Song')],
         ['artist', param('My Artist')],
         ['isrc', param('DKU3-202200101')],
-        ['originalReleaseDate', param('1970-01-01')],
-        ['duration', param(420)],
-        ['genre', param('World')],
-        ['recordLabel', param('My Label')],
+        ['losslessAudio', param('https://myserver.com/audio.wav')],
+        ['animation_url', param('https://myserver.com/audio.mp3')]
       ], [owner.address], [1])
 
       await token.createToken([
@@ -82,17 +88,28 @@ describe("MusicToken module", async function(){
         ['artist', param('My Artist 2')],
       ], [], [])
 
+      await expect(token.createToken([], [], [])).to.be.revertedWith('EMPTY_META');
+
     })
 
-    it("produces correct json", async function(){
+    it("Produce valid JSON", async function(){
 
       let json = await token.uri(1);
-      // console.log(json);
+      json = base64DataUrlToJson(json);
+      expect(json.title).to.equal('My Song');
+      expect(json.artist).to.equal('My Artist');
+      expect(json.isrc).to.equal('DKU3-202200101');
+      expect(json.losslessAudio).to.equal('https://myserver.com/audio.wav');
+      expect(json.animation_url).to.equal('https://myserver.com/audio.mp3');
 
       json = await token.uri(2);
-      // console.log(json);
+      json = base64DataUrlToJson(json);
+      expect(json.title).to.equal('My Song 2');
+      expect(json.artist).to.equal('My Artist 2');
 
     })
+
+
 
 
 })
