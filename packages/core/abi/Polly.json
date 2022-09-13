@@ -165,11 +165,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "for_",
-        "type": "address"
-      },
-      {
         "internalType": "string",
         "name": "name_",
         "type": "string"

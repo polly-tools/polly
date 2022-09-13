@@ -147,7 +147,6 @@ contract Polly721Configurator is PollyConfigurator, ReentrancyGuard {
 
     // Configure a MetaForIds module
     Polly.Param[] memory meta_params_ = polly_.configureModule(
-      for_,
       'MetaForIds', // module name
       1, // version
       new Polly.Param[](0), // No inputs

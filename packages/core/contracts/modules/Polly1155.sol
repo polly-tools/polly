@@ -150,9 +150,8 @@ contract Polly1155Configurator is PollyConfigurator {
 
     // Configure a MetaForIds module
     uint meta_fee_ = polly_.getConfiguratorFee(for_, 'MetaForIds', 1, new Polly.Param[](0));
-    console.log('meta fee', meta_fee_);
+
     Polly.Param[] memory meta_params_ = polly_.configureModule{value: meta_fee_}(
-      address(this),
       'MetaForIds', // module name
       1, // version
       new Polly.Param[](0), // No inputs

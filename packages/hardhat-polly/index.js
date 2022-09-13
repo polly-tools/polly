@@ -73,7 +73,6 @@ extendEnvironment(async (hre) => {
 
     // Configure MetaForIds
     const tx = await polly.connect(signer).configureModule(
-      o.for, // For
       name, // Name
       o.version, // Latest version
       o.params, // No params

@@ -34,10 +34,7 @@ describe("MusicToken module", async function(){
     owner,
     user1,
     user2,
-    user3,
-    minter1,
-    minter2,
-    minter3
+    user3
 
     it("Setup", async function(){
 
@@ -50,12 +47,7 @@ describe("MusicToken module", async function(){
       await hre.polly.addModule('Polly1155');
       await hre.polly.addModule('MusicToken', polly.address);
 
-      // Init musictoken module
-      // const mt_module_  = await polly.getModule('MusicToken', 1);
-      // mt = await ethers.getContractAt('MusicToken', mt_module_.implementation);
-
       // Init token module
-
       const params = [
         param('Polly1155')
       ];
@@ -64,7 +56,6 @@ describe("MusicToken module", async function(){
       fee = fee.add(await polly.fee(owner.address));
 
       [mt, config] = await hre.polly.configureModule('MusicToken', {
-        for: owner.address,
         version: 1,
         params: params,
       }, {value: fee});

@@ -294,7 +294,7 @@ contract MusicTokenConfigurator is PollyConfigurator {
     _fee_recipient = msg.sender;
   }
 
-  function _isValidPollyTokenName(string memory name_) private view returns(bool) {
+  function _isValidPollyTokenName(string memory name_) private pure returns(bool) {
     return (
       keccak256(abi.encodePacked(name_)) == keccak256(abi.encodePacked('Polly1155'))
       ||
@@ -316,15 +316,15 @@ contract MusicTokenConfigurator is PollyConfigurator {
 
   function run(Polly polly_, address for_, Polly.Param[] memory params_) external virtual override payable returns(Polly.Param[] memory){
 
+      require(_isValidPollyTokenName(params_[0]._string), 'INVALID_TOKEN_NAME');
+
       Polly.Param[] memory rparams_ = new Polly.Param[](3);
 
       MusicToken mt_ = MusicToken(polly_.getModule('MusicToken', 1).implementation);
-      rparams_[0]._address = address(mt_);
+      rparams_[0]._address = address(mt_); // Return MusicToken address
 
       uint polly_token_fee_ = polly_.getConfiguratorFee(msg.sender, params_[0]._string, 1, new Polly.Param[](0));
-      console.log('polly_token_fee_', polly_token_fee_);
       Polly.Param[] memory config_ = Polly(polly_).configureModule{value: polly_token_fee_}(
-        address(this),
         params_[0]._string,
         1,
         new Polly.Param[](0),
@@ -332,13 +332,13 @@ contract MusicTokenConfigurator is PollyConfigurator {
         ''
       );
 
-      rparams_[1]._address = config_[0]._address; // PollyToken module
-      rparams_[2]._address = config_[1]._address; // MetaForIds module
+      rparams_[1]._address = config_[0]._address; // return PollyToken module
+      rparams_[2]._address = config_[1]._address; // return MetaForIds module
+
 
       /// Permissions
-      // _transfer(rparams_[0]._address, for_);
-      _transfer(rparams_[1]._address, for_);
-      _transfer(rparams_[2]._address, for_);
+      _transfer(rparams_[1]._address, for_); // transfer PollyToken module
+      _transfer(rparams_[2]._address, for_); // transfer MetaForIds module
 
       return rparams_;
 

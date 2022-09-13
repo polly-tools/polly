@@ -133,7 +133,7 @@ contract Polly is Ownable {
         _module_names.push(name_); // This is a new module, add to module names mapping
 
       address configurator_ = getConfigurator(name_, version_);
-      console.log('configurator_', name_, Strings.toHexString(uint160(configurator_), 20));
+
       if(configurator_ != address(0))
         _configurators[configurator_] = true;
 
@@ -298,7 +298,7 @@ contract Polly is Ownable {
     /// @param version_ uint version of the module
     /// @param params_ Polly.Param[] array of configuration input parameters
     /// @return rparams_ Polly.Param[] array of configuration return parameters
-    function configureModule(address for_, string memory name_, uint version_, Polly.Param[] memory params_, bool store_, string memory config_name_) public payable returns(Polly.Param[] memory rparams_) {
+    function configureModule(string memory name_, uint version_, Polly.Param[] memory params_, bool store_, string memory config_name_) public payable returns(Polly.Param[] memory rparams_) {
 
       if(version_ == 0)
         version_ = getLatestModuleVersion(name_); // version_ is 0, get latest version
@@ -312,29 +312,29 @@ contract Polly is Ownable {
       PollyConfigurator config_ = PollyConfigurator(configurator_); // get configurator instance
 
       // Fee
-      uint fee_ = config_.fee(this, for_, params_); // get configurator fee info
+      uint fee_ = config_.fee(this, msg.sender, params_); // get configurator fee info
       if(!_configurators[msg.sender]){
-        console.log('address is not configurator', Strings.toHexString(uint160(for_), 20));
-        fee_ = fee_+fee(for_);
+
+        fee_ = fee_+fee(msg.sender);
       }
-      console.log(name_, fee_, msg.value);
+
       require(fee_ == msg.value, 'INVALID_FEE');
 
       // Configure
-      rparams_ = config_.run{value: fee_}(this, for_, params_); // run configurator with params
+      rparams_ = config_.run{value: fee_}(this, msg.sender, params_); // run configurator with params
 
       // Store
       if(store_){
 
-        uint new_count_ = _configs_count[for_] + 1; // get new config count for storing
-        _configs[for_][new_count_].name = config_name_; // store config name
-        _configs[for_][new_count_].module = name_; // store module name
+        uint new_count_ = _configs_count[msg.sender] + 1; // get new config count for storing
+        _configs[msg.sender][new_count_].name = config_name_; // store config name
+        _configs[msg.sender][new_count_].module = name_; // store module name
 
         for (uint i = 0; i < rparams_.length; i++){ // store each config params
-          _configs[for_][new_count_].params.push(rparams_[i]);
+          _configs[msg.sender][new_count_].params.push(rparams_[i]);
         }
 
-        _configs_count[for_] = new_count_; // update config count
+        _configs_count[msg.sender] = new_count_; // update config count
 
       }
 
@@ -367,7 +367,7 @@ contract Polly is Ownable {
       else
         id_ = page_ == 1 ? count_ : count_ - (limit_*(page_-1)); // calculate descending start id
 
-      // console.log('id_', id_);
+      //
 
       if(
         (ascending_ && id_ > count_) // ascending and id is greater than total number of configs
