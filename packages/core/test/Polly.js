@@ -84,17 +84,47 @@ describe("Polly", function () {
       expect(tModule1.implementation).to.equal(contracts.testReadOnly.address);
       expect(tModule1.clone).to.equal(false);
 
+      const tModule1_1 = await contracts.polly.getModule('TestReadOnly', 1);
+      expect(tModule1_1.name).to.equal('TestReadOnly');
+      expect(tModule1_1.version).to.equal(1);
+      expect(tModule1_1.implementation).to.equal(contracts.testReadOnly.address);
+      expect(tModule1_1.clone).to.equal(false);
+
       const tModule2 = await contracts.polly.getModule('TestClone', 0);
       expect(tModule2.name).to.equal('TestClone');
       expect(tModule2.version).to.equal(1);
       expect(tModule2.implementation).to.equal(contracts.testClone.address);
       expect(tModule2.clone).to.equal(true);
 
+      const tModule2_1 = await contracts.polly.getModule('TestClone', 1);
+      expect(tModule2_1.name).to.equal('TestClone');
+      expect(tModule2_1.version).to.equal(1);
+      expect(tModule2_1.implementation).to.equal(contracts.testClone.address);
+      expect(tModule2_1.clone).to.equal(true);
+
       const tModule3 = await contracts.polly.getModule('TestCloneKeystore', 0);
       expect(tModule3.name).to.equal('TestCloneKeystore');
       expect(tModule3.version).to.equal(1);
       expect(tModule3.implementation).to.equal(contracts.testCloneKeystore.address);
       expect(tModule3.clone).to.equal(true);
+
+
+      const tModule3_1 = await contracts.polly.getModule('TestCloneKeystore', 1);
+      expect(tModule3_1.name).to.equal('TestCloneKeystore');
+      expect(tModule3_1.version).to.equal(1);
+      expect(tModule3_1.implementation).to.equal(contracts.testCloneKeystore.address);
+      expect(tModule3_1.clone).to.equal(true);
+
+    });
+
+    it("reverts on invalid modules", async function(){
+
+      await expect(contracts.polly.getModule('TestReadOnly', 10))
+      .to.be.revertedWith('INVALID_MODULE_OR_VERSION');
+      await expect(contracts.polly.getModule('TestClone', 10))
+      .to.be.revertedWith('INVALID_MODULE_OR_VERSION');
+      await expect(contracts.polly.getModule('TestCloneKeystore', 10))
+      .to.be.revertedWith('INVALID_MODULE_OR_VERSION');
 
     });
 
@@ -135,20 +165,34 @@ describe("Polly", function () {
   });
 
 
-  describe("Anyone can", async function(){
+  describe("configureModule()", async function(){
 
-    it("create a configuration", async function(){
 
+    it("allows anyone to create a configuration", async function(){
+
+      // Owner
       await expect(contracts.polly.configureModule('TestClone', 0, [], false, ''))
       .to.emit(contracts.polly, 'moduleConfigured');
 
       await expect(contracts.polly.configureModule('TestClone', 0, [parseParam(Enums.ParamType.UINT, 1000)], false, ''))
       .to.emit(contracts.polly, 'moduleConfigured');
 
+      // User 2
+      await expect(contracts.polly.configureModule('TestClone', 0, [], false, ''))
+      .to.emit(contracts.polly, 'moduleConfigured');
+
+      await expect(contracts.polly.configureModule('TestClone', 0, [parseParam(Enums.ParamType.UINT, 2000)], false, ''))
+      .to.emit(contracts.polly, 'moduleConfigured');
+
+      await expect(contracts.polly.configureModule('TestClone', 0, [], false, ''))
+      .to.emit(contracts.polly, 'moduleConfigured');
+
+      await expect(contracts.polly.configureModule('TestClone', 0, [parseParam(Enums.ParamType.UINT, 2000)], false, ''))
+      .to.emit(contracts.polly, 'moduleConfigured');
 
     })
 
-    it("create a configuration and store it for the owner", async function(){
+    it("stores configurations correctly", async function(){
 
       await expect(contracts.polly.configureModule('TestClone', 0, [], true, 'My config1'))
       .to.emit(contracts.polly, 'moduleConfigured');

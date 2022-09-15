@@ -156,12 +156,6 @@ contract Polly is Ownable {
     }
 
 
-    // function fee(address for_, uint value_) public pure returns(uint) {
-    //   /// Implement fee logic here
-    //   return _fee_handler.get(for_, value_);
-    // }
-
-
     /// @dev retrieves a specific module version base
     /// @param name_ string name of the module
     /// @param version_ uint version of the module
@@ -169,7 +163,9 @@ contract Polly is Ownable {
     function getModule(string memory name_, uint version_) public view returns(Module memory){
 
       if(version_ < 1)
-        version_ = _module_versions[name_]; // version_ is 0, get latest version
+        version_ = getLatestModuleVersion(name_); // version_ is 0, get latest version
+
+      require(moduleExists(name_, version_), string(abi.encodePacked('INVALID_MODULE_OR_VERSION: ', name_, '@', Strings.toString(version_))));
 
       Polly.ModuleType type_ = PollyModule(_modules[name_][version_]).PMTYPE(); // get module info from stored implementation
       string memory info_ = PollyModule(_modules[name_][version_]).PMINFO(); // get module info from stored implementation
@@ -316,8 +312,6 @@ contract Polly is Ownable {
 
       if(version_ == 0)
         version_ = getLatestModuleVersion(name_); // version_ is 0, get latest version
-
-      require(moduleExists(name_, version_), string(abi.encodePacked('INVALID_MODULE_OR_VERSION: ', name_, '@', Strings.toString(version_))));
 
       Module memory module_ = getModule(name_, version_); // get module
       address configurator_ = PollyModule(module_.implementation).configurator(); // get module configurator address
