@@ -38,7 +38,7 @@ describe("MusicToken module", async function(){
     let
     polly,
     mt,
-    token,
+    p1155,
     owner,
     user1,
     user2,
@@ -55,7 +55,7 @@ describe("MusicToken module", async function(){
       await hre.polly.addModule('Polly1155');
       await hre.polly.addModule('MusicToken', polly.address);
 
-      // Init token module
+      // Init Polly1155 module
       const params = [
         param('Polly1155')
       ];
@@ -68,14 +68,14 @@ describe("MusicToken module", async function(){
         params: params,
       }, {value: fee});
 
-      token = await ethers.getContractAt('Polly1155', config.params[1]._address);
+      p1155 = await ethers.getContractAt('Polly1155', config.params[1]._address);
 
     })
 
 
-    it("Create token", async function(){
+    it("Create p1155", async function(){
 
-      await token.createToken([
+      await p1155.createToken([
         ['title', param('My Song')],
         ['artist', param('My Artist')],
         ['isrc', param('DKU3-202200101')],
@@ -83,18 +83,18 @@ describe("MusicToken module", async function(){
         ['animation_url', param('https://myserver.com/audio.mp3')]
       ], [owner.address], [1])
 
-      await token.createToken([
+      await p1155.createToken([
         ['title', param('My Song 2')],
         ['artist', param('My Artist 2')],
       ], [], [])
 
-      await expect(token.createToken([], [], [])).to.be.revertedWith('EMPTY_META');
+      await expect(p1155.createToken([], [], [])).to.be.revertedWith('EMPTY_META');
 
     })
 
     it("Produce valid JSON", async function(){
 
-      let json = await token.uri(1);
+      let json = await p1155.uri(1);
       json = base64DataUrlToJson(json);
       expect(json.title).to.equal('My Song');
       expect(json.artist).to.equal('My Artist');
@@ -102,7 +102,7 @@ describe("MusicToken module", async function(){
       expect(json.losslessAudio).to.equal('https://myserver.com/audio.wav');
       expect(json.animation_url).to.equal('https://myserver.com/audio.mp3');
 
-      json = await token.uri(2);
+      json = await p1155.uri(2);
       json = base64DataUrlToJson(json);
       expect(json.title).to.equal('My Song 2');
       expect(json.artist).to.equal('My Artist 2');

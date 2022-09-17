@@ -24,6 +24,7 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
   string[] private _hooks = [
     "beforeCreateToken",
     "beforeMint1155",
+    "beforeMint721",
     "tokenURI"
   ];
 
@@ -52,22 +53,27 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
   }
 
 
-  function beforeMint1155(address parent_, uint id_, uint amount_, PollyAux.Msg memory msg_) public view override {
-
+  /// @dev internal function to run on beforeMint1155 and beforeMint721
+  function _beforeMint(address parent_, uint id_, PollyAux.Msg memory msg_) private view returns(MetaForIds) {
     require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
     MetaForIds meta_ = PollyToken(parent_).getMetaHandler();
     require(msg_._value >= meta_.getUint(id_, 'mt.min_price'), 'INVALID_PRICE');
+    return meta_;
+  }
+
+
+  function beforeMint1155(address parent_, uint id_, uint amount_, PollyAux.Msg memory msg_) public view override {
+    MetaForIds meta_ = _beforeMint(parent_, id_, msg_);
     if(meta_.getUint(id_, 'mt.max_mint') > 0)
       require(amount_ <= meta_.getUint(id_, 'mt.max_mint'), 'MAX_MINT_EXCEEDED');
 
   }
 
-  function beforeMint721(address parent_, uint id_, PollyAux.Msg memory) public view override {
-    require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
-
+  function beforeMint721(address parent_, uint id_, PollyAux.Msg memory msg_) public view override {
+    _beforeMint(parent_, id_, msg_);
   }
 
-  function beforeCreateToken(address, uint id_, PollyToken.Meta[] memory meta_) public view override returns(uint, PollyToken.Meta[] memory){
+  function beforeCreateToken(address, uint id_, PollyToken.Meta[] memory meta_) public pure override returns(uint, PollyToken.Meta[] memory){
     require(meta_.length > 0, 'EMPTY_META');
     for(uint i = 0; i < meta_.length; i++){
       meta_[i]._key = string(abi.encodePacked('mt.', meta_[i]._key));
