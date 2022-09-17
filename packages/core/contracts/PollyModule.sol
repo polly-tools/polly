@@ -15,8 +15,6 @@ interface PollyModule {
   function PMINFO() external view returns(string memory);
 
   // Clonable
-  function DEFAULT_ADMIN_ROLE() external view returns(bytes32);
-  function MANAGER() external view returns(bytes32);
   function init(address for_, address implementation_) external;
   function didInit() external view returns(bool);
   function configurator() external view returns(address);
