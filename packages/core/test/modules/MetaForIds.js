@@ -1,8 +1,5 @@
 const { expect, config } = require("chai");
 const { ethers } = require("hardhat");
-const keccak256 = require('keccak256')
-const colors = require('colors');
-const {inputParam} = require('@polly-os/utils/js/PollyConfigurator.js')
 
 const Format = {
   KEY_VALUE: 0,

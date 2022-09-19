@@ -10,7 +10,6 @@ contract TestReadOnly is PMReadOnly {
 
   string public constant override PMNAME = 'TestReadOnly';
   uint public constant override PMVERSION = 1;
-  string public constant override PMINFO = 'A simple read-only module for testing';
 
   function readValue() public pure returns(uint) {
     return 1;
@@ -24,7 +23,6 @@ contract TestClone is PMClone {
 
   string public constant override PMNAME = 'TestClone';
   uint public constant override PMVERSION = 1;
-  string public constant override PMINFO = 'A simple cloneable module for testing';
 
   uint private _value;
 
@@ -82,7 +80,6 @@ contract TestCloneKeystore is PMCloneKeystore {
 
   string public constant override PMNAME = 'TestCloneKeystore';
   uint public constant override PMVERSION = 1;
-  string public constant override PMINFO = 'A simple cloneable module with keystorage for testing';
 
   constructor() PMCloneKeystore(){
     _setConfigurator(address(new TestCloneKeystoreConfigurator()));

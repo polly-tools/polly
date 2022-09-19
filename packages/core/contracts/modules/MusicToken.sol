@@ -4,6 +4,10 @@ pragma solidity ^0.8.4;
 import '../Polly.sol';
 import '../PollyConfigurator.sol';
 import './shared/PollyToken.sol';
+import './RoyaltyInfo.sol';
+import './Token1155.sol';
+import './Token721.sol';
+import './TokenUtils.sol';
 import 'base64-sol/base64.sol';
 
 
@@ -16,10 +20,10 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
 
   string public constant override PMNAME = "MusicToken";
   uint256 public constant override PMVERSION = 1;
-  string public constant override PMINFO = "MusicToken | format token metadata for music";
 
   MusicTokenSchema private _schema;
   Json private _json;
+  TokenUtils private _utils;
 
   string[] private _hooks = [
     "beforeCreateToken",
@@ -33,6 +37,12 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
     _json = Json(
       Polly(polly_)
       .getModule('Json', 1)
+      .implementation
+    );
+
+    _utils = TokenUtils(
+      Polly(polly_)
+      .getModule('TokenUtils', 1)
       .implementation
     );
 
@@ -54,30 +64,29 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
 
 
   /// @dev internal function to run on beforeMint1155 and beforeMint721
-  function _beforeMint(address parent_, uint id_, PollyAux.Msg memory msg_) private view returns(MetaForIds) {
+  function _beforeMint(address parent_, uint id_, PollyAux.Msg memory msg_) private view {
     require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
-    MetaForIds meta_ = PollyToken(parent_).getMetaHandler();
-    require(msg_._value >= meta_.getUint(id_, 'mt.min_price'), 'INVALID_PRICE');
-    return meta_;
+    _utils.requireValidTime(parent_, id_);
   }
 
 
   function beforeMint1155(address parent_, uint id_, uint amount_, PollyAux.Msg memory msg_) public view override {
-    MetaForIds meta_ = _beforeMint(parent_, id_, msg_);
-    if(meta_.getUint(id_, 'mt.max_mint') > 0)
-      require(amount_ <= meta_.getUint(id_, 'mt.max_mint'), 'MAX_MINT_EXCEEDED');
+
+    _beforeMint(parent_, id_, msg_);
+
+    _utils.requireValidSupply1155(parent_, id_, amount_);
+    _utils.requireValidAmount1155(parent_, id_, amount_);
+    _utils.requireValidPrice1155(parent_, id_, amount_, msg_._value);
 
   }
 
   function beforeMint721(address parent_, uint id_, PollyAux.Msg memory msg_) public view override {
     _beforeMint(parent_, id_, msg_);
+    _utils.requireValidPrice721(parent_, id_, msg_._value);
   }
 
   function beforeCreateToken(address, uint id_, PollyToken.Meta[] memory meta_) public pure override returns(uint, PollyToken.Meta[] memory){
     require(meta_.length > 0, 'EMPTY_META');
-    for(uint i = 0; i < meta_.length; i++){
-      meta_[i]._key = string(abi.encodePacked('mt.', meta_[i]._key));
-    }
     return (id_, meta_);
   }
 
@@ -88,16 +97,16 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
 
     MetaForIds meta_ = PollyToken(parent_).getMetaHandler();
 
-    if(!_stringIsEmpty(meta_.getString(id_, 'mt.metadata_uri')))
-      return meta_.getString(id_, 'mt.metadata_uri');
+    if(!_stringIsEmpty(meta_.getString(id_, 'metadata_uri')))
+      return meta_.getString(id_, 'metadata_uri');
 
     MusicTokenSchema schema_ = _schema;
-    if(meta_.getAddress(id_, 'mt.schema') != address(0)){
-      schema_ = MusicTokenSchema(meta_.getAddress(id_, 'mt.schema'));
+    if(meta_.getAddress(id_, 'metadata_schema') != address(0)){
+      schema_ = MusicTokenSchema(meta_.getAddress(id_, 'metadata_schema'));
     }
     else
-    if(meta_.getAddress(0, 'mt.schema') != address(0)){
-      schema_ = MusicTokenSchema(meta_.getAddress(0, 'mt.schema'));
+    if(meta_.getAddress(0, 'metadata_schema') != address(0)){
+      schema_ = MusicTokenSchema(meta_.getAddress(0, 'metadata_schema'));
     }
 
     Json.Item[] memory items_ = schema_.populate(id_, PollyToken(parent_), meta_);
@@ -134,7 +143,7 @@ contract MusicTokenSchema {
     // version
     items_[0]._key = 'version';
     items_[0]._type = Json.Type.STRING;
-    items_[0]._string = 'mnft-20220202';
+    items_[0]._string = SCHEMA_ID;
 
     // title
     items_[1]._key = 'title';
@@ -254,15 +263,15 @@ contract MusicTokenSchema {
 
     string memory image_ = token_.image(id_);
     if(_stringIsEmpty(image_))
-      image_ = meta_.getString(id_, 'mt.artwork');
+      image_ = meta_.getString(id_, 'artwork');
 
     string memory mt_key_;
     for(uint256 i = 0; i < items_.length; i++){
 
-      mt_key_ = string(abi.encodePacked('mt.', items_[i]._key));
+      mt_key_ = string(abi.encodePacked('', items_[i]._key));
 
       if(_stringIs(items_[i]._key, 'name')){
-        items_[i]._string = string(abi.encodePacked(meta_.getString(id_, 'mt.title'), ' - ', meta_.getString(id_, 'mt.artist')));
+        items_[i]._string = string(abi.encodePacked(meta_.getString(id_, 'title'), ' - ', meta_.getString(id_, 'artist')));
       }
       else
       if(_stringIs(items_[i]._key, 'artwork') || _stringIs(items_[i]._key, 'image')){
@@ -296,10 +305,44 @@ contract MusicTokenConfigurator is PollyConfigurator {
 
   function _isValidPollyTokenName(string memory name_) private pure returns(bool) {
     return (
-      keccak256(abi.encodePacked(name_)) == keccak256(abi.encodePacked('Polly1155'))
+      keccak256(abi.encodePacked(name_)) == keccak256(abi.encodePacked('Token1155'))
       ||
-      keccak256(abi.encodePacked(name_)) == keccak256(abi.encodePacked('Polly721'))
+      keccak256(abi.encodePacked(name_)) == keccak256(abi.encodePacked('Token721'))
     );
+  }
+
+
+  function inputs() public pure override returns(string[] memory){
+
+    string[] memory inputs_ = new string[](4);
+
+    // Input one - Token type
+    KeyStringValuePair[] memory items_ = new KeyStringValuePair[](2);
+    items_[0]._key = 'ERC1155';
+    items_[0]._value = 'Token1155';
+    items_[1]._key = 'ERC721';
+    items_[1]._value = 'Token721';
+    inputs_[0] = _json('string', 'Token type', 'The token type to extend', items_);
+
+    // Input two - Royalities
+    inputs_[1] = _json('bool', 'Royalties', 'Enable royalties');
+
+  }
+
+
+  function output() public pure returns(string[] memory){
+
+    string[] memory outputs_ = new string[](2);
+
+
+    // outputs_[0] = _json('module', 'PollyToken', 'The Polly token address');
+
+    // outputs_[1]._type = 'module';
+    // outputs_[1]._name = 'MetaForIds';
+    // outputs_[1]._description = 'the address of the MetaForIds contract';
+
+    return outputs_;
+
   }
 
   function fee(Polly polly_, address for_, Polly.Param[] memory params_) public view override returns (uint256) {
@@ -321,11 +364,22 @@ contract MusicTokenConfigurator is PollyConfigurator {
       Polly.Param[] memory rparams_ = new Polly.Param[](3);
 
       MusicToken mt_ = MusicToken(polly_.getModule('MusicToken', 1).implementation);
-      rparams_[0]._address = address(mt_); // Return MusicToken address
+      RoyaltyInfo ri_ = RoyaltyInfo(polly_.getModule('RoyaltyInfo', 1).implementation);
 
-      Polly.Param[] memory token_params_ = new Polly.Param[](1);
+      // Setup PollyToken params
+      bool aux_image_ = (params_.length > 1 && params_[1]._address != address(0)); // Valid royalty aux address
+      bool aux_royalties_ = (params_.length > 2 && params_[2]._address != address(0)); // Valid royalty aux address
+      bool custom_schema_ = (params_.length > 3 && params_[3]._address != address(0)); // Valid royalty aux address
+
+      Polly.Param[] memory token_params_ = new Polly.Param[](4);
       token_params_[0]._address = address(mt_);
-      Polly.Param[] memory config_ = Polly(polly_).configureModule(
+      token_params_[1]._address = address(ri_);
+      if(aux_image_)
+        token_params_[2]._address = params_[1]._address;
+      if(aux_royalties_)
+        token_params_[1]._address = params_[2]._address;
+
+      Polly.Param[] memory token_config_ = Polly(polly_).configureModule(
         params_[0]._string,
         1,
         token_params_,
@@ -333,13 +387,18 @@ contract MusicTokenConfigurator is PollyConfigurator {
         ''
       );
 
-      rparams_[1]._address = config_[0]._address; // return PollyToken module
-      rparams_[2]._address = config_[1]._address; // return MetaForIds module
+      if(custom_schema_){
+        PollyToken token_ = PollyToken(token_config_[0]._address);
+        token_.getMetaHandler().setAddress(0, 'metadata_schema', params_[3]._address);
+      }
 
 
       /// Permissions
-      _transfer(rparams_[1]._address, for_); // transfer PollyToken module
-      _transfer(rparams_[2]._address, for_); // transfer MetaForIds module
+      _transfer(token_config_[0]._address, for_); // transfer PollyToken module
+      _transfer(token_config_[1]._address, for_); // transfer MetaForIds module
+
+      rparams_[0]._address = token_config_[0]._address; // return PollyToken module
+      rparams_[1]._address = token_config_[1]._address; // return MetaForIds module
 
       return rparams_;
 

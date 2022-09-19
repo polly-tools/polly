@@ -23,7 +23,6 @@ contract Json is PMReadOnly {
 
   string public constant override PMNAME = 'Json';
   uint public constant override PMVERSION = 1;
-  string public constant override PMINFO = 'JSON | on-chain JSON parser';
 
   function encode(Item[] memory items_, Format format_) public pure returns(string memory){
 

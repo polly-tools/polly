@@ -34,14 +34,19 @@ abstract contract PollyAuxParent {
 
     PollyAux aux_;
     string[] memory hooks_;
-
-    for(uint i = 0; i < auxs_.length; i++) {
-      aux_ = PollyAux(auxs_[i]);
-      hooks_ = aux_.hooks();
-      for(uint j = 0; j < hooks_.length; j++) {
-        if(!_aux_locked[hooks_[j]])
-          _aux_hooks[hooks_[j]] = address(aux_);
+    address aux_address_;
+    uint i = 0;
+    while(i < auxs_.length) {
+      aux_address_ = auxs_[i];
+      if(aux_address_ != address(0)){
+        aux_ = PollyAux(aux_address_);
+        hooks_ = aux_.hooks();
+        for(uint j = 0; j < hooks_.length; j++) {
+          if(!_aux_locked[hooks_[j]])
+            _aux_hooks[hooks_[j]] = address(aux_);
+        }
       }
+      ++i;
     }
   }
 

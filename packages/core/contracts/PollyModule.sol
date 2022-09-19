@@ -2,9 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/access/IAccessControl.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Polly.sol";
 
 interface PollyModule {
@@ -12,10 +10,9 @@ interface PollyModule {
   function PMTYPE() external view returns(Polly.ModuleType);
   function PMNAME() external view returns(string memory);
   function PMVERSION() external view returns(uint);
-  function PMINFO() external view returns(string memory);
 
   // Clonable
-  function init(address for_, address implementation_) external;
+  function init(address for_) external;
   function didInit() external view returns(bool);
   function configurator() external view returns(address);
   function isManager(address address_) external view returns(bool);
@@ -36,7 +33,6 @@ abstract contract PMBase {
   function PMTYPE() external view virtual returns(Polly.ModuleType);
   function PMNAME() external view virtual returns(string memory);
   function PMVERSION() external view virtual returns(uint);
-  function PMINFO() external view virtual returns(string memory);
 
   // Configuration
   function _setConfigurator(address configurator_) internal {
@@ -74,11 +70,11 @@ abstract contract PMClone is PMBase {
 
   // Initialization
   constructor(){
-    init(msg.sender, address(this));
+    init(msg.sender);
   }
 
-  function init(address for_, address) public virtual {
-    require(!_did_init, 'CAN_NOT_INIT');
+  function init(address for_) public virtual {
+    require(!_did_init, 'ALREADY_INITIALIZED');
     _did_init = true;
     _grantRole('admin', for_);
     _grantRole('manager', for_);
@@ -90,6 +86,11 @@ abstract contract PMClone is PMBase {
 
 
   /// Access control
+
+  function _requireRole(string memory role_, address address_) internal view {
+    require(hasRole(role_, address_), string(abi.encodePacked('MISSING_ROLE: ', role_, ' - ', Strings.toHexString(uint160(address_), 20))));
+  }
+
   function owner() public view returns(address){
     return _owner;
   }
@@ -99,7 +100,8 @@ abstract contract PMClone is PMBase {
     _grantRole('admin', new_owner_);
   }
 
-  function setOwner(address new_owner_) public onlyRole('admin'){
+  function setOwner(address new_owner_) public {
+    _requireRole('admin', msg.sender);
     _setOwner(new_owner_);
   }
 
@@ -111,15 +113,18 @@ abstract contract PMClone is PMBase {
     _roles[to_][role_] = true;
   }
 
-  function grantRole(string memory role_, address to_) public onlyRole('admin') {
+  function grantRole(string memory role_, address to_) public {
+    _requireRole('admin', msg.sender);
     _grantRole(role_, to_);
   }
 
-  function revokeRole(string memory role_, address to_) public onlyRole('admin') {
+  function revokeRole(string memory role_, address to_) public {
+    _requireRole('admin', msg.sender);
     _roles[to_][role_] = false;
   }
 
-  function renounceRole(string memory role_) public onlyRole(role_){
+  function renounceRole(string memory role_) public {
+    _requireRole(role_, msg.sender);
     _roles[msg.sender][role_] = false;
   }
 

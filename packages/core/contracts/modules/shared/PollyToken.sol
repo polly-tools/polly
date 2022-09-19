@@ -1,10 +1,30 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
+import '@openzeppelin/contracts/utils/introspection/ERC165.sol';
 import '../../Polly.sol';
 import '../../PollyAux.sol';
 import '../MetaForIds.sol';
 
-contract PollyToken is PollyAuxParent {
+
+
+/// @title IERC2981Royalties
+/// @dev Interface for the ERC2981 - Token Royalty standard
+interface IERC2981Royalties {
+    /// @notice Called with the sale price to determine how much royalty
+    //          is owed and to whom.
+    /// @param id_ - the NFT asset queried for royalty information
+    /// @param value_ - the sale price of the NFT asset specified by id_
+    /// @return receiver_ - address of who should be sent the royalty payment
+    /// @return amount_ - the royalty payment amount for value sale price
+    function royaltyInfo(uint256 id_, uint256 value_)
+        external
+        view
+        returns (address receiver_, uint256 amount_);
+}
+
+
+
+contract PollyToken is PollyAuxParent, ERC165, IERC2981Royalties {
 
   struct Meta {
     string _key;
@@ -27,6 +47,7 @@ contract PollyToken is PollyAuxParent {
   function getMetaHandler() public view returns (MetaForIds) {
     return _meta;
   }
+
 
   /// @dev create a new token
   function _createToken(Meta[] memory meta_) internal returns (uint) {
@@ -105,7 +126,18 @@ contract PollyToken is PollyAuxParent {
 
 
 
-  /// Implement Royalty info
+  /// @dev get the royalty info
+  /// @param id_ the id of the token
+  /// @param value_ the value of the sale
+  function royaltyInfo(uint id_, uint value_) public view override returns (address receiver_, uint amount_) {
+
+    if(_hasHook('royaltyInfo')) {
+      return _getAux('royaltyInfo').royaltyInfo(address(this), id_, value_);
+    }
+
+    return (address(0), 0);
+
+  }
 
 
 
@@ -122,6 +154,13 @@ contract PollyToken is PollyAuxParent {
     }
   }
 
+
+  /// Override
+  function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool){
+      return interfaceId == type(IERC2981Royalties).interfaceId;
+  }
+
+
 }
 
 
@@ -135,10 +174,10 @@ abstract contract PollyTokenAux is PollyAux {
     "afterMint1155",
     "beforeMint721",
     "afterMint721",
-    "getToken",
     "tokenImage",
     "tokenURI",
-    "contractURI"
+    "contractURI",
+    "royaltyInfo"
   ];
 
 
@@ -151,6 +190,6 @@ abstract contract PollyTokenAux is PollyAux {
   function tokenImage(address parent_, uint id_) external view virtual returns (string memory){}
   function tokenURI(address parent_, uint id_) external view virtual returns (string memory){}
   function contractURI(address parent_) external view virtual returns (string memory){}
+  function royaltyInfo(address parent_, uint id_, uint value_) external view virtual returns (address receiver, uint royaltyAmount){}
 
 }
-

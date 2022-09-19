@@ -562,11 +562,6 @@
             "type": "uint256"
           },
           {
-            "internalType": "string",
-            "name": "info",
-            "type": "string"
-          },
-          {
             "internalType": "address",
             "name": "implementation",
             "type": "address"
@@ -616,11 +611,6 @@
             "internalType": "uint256",
             "name": "version",
             "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "info",
-            "type": "string"
           },
           {
             "internalType": "address",

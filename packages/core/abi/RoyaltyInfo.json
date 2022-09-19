@@ -1,16 +1,5 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "polly_",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "inputs": [],
     "name": "PMNAME",
     "outputs": [
@@ -166,7 +155,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "parent_",
         "type": "address"
       },
       {
@@ -271,7 +260,7 @@
         "type": "tuple[]"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -321,7 +310,7 @@
     ],
     "name": "beforeMint1155",
     "outputs": [],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -366,7 +355,7 @@
     ],
     "name": "beforeMint721",
     "outputs": [],
-    "stateMutability": "view",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -436,12 +425,12 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "receiver",
+        "name": "receiver_",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "royaltyAmount",
+        "name": "royalty_",
         "type": "uint256"
       }
     ],

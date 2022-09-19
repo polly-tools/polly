@@ -52,57 +52,25 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "didInit",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "role_",
-        "type": "string"
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "to_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount_",
+        "type": "uint256"
       }
     ],
-    "name": "grantRole",
+    "name": "requireValidAmount1155",
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "role_",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "check_",
-        "type": "address"
-      }
-    ],
-    "name": "hasRole",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -110,70 +78,110 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "for_",
+        "name": "parent_address_",
         "type": "address"
-      }
-    ],
-    "name": "init",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
+      },
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
       }
     ],
+    "name": "requireValidBlock",
+    "outputs": [],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "role_",
-        "type": "string"
-      }
-    ],
-    "name": "renounceRole",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "role_",
-        "type": "string"
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "to_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value_",
+        "type": "uint256"
       }
     ],
-    "name": "revokeRole",
+    "name": "requireValidPrice1155",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
       {
         "internalType": "address",
-        "name": "new_owner_",
+        "name": "parent_address_",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value_",
+        "type": "uint256"
       }
     ],
-    "name": "setOwner",
+    "name": "requireValidPrice721",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount_",
+        "type": "uint256"
+      }
+    ],
+    "name": "requireValidSupply1155",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "requireValidTime",
+    "outputs": [],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

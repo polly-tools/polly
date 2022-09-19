@@ -11,7 +11,6 @@ contract MetaForIds is PMClone {
   Json private _json_parser;
   string public constant override PMNAME = 'MetaForIds';
   uint public constant override PMVERSION = 1;
-  string public constant override PMINFO = 'Meta for IDs | storage and retrieval of metadata for uint IDs';
 
   struct Item {
     Json.Type _type;

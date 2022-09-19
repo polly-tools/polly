@@ -58,7 +58,6 @@ contract Polly is Ownable {
     struct Module {
       string name;
       uint version;
-      string info;
       address implementation;
       bool clone;
     }
@@ -168,10 +167,9 @@ contract Polly is Ownable {
       require(moduleExists(name_, version_), string(abi.encodePacked('INVALID_MODULE_OR_VERSION: ', name_, '@', Strings.toString(version_))));
 
       Polly.ModuleType type_ = PollyModule(_modules[name_][version_]).PMTYPE(); // get module info from stored implementation
-      string memory info_ = PollyModule(_modules[name_][version_]).PMINFO(); // get module info from stored implementation
       bool clone_ = type_ == Polly.ModuleType.CLONE;
 
-      return Module(name_, version_, info_, _modules[name_][version_], clone_); // return module
+      return Module(name_, version_, _modules[name_][version_], clone_); // return module
 
     }
 
@@ -294,7 +292,7 @@ contract Polly is Ownable {
       address implementation_ = _modules[name_][version_]; // get module implementation address
 
       PollyModule module_ = PollyModule(Clones.clone(implementation_)); // clone module implementation
-      module_.init(msg.sender, implementation_); // initialize module
+      module_.init(msg.sender); // initialize module
 
 
       emit moduleCloned(name_, name_, version_, address(module_)); // emit module cloned event

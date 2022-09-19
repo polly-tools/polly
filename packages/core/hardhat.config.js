@@ -3,12 +3,13 @@ require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
+require('solidity-coverage');
 require("@polly-os/hardhat-polly");
 require("./tasks.js");
 
 const accounts = require('./hhaccounts.js');
 accounts[0] = {privateKey: process.env.DEPLOYER_KEY, balance: '10000000000000000000000'};
-
+const accounts_keys = accounts.map(account => account.privateKey)
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -47,7 +48,7 @@ module.exports = {
   },
   gasReporter: {
     enabled: true,
-    // gasPrice: 70,
+    gasPrice: 25,
     currency: 'ETH',
     coinmarketcap: process.env.CMC_API_KEY
   },
@@ -70,15 +71,16 @@ module.exports = {
     },
     mainnet: {
       url: process.env.MAINNET_RPC_URL,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: accounts_keys,
     },
     goerli: {
       url: process.env.GOERLI_RPC_URL,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: accounts_keys,
     },
     localhost: {
+      gas: 10000000,
       url: process.env.LOCALHOST_RPC_URL,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: accounts_keys,
     }
   }
 };

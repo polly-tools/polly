@@ -61,13 +61,11 @@ extendEnvironment(async (hre) => {
       signer,
       ...o
     } = Object.assign({
-      for: owner.address,
       version: 0, // Latest version
       params: [], // No params
       store: true, // Store config in Polly
       configName: '', // No config name
-      signer: owner
-
+      signer: owner // Default signer
     }, options);
 
 

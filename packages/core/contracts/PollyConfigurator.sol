@@ -7,6 +7,16 @@ import './PollyModule.sol';
 
 abstract contract PollyConfigurator {
 
+  struct KeyStringValuePair {
+    string _key;
+    string _value;
+  }
+
+  struct KeyUintValuePair {
+    string _key;
+    uint _value;
+  }
+
   string internal constant ADMIN = 'admin';
   string internal constant MANAGER = 'manager';
 
@@ -51,5 +61,74 @@ abstract contract PollyConfigurator {
     m_.revokeRole(MANAGER, to_);
     m_.revokeRole(ADMIN, to_);
   }
+
+  function _json(string memory type_, string memory name_, string memory description_) internal pure returns(string memory){
+    return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '"}'));
+  }
+
+  function _json(string memory type_, string memory name_, string memory description_, string[] memory choices_) internal pure returns(string memory){
+
+    string memory choices_string_;
+    for(uint i = 0; i < choices_.length; i++){
+      choices_string_ = string(abi.encodePacked(choices_string_, '"', choices_[i], '"'));
+      if(i < choices_.length - 1){
+        choices_string_ = string(abi.encodePacked(choices_string_, ','));
+      }
+    }
+
+    return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '", "choices": [', choices_string_, ']}'));
+
+  }
+
+  function _json(string memory type_, string memory name_, string memory description_, uint[] memory choices_) internal pure returns(string memory){
+
+    string memory choices_string_;
+
+    for(uint i = 0; i < choices_.length; i++){
+      choices_string_ = string(abi.encodePacked(choices_string_, '"', Strings.toString(choices_[i]), '"'));
+      if(i < choices_.length - 1){
+        choices_string_ = string(abi.encodePacked(choices_string_, ','));
+      }
+    }
+
+    return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '", "choices": [', choices_string_, ']}'));
+
+  }
+
+  function _json(string memory type_, string memory name_, string memory description_, KeyStringValuePair[] memory choices_) internal pure returns(string memory){
+
+      string memory choices_string_;
+
+      for(uint i = 0; i < choices_.length; i++){
+        choices_string_ = string(abi.encodePacked(choices_string_, '{"', choices_[i]._key, '": "', choices_[i]._value, '"}'));
+        if(i < choices_.length - 1){
+          choices_string_ = string(abi.encodePacked(choices_string_, ','));
+        }
+      }
+
+      return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '", "choices": [', choices_string_, ']}'));
+
+  }
+
+
+    function _json(string memory type_, string memory name_, string memory description_, KeyUintValuePair[] memory choices_) internal pure returns(string memory){
+
+        string memory choices_string_;
+
+        for(uint i = 0; i < choices_.length; i++){
+          choices_string_ = string(abi.encodePacked(choices_string_, '{"', choices_[i]._key, '": ', Strings.toString(choices_[i]._value), '}'));
+          if(i < choices_.length - 1){
+            choices_string_ = string(abi.encodePacked(choices_string_, ','));
+          }
+        }
+
+        return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '", "choices": [', choices_string_, ']}'));
+
+    }
+
+
+
+
+
 
 }

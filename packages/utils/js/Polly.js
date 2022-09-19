@@ -20,7 +20,7 @@ const Param = {
   _address: '0x0000000000000000000000000000000000000000'
 }
 
-function parseParam(type, input){
+function parseParamType(type, input){
   const param = {...Param};
   if(type == Enums.ParamType.UINT)
     param._uint = input;
@@ -35,13 +35,13 @@ function parseParam(type, input){
   return param;
 }
 
-function param(input){
+function parseParam(input){
   let type;
   if(typeof input == 'string' && input.match(/^0x/)){
     type = Enums.ParamType.ADDRESS;
   }
   else
-  if(typeof input == 'integer'){
+  if(typeof input == 'number'){
     if(input < 0)
       type = Enums.ParamType.INT;
     else
@@ -56,10 +56,15 @@ function param(input){
     type = Enums.ParamType.STRING;
   }
 
-  return parseParam(type, input);
+  return parseParamType(type, input);
 
 }
 
+function parseParams(params){
+  return params.map(param => parseParam(param));
+}
+
+
 module.exports = {
-  Enums, parseParam, param, Param
+  Enums, Param, parseParamType, parseParam, parseParams
 }

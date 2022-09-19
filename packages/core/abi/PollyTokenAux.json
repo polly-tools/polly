@@ -362,6 +362,40 @@
         "internalType": "uint256",
         "name": "id_",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value_",
+        "type": "uint256"
+      }
+    ],
+    "name": "royaltyInfo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "royaltyAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
       }
     ],
     "name": "tokenImage",

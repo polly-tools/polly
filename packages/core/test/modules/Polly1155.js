@@ -1,7 +1,5 @@
 const { expect, config } = require("chai");
 const { ethers } = require("hardhat");
-const keccak256 = require('keccak256')
-const colors = require('colors');
 const {parseParam, Enums} = require('@polly-os/utils/js/Polly.js')
 
 const Format = {
@@ -23,7 +21,7 @@ const Type = {
  * CHAINS
  */
 
-describe("Polly1155 module", async function(){
+describe("Token1155 module", async function(){
 
     const nullAddress = '0x'+'0'.repeat(40);
 
@@ -46,9 +44,9 @@ describe("Polly1155 module", async function(){
       polly = await hre.polly.deploy();
       await hre.polly.addModule('Json');
       await hre.polly.addModule('MetaForIds');
-      await hre.polly.addModule('Polly1155');
+      await hre.polly.addModule('Token1155');
 
-      p1155 = await hre.polly.configureModule('Polly1155', {
+      p1155 = await hre.polly.configureModule('Token1155', {
         params: [
           parseParam(Enums.ParamType.ADDRESS, '0x0000000000000000000000000000000000000000'), // Pass an aux
         ]
