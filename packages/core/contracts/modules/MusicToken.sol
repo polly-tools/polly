@@ -312,34 +312,31 @@ contract MusicTokenConfigurator is PollyConfigurator {
   }
 
 
-  function inputs() public pure override returns(string[] memory){
+  function inputs() public pure override returns(Input[] memory){
 
-    string[] memory inputs_ = new string[](4);
+    Input[] memory inputs_ = new Input[](4);
 
     // Input one - Token type
-    KeyStringValuePair[] memory items_ = new KeyStringValuePair[](2);
-    items_[0]._key = 'ERC1155';
-    items_[0]._value = 'Token1155';
-    items_[1]._key = 'ERC721';
-    items_[1]._value = 'Token721';
-    inputs_[0] = _json('string', 'Token type', 'The token type to extend', items_);
+    // KeyStringValuePair[] memory items_ = new KeyStringValuePair[](2);
+    // items_[0]._key = 'ERC1155';
+    // items_[0]._value = 'Token1155';
+    // items_[1]._key = 'ERC721';
+    // items_[1]._value = 'Token721';
+    // inputs_[0] = _json('string', 'Token type', 'The token type to extend', items_);
 
-    // Input two - Royalities
-    inputs_[1] = _json('bool', 'Royalties', 'Enable royalties');
+    // // Input two - Royalities
+    // inputs_[1] = _json('bool', 'Royalties', 'Enable royalties');
+
+
+
+    return inputs_;
 
   }
 
 
-  function output() public pure returns(string[] memory){
+  function output() public pure returns(Output[] memory){
 
-    string[] memory outputs_ = new string[](2);
-
-
-    // outputs_[0] = _json('module', 'PollyToken', 'The Polly token address');
-
-    // outputs_[1]._type = 'module';
-    // outputs_[1]._name = 'MetaForIds';
-    // outputs_[1]._description = 'the address of the MetaForIds contract';
+    Output[] memory outputs_ = new Output[](2);
 
     return outputs_;
 

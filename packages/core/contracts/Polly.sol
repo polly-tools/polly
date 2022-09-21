@@ -30,12 +30,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PollyModule.sol";
 import "./PollyConfigurator.sol";
 import "./PollyFeeHandler.sol";
-import "hardhat/console.sol";
 
-/// @title Polly
+/// @title Polly main contract
 /// @author polly.tools
-/// @dev Stores and enables deployment of registered Polly module smart contracts
-/// @notice Polly allows anyone to deploy registered modules as proxy contracts onchain
 
 /**
  *
@@ -76,6 +73,7 @@ contract Polly is Ownable {
       Param[] params;
     }
 
+    /// @dev struct for a general type parameter
     struct Param {
       uint _uint;
       int _int;
@@ -85,8 +83,7 @@ contract Polly is Ownable {
     }
 
 
-    /// PROPERTIES ///
-
+    /// PRIVATE PROPERTIES ///
     string[] private _module_names; // names of registered modules
     mapping(string => mapping(uint => address)) private _modules; // mapping of registered modules and their versions - name => (id => implementation)
     uint private _module_count; // the total number of registered modules
@@ -100,7 +97,6 @@ contract Polly is Ownable {
 
 
     /// EVENTS ///
-
     event moduleUpdated(
       string indexed indexedName, string name, uint version, address indexed implementation
     );
@@ -114,7 +110,7 @@ contract Polly is Ownable {
     );
 
 
-    // CONSTRUCTOR ///
+    /// CONSTRUCTOR ///
 
     constructor() {
       _fee_handler = new PollyFeeHandler();
@@ -304,8 +300,8 @@ contract Polly is Ownable {
     /// @dev if a module is configurable run the configurator
     /// @param name_ string name of the module
     /// @param version_ uint version of the module
-    /// @param params_ Polly.Param[] array of configuration input parameters
-    /// @return rparams_ Polly.Param[] array of configuration return parameters
+    /// @param params_ array of configuration input parameters
+    /// @return rparams_ array of configuration return parameters
     function configureModule(string memory name_, uint version_, Polly.Param[] memory params_, bool store_, string memory config_name_) public payable returns(Polly.Param[] memory rparams_) {
 
       if(version_ == 0)
@@ -352,7 +348,7 @@ contract Polly is Ownable {
     /// @param address_ address of the user
     /// @param limit_ maximum number of configurations to return
     /// @param page_ page of configurations to return
-    /// @param ascending_ bool sort configurations ascending (true) or descending (false)
+    /// @param ascending_ sort configurations ascending (true) or descending (false)
     /// @return PollyConfigurator.Config[] array of configurations
     function getConfigsForAddress(address address_, uint limit_, uint page_, bool ascending_) public view returns(Config[] memory){
 

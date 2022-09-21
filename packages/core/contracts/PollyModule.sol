@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./Polly.sol";
 
+/// @dev full interface for a PollyModule
 interface PollyModule {
 
   function PMTYPE() external view returns(Polly.ModuleType);
