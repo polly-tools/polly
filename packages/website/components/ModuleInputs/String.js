@@ -1,5 +1,4 @@
 import Grid from "styled-components-grid";
-import {inputParam} from "@polly-os/utils/js/PollyConfigurator"
 
 export default function String({input, module, ...p}){
 
@@ -9,7 +8,12 @@ export default function String({input, module, ...p}){
 
     return <div>
         <label>{input.name}</label><br/>
-        <input type="text" onKeyUp={handleChange}/>
-        <small>{input.description}</small>
-        </div>
+        {input.values.length > 0 && <select onChange={handleChange}>
+            {input.values.map((value, index) => <option key={index} value={value.value}>{value.label}</option>)}
+        </select>}
+        {input.values.length == 0 && <><input type="text" onKeyUp={handleChange}/>
+          <small>{input.description}</small>
+        </>
+        }
+    </div>
 }

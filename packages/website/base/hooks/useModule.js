@@ -2,6 +2,7 @@ import useContract from "./useContract";
 import { useState, useEffect} from "react";
 import { usePolly } from "./usePolly";
 
+const nullAddress = '0x0000000000000000000000000000000000000000';
 
 export default function useModule(options = {}){
 
@@ -16,9 +17,11 @@ export default function useModule(options = {}){
     async function fetchModule(name, version){
         setFetching(true);
         const _module = await polly.read('getModule', {name_: name, version_: version}).then(res => res.result);
+        console.log(name, version, _module)
+        const hasConfigurator = await fetch(`/api/module/${name}/configurator`).then(res => res.json()).then(res => res.result != nullAddress ? true : false);
         setModule(_module)
 
-        if(_module.clonable){
+        if(hasConfigurator){
           const inputs = await fetch(`/api/module/${name}/configurator/inputs?version=${version}`).then(res => res.json()).then(res => res.result);
           const outputs = await fetch(`/api/module/${name}/configurator/outputs?version=${version}`).then(res => res.json()).then(res => res.result);
           setInputs(inputs)

@@ -21,6 +21,7 @@
     "keccak256": "^1.0.6"
   },
   "dependencies": {
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
     "@openzeppelin/contracts": "^4.4.1",
     "base64-sol": "^1.1.0",
     "colors": "^1.4.0",

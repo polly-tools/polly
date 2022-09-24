@@ -17,7 +17,7 @@ function getLibrary(provider){
 
 
 const GlobalStyle = createGlobalStyle`
-    
+
   body {
 
     font-family: ${theme.fonts[0].family};
@@ -31,6 +31,10 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     width: 100%;
     height: 100vh;
+
+    * {
+      box-sizing: border-box;
+    }
 
     > div {
       width: 100%;
@@ -100,6 +104,18 @@ const GlobalStyle = createGlobalStyle`
       color: ${theme.colors.text};
     }
 
+  }
+
+  select {
+    border: 0px solid ${theme.colors.text};
+    border-bottom-width: 2px;
+    background-color: transparent;
+    font-family: ${theme.fonts[0].family};
+    font-size: inherit;
+    padding: 1vw 0;
+    color: inherit;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   button {

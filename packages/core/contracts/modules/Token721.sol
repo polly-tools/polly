@@ -8,7 +8,7 @@ import '../PollyConfigurator.sol';
 import '../PollyAux.sol';
 import './shared/PollyToken.sol';
 import './Json.sol';
-import './MetaForIds.sol';
+import './Meta.sol';
 
 contract Token721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
 
@@ -29,32 +29,40 @@ contract Token721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
   */
 
   /// @dev create a new token
-  function createToken(PollyToken.Meta[] memory meta_, address[] memory mint_) public onlyRole('manager') returns (uint) {
+  function createToken(PollyToken.MetaEntry[] memory meta_, address[] memory mint_) public onlyRole('manager') returns (uint) {
 
     uint id_ = _createToken(meta_);
 
     for (uint i = 0; i < mint_.length; i++){
-      _mint(mint_[i], id_);
+      _mintFor(mint_[i], id_, true, PollyAux.Msg(msg.sender, 0, msg.data, msg.sig));
     }
 
     return id_;
 
   }
 
+  /// @dev mint a token
+  /// @param id_ the id of the token
+  function _mintFor(address for_, uint id_, bool pre_, PollyAux.Msg memory msg_) private {
+
+    if(_hasHook('beforeMint721'))
+      getAux('beforeMint721').beforeMint721(address(this), id_, pre_, msg_);
+
+    _mint(for_, id_);
+    _supply[id_] = 1;
+
+    if(_hasHook('afterMint721'))
+      getAux('afterMint721').afterMint721(address(this), id_, pre_, msg_);
+
+  }
+
+
+
 
   /// @dev mint a token
   /// @param id_ the id of the token
   function mint(uint id_) public payable nonReentrant {
-
-    if(_hasHook('beforeMint721'))
-      getAux('beforeMint721').beforeMint721(address(this), id_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
-
-    _mint(msg.sender, id_);
-    _supply[id_] = 1;
-
-    if(_hasHook('afterMint721'))
-      getAux('afterMint721').afterMint721(address(this), id_, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
-
+    _mintFor(msg.sender, id_, false, PollyAux.Msg(msg.sender, msg.value, msg.data, msg.sig));
   }
 
 
@@ -94,7 +102,7 @@ contract Token721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
     _setMetaHandler(handler_);
   }
 
-  function setMetaForId(uint id_, PollyToken.Meta[] memory meta_) public onlyRole('manager') {
+  function setMetaForId(uint id_, PollyToken.MetaEntry[] memory meta_) public onlyRole('manager') {
     _batchSetMetaForId(id_, meta_);
   }
 
@@ -128,7 +136,7 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
 
     string[] memory outputs_ = new string[](3);
     outputs_[0] = 'module.Token721.address of the Token721 contract';
-    outputs_[1] = 'module.MetaForIds.address of the MetaForIds contract';
+    outputs_[1] = 'module.Meta.address of the Meta contract';
     outputs_[2] = 'module.Token721Aux.address of the Token721Aux contract';
 
     return outputs_;
@@ -143,9 +151,9 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
     Token721 p721_ = Token721(polly_.cloneModule('Token721', 1));
     rparams_[0]._address = address(p721_);
 
-    // Configure a MetaForIds module
+    // Configure a Meta module
     Polly.Param[] memory meta_params_ = polly_.configureModule(
-      'MetaForIds', // module name
+      'Meta', // module name
       1, // version
       new Polly.Param[](0), // No inputs
       false, // Don't store

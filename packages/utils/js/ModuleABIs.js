@@ -1,5 +1,9 @@
-import Hello from '@polly-os/core/abi/Hello.json';
+import Token1155 from '@polly-os/core/abi/Token1155.json';
+import Token721 from '@polly-os/core/abi/Token721.json';
+import MusicToken from '@polly-os/core/abi/MusicToken.json';
 
 export default {
-    Hello
+    Token1155,
+    Token721,
+    MusicToken
 }

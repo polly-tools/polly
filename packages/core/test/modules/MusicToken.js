@@ -49,7 +49,7 @@ describe("MusicToken module", async function(){
 
       polly = await hre.polly.deploy();
       await hre.polly.addModule('Json');
-      await hre.polly.addModule('MetaForIds');
+      await hre.polly.addModule('Meta');
       await hre.polly.addModule('TokenUtils');
       await hre.polly.addModule('Token721');
       await hre.polly.addModule('Token1155');

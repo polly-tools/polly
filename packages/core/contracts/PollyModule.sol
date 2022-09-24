@@ -133,72 +133,72 @@ abstract contract PMClone is PMBase {
 }
 
 
-abstract contract PMCloneKeystore is PMClone {
+// abstract contract PMCloneKeystore is PMClone {
 
-  /// @dev arbitrary key-value parameters
-  struct Param {
-    uint _uint;
-    int _int;
-    bool _bool;
-    string _string;
-    address _address;
-  }
+//   /// @dev arbitrary key-value parameters
+//   struct Param {
+//     uint _uint;
+//     int _int;
+//     bool _bool;
+//     string _string;
+//     address _address;
+//   }
 
-  /// @dev locked keys
-  mapping(string => bool) private _locked_keys;
-  bool private _locked;
-  /// @dev parameters
-  mapping(string => Polly.Param) private _params;
+//   /// @dev locked keys
+//   mapping(string => bool) private _locked_keys;
+//   bool private _locked;
+//   /// @dev parameters
+//   mapping(string => Polly.Param) private _params;
 
-  /// @dev Locks a given key so that it can not be changed
-  /// @param key_ The key to lock
-  function lockKey(string memory key_) public onlyRole('admin'){
-    _locked_keys[key_] = true;
-  }
+//   /// @dev Locks a given key so that it can not be changed
+//   /// @param key_ The key to lock
+//   function lockKey(string memory key_) public onlyRole('admin'){
+//     _locked_keys[key_] = true;
+//   }
 
-  /// @dev Lock all keys so that they can not be changed
-  function lock() public onlyRole('admin'){
-    _locked = true;
-  }
+//   /// @dev Lock all keys so that they can not be changed
+//   function lock() public onlyRole('admin'){
+//     _locked = true;
+//   }
 
-  /// @dev Check if key is locked
-  /// @param key_ Key to check
-  /// @return bool true if key is locked, false otherwise
-  function isLockedKey(string memory key_) public view returns(bool) {
-    return _locked_keys[key_];
-  }
+//   /// @dev Check if key is locked
+//   /// @param key_ Key to check
+//   /// @return bool true if key is locked, false otherwise
+//   function isLockedKey(string memory key_) public view returns(bool) {
+//     return _locked_keys[key_];
+//   }
 
-  /// @dev Check if all keys are locked
-  /// @return bool true if all keys are locked, false otherwise
-  function isLocked() public view returns(bool) {
-    return _locked;
-  }
+//   /// @dev Check if all keys are locked
+//   /// @return bool true if all keys are locked, false otherwise
+//   function isLocked() public view returns(bool) {
+//     return _locked;
+//   }
 
-  /// @dev set param for key
-  /// @param key_ key
-  /// @param value_ value
-  function set(Polly.ParamType type_, string memory key_, Polly.Param memory value_) public onlyRole('manager'){
-    require(!isLocked(), 'ALL_KEYS_LOCKED');
-    require(!isLockedKey(key_), 'LOCKED_KEY');
-    if(type_ == Polly.ParamType.UINT){
-      _params[key_]._uint = value_._uint;
-    } else if(type_ == Polly.ParamType.INT){
-      _params[key_]._int = value_._int;
-    } else if(type_ == Polly.ParamType.BOOL){
-      _params[key_]._bool = value_._bool;
-    } else if(type_ == Polly.ParamType.STRING){
-      _params[key_]._string = value_._string;
-    } else if(type_ == Polly.ParamType.ADDRESS){
-      _params[key_]._address = value_._address;
-    }
-  }
+//   /// @dev set param for key
+//   /// @param key_ key
+//   /// @param value_ value
+//   function set(Polly.ParamType type_, string memory key_, Polly.Param memory value_) public onlyRole('manager'){
+//     require(!isLocked(), 'ALL_KEYS_LOCKED');
+//     require(!isLockedKey(key_), 'LOCKED_KEY');
+//     if(type_ == Polly.ParamType.UINT){
+//       _params[key_]._uint = value_._uint;
+//     } else if(type_ == Polly.ParamType.INT){
+//       _params[key_]._int = value_._int;
+//     } else if(type_ == Polly.ParamType.BOOL){
+//       _params[key_]._bool = value_._bool;
+//     } else if(type_ == Polly.ParamType.STRING){
+//       _params[key_]._string = value_._string;
+//     } else if(type_ == Polly.ParamType.ADDRESS){
+//       _params[key_]._address = value_._address;
+//     }
+//   }
 
-  /// @dev get param for key
-  /// @param key_ key
-  /// @return value
-  function get(string memory key_) public view returns(Polly.Param memory){
-    return _params[key_];
-  }
+//   /// @dev get param for key
+//   /// @param key_ key
+//   /// @return value
+//   function get(string memory key_) public view returns(Polly.Param memory){
+//     return _params[key_];
+//   }
 
 
-}
+// }

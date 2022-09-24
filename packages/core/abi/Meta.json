@@ -5,120 +5,6 @@
     "type": "constructor"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "previousAdminRole",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "newAdminRole",
-        "type": "bytes32"
-      }
-    ],
-    "name": "RoleAdminChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
-    ],
-    "name": "RoleGranted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
-    ],
-    "name": "RoleRevoked",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "DEFAULT_ADMIN_ROLE",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "MANAGER",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "PMINFO",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "PMNAME",
     "outputs": [
@@ -158,19 +44,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
-      }
-    ],
-    "name": "allowAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "configurator",
     "outputs": [
@@ -199,9 +72,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
       },
       {
         "internalType": "string",
@@ -209,7 +82,7 @@
         "type": "string"
       }
     ],
-    "name": "getAddressKey",
+    "name": "get",
     "outputs": [
       {
         "components": [
@@ -250,6 +123,83 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "getAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "getBool",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "getInt",
+    "outputs": [
+      {
+        "internalType": "int256",
+        "name": "",
+        "type": "int256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
         "components": [
           {
             "internalType": "enum Json.Type",
@@ -260,11 +210,6 @@
             "internalType": "string",
             "name": "_key",
             "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
           },
           {
             "internalType": "string",
@@ -296,44 +241,22 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
         "internalType": "string",
         "name": "key_",
         "type": "string"
       }
     ],
-    "name": "getKey",
+    "name": "getString",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "_uint",
-            "type": "uint256"
-          },
-          {
-            "internalType": "int256",
-            "name": "_int",
-            "type": "int256"
-          },
-          {
-            "internalType": "bool",
-            "name": "_bool",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct Polly.Param",
+        "internalType": "string",
         "name": "",
-        "type": "tuple"
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -342,17 +265,22 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
       }
     ],
-    "name": "getRoleAdmin",
+    "name": "getUint",
     "outputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "uint256",
         "name": "",
-        "type": "bytes32"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -361,13 +289,13 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "string",
+        "name": "role_",
+        "type": "string"
       },
       {
         "internalType": "address",
-        "name": "account",
+        "name": "to_",
         "type": "address"
       }
     ],
@@ -379,13 +307,13 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "string",
+        "name": "role_",
+        "type": "string"
       },
       {
         "internalType": "address",
-        "name": "account",
+        "name": "check_",
         "type": "address"
       }
     ],
@@ -416,12 +344,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
       }
     ],
-    "name": "isLockedAddress",
+    "name": "isLockedId",
     "outputs": [
       {
         "internalType": "bool",
@@ -435,9 +363,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
       },
       {
         "internalType": "string",
@@ -445,7 +373,7 @@
         "type": "string"
       }
     ],
-    "name": "isLockedAddressKey",
+    "name": "isLockedIdKey",
     "outputs": [
       {
         "internalType": "bool",
@@ -478,31 +406,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
       }
     ],
-    "name": "isManager",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
-      }
-    ],
-    "name": "lockAddress",
+    "name": "lockId",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -510,9 +419,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
       },
       {
         "internalType": "string",
@@ -520,7 +429,7 @@
         "type": "string"
       }
     ],
-    "name": "lockAddressKey",
+    "name": "lockIdKey",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -539,16 +448,24 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
       {
         "internalType": "address",
-        "name": "account",
+        "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "role_",
+        "type": "string"
       }
     ],
     "name": "renounceRole",
@@ -559,13 +476,13 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "string",
+        "name": "role_",
+        "type": "string"
       },
       {
         "internalType": "address",
-        "name": "account",
+        "name": "to_",
         "type": "address"
       }
     ],
@@ -577,9 +494,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "address_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
       },
       {
         "internalType": "string",
@@ -615,11 +532,80 @@
           }
         ],
         "internalType": "struct Polly.Param",
-        "name": "param_",
+        "name": "value_",
         "type": "tuple"
       }
     ],
-    "name": "setAddressKey",
+    "name": "set",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "value_",
+        "type": "address"
+      }
+    ],
+    "name": "setAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "value_",
+        "type": "bool"
+      }
+    ],
+    "name": "setBool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "int256",
+        "name": "value_",
+        "type": "int256"
+      }
+    ],
+    "name": "setInt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -640,44 +626,12 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "_uint",
-            "type": "uint256"
-          },
-          {
-            "internalType": "int256",
-            "name": "_int",
-            "type": "int256"
-          },
-          {
-            "internalType": "bool",
-            "name": "_bool",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct Polly.Param",
-        "name": "param_",
-        "type": "tuple"
+        "internalType": "address",
+        "name": "new_owner_",
+        "type": "address"
       }
     ],
-    "name": "setKey",
+    "name": "setOwner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -685,20 +639,65 @@
   {
     "inputs": [
       {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
-    ],
-    "name": "supportsInterface",
-    "outputs": [
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "value_",
+        "type": "string"
       }
     ],
-    "stateMutability": "view",
+    "name": "setString",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value_",
+        "type": "uint256"
+      }
+    ],
+    "name": "setUint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "wipeKey",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

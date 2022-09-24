@@ -76,59 +76,59 @@ contract TestCloneConfigurator is PollyConfigurator {
 
 
 
-contract TestCloneKeystore is PMCloneKeystore {
+// abstract contract TestCloneKeystore is PMCloneKeystore {
 
-  string public constant override PMNAME = 'TestCloneKeystore';
-  uint public constant override PMVERSION = 1;
+//   string public constant override PMNAME = 'TestCloneKeystore';
+//   uint public constant override PMVERSION = 1;
 
-  constructor() PMCloneKeystore(){
-    _setConfigurator(address(new TestCloneKeystoreConfigurator()));
-  }
+//   constructor(Polly polly_) PMCloneKeystore(){
+//     _setConfigurator(address(new TestCloneKeystoreConfigurator()));
+//   }
 
-  function readValue() public view returns(uint) {
-    return get('value')._uint;
-  }
+//   function readValue() public view returns(uint) {
+//     return get('value')._uint;
+//   }
 
-  function writeValue(uint value_) public {
-    Polly.Param memory param_;
-    param_._uint = value_;
-    set(Polly.ParamType.UINT, 'value', param_);
-  }
+//   function writeValue(uint value_) public {
+//     Polly.Param memory param_;
+//     param_._uint = value_;
+//     set(Polly.ParamType.UINT, 'value', param_);
+//   }
 
-}
+// }
 
 
-contract TestCloneKeystoreConfigurator is PollyConfigurator {
+// contract TestCloneKeystoreConfigurator is PollyConfigurator {
 
-  function inputs() public pure override returns (string[] memory) {
-    /// Inputs
-    string[] memory inputs_ = new string[](1);
-    inputs_[0] = "uint | Value | What value do you want to write?";
-    return inputs_;
-  }
+//   function inputs() public pure override returns (string[] memory) {
+//     /// Inputs
+//     string[] memory inputs_ = new string[](1);
+//     inputs_[0] = "uint | Value | What value do you want to write?";
+//     return inputs_;
+//   }
 
-  function outputs() public pure override returns (string[] memory) {
-    /// outputs
-    string[] memory outputs_ = new string[](1);
-    outputs_[0] = "module | TestCloneKeystore | The address of the TestCloneKeystore module clone";
-    return outputs_;
-  }
+//   function outputs() public pure override returns (string[] memory) {
+//     /// outputs
+//     string[] memory outputs_ = new string[](1);
+//     outputs_[0] = "module | TestCloneKeystore | The address of the TestCloneKeystore module clone";
+//     return outputs_;
+//   }
 
-  function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override payable returns(Polly.Param[] memory){
+//   function run(Polly polly_, address for_, Polly.Param[] memory inputs_) public override payable returns(Polly.Param[] memory){
 
-    // Clone a TestClone module
-    TestCloneKeystore testCloneKeystore_ = TestCloneKeystore(polly_.cloneModule('TestCloneKeystore', 1));
-    // Set the uint with key "value" to 1
-    testCloneKeystore_.set(Polly.ParamType.UINT, 'value', inputs_[0]);
+//     // Clone a TestClone module
+//     TestCloneKeystore testCloneKeystore_ = TestCloneKeystore(polly_.cloneModule('TestCloneKeystore', 1));
+//     // Set the uint with key "value" to 1
+//     testCloneKeystore_.set(Polly.ParamType.UINT, 'value', inputs_[0]);
 
-    // Grant roles to the address calling the configurator
-    _transfer(address(testCloneKeystore_), for_);
+//     // Grant roles to the address calling the configurator
+//     _transfer(address(testCloneKeystore_), for_);
 
-    // Return the cloned module as part of the return parameters
-    Polly.Param[] memory return_ = new Polly.Param[](1);
-    return_[0]._address = address(testCloneKeystore_);
-    return return_;
+//     // Return the cloned module as part of the return parameters
+//     Polly.Param[] memory return_ = new Polly.Param[](1);
+//     return_[0]._address = address(testCloneKeystore_);
+//     return return_;
 
-  }
+//   }
 
-}
+// }

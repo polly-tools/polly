@@ -5,7 +5,7 @@ pragma solidity ^0.8.4;
 import "../Polly.sol";
 import "../PollyModule.sol";
 import "./shared/PollyToken.sol";
-import "./MetaForIds.sol";
+import "./Meta.sol";
 import "./Token1155.sol";
 import "./Token721.sol";
 
@@ -21,7 +21,7 @@ contract TokenUtils is PMReadOnly {
     view
   {
     PollyToken parent_ = PollyToken(parent_address_);
-    MetaForIds meta_ = parent_.getMetaHandler();
+    Meta meta_ = parent_.getMetaHandler();
     uint min_time_ = meta_.getUint(id_, "min_time");
     uint max_time_ = meta_.getUint(id_, "max_time");
 
@@ -41,7 +41,7 @@ contract TokenUtils is PMReadOnly {
     view
   {
     PollyToken parent_ = PollyToken(parent_address_);
-    MetaForIds meta_ = parent_.getMetaHandler();
+    Meta meta_ = parent_.getMetaHandler();
     uint min_block_ = meta_.getUint(id_, "min_block");
     uint max_block_ = meta_.getUint(id_, "max_block");
 
@@ -61,7 +61,7 @@ contract TokenUtils is PMReadOnly {
   {
 
     Token1155 parent_ = Token1155(parent_address_);
-    MetaForIds meta_ = parent_.getMetaHandler();
+    Meta meta_ = parent_.getMetaHandler();
     uint max_supply_ = meta_.getUint(id_, "max_supply");
     if(max_supply_ > 0){
       uint supply_ = parent_.totalSupply(id_);
@@ -78,7 +78,7 @@ contract TokenUtils is PMReadOnly {
   {
 
     Token1155 parent_ = Token1155(parent_address_);
-    MetaForIds meta_ = parent_.getMetaHandler();
+    Meta meta_ = parent_.getMetaHandler();
     uint max_mint_ = meta_.getUint(id_, "max_mint");
     if(max_mint_ > 0)
       require(max_mint_ >= amount_, 'MAX_MINT_REACHED');
@@ -93,7 +93,7 @@ contract TokenUtils is PMReadOnly {
   {
 
     Token1155 parent_ = Token1155(parent_address_);
-    MetaForIds meta_ = parent_.getMetaHandler();
+    Meta meta_ = parent_.getMetaHandler();
     uint min_price_ = meta_.getUint(id_, "min_price");
     if(min_price_ > 0)
       require(value_ >= (amount_*min_price_), 'INVALID_PRICE');
@@ -107,7 +107,7 @@ contract TokenUtils is PMReadOnly {
   {
 
     Token721 parent_ = Token721(parent_address_);
-    MetaForIds meta_ = parent_.getMetaHandler();
+    Meta meta_ = parent_.getMetaHandler();
     uint min_price_ = meta_.getUint(id_, "min_price");
     if(min_price_ > 0)
       require(value_ >= min_price_, 'INVALID_PRICE');

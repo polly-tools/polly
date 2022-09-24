@@ -1,11 +1,11 @@
 import { ethers } from "ethers";
-import ABIAPI from 'abiapi';
+import ABIAPI from '@polly-os/abiapi';
 import { getProvider } from "base/provider";
 import { isArray, isObject} from 'lodash';
 import getBaseUrl from 'base/url';
 import { parseConfig } from "base/utils";
 import ModuleABIs from '@polly-os/utils/js/ModuleABIs';
-
+import getQuery from 'base/api/getQuery';
 
 // NUMBER PARSER
 function bigNumbersToNumber(value){
@@ -44,7 +44,7 @@ function moduleParser(module){
 export default async (req, res) => {
 
     const data = {};
-    const {name, address, method, version, ...query} = req.query;
+    const {name, address, method, version, ...query} = getQuery(req);
 
     const moduleABI = ModuleABIs[name];
     const abi = new ABIAPI(moduleABI);

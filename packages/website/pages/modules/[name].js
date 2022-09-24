@@ -20,6 +20,7 @@ import moduleMDX from "mdx/modules"
 import useModule from "base/hooks/useModule";
 import ModuleInterface, { ModuleInterfaceProvider, useModuleInterface } from "components/ModuleInterface/ModuleInterface";
 
+const nullAddress = '0x0000000000000000000000000000000000000000';
 
 function etherscanLink(append_){
     if(process.env.NEXT_PUBLIC_NETWORK_ID == 5)
@@ -38,14 +39,32 @@ function hyphenToCC(string){
     }));
 }
 
-export async function handleClone(polly, name, version, params, store, configName){
-    // console.log('handleClone', name, version, params, store, polly);
+export async function handleConfigure(account, polly, name, version, params, store, configName){
+
+
+    const conf_fee = await polly.read('getConfiguratorFee', {
+      for_: account,
+      name_: name,
+      version_: version,
+      params_: params
+    }).then(fee => fee.result)
+
+    const fee = await polly.read('fee', {
+      for_: account,
+      value_: conf_fee
+    }).then(fee => fee.result)
+
+    console.log('conf_fee', conf_fee)
+    console.log('fee', fee)
+
     await polly.write('configureModule', {
         name_: name,
         version_: version,
         params_: params,
         store_: store,
         configName_: configName
+    }, {
+      value: fee+conf_fee
     });
 }
 
@@ -56,6 +75,7 @@ export function DeployModuleScreen(p){
     const [configName, setConfigName] = useState('');
     const {module, inputs, outputs, userInputs} = useModuleInterface();
     const {setConnectIntent} = useConnectIntent();
+
 
     return <Modal show={p.show}>
 
@@ -80,7 +100,7 @@ export function DeployModuleScreen(p){
                     {label: 'Cancel', callback: () => p.onCancel()},
                     {label: account ? 'Deploy' : 'Connect to deploy', cta: true, callback: () => {
                         if(account)
-                            handleClone(p.polly, module.name, module.version, userInputs, true, configName)
+                            handleConfigure(account, p.polly, module.name, module.version, userInputs, true, configName)
                         else
                             setConnectIntent(true);
                     }
@@ -102,28 +122,28 @@ export default function Module(p){
     const polly = usePolly();
     const [showCloneScreen, setShowCloneScreen] = useState(false);
 
-    const MDX = moduleMDX[p.name];
+    const MDX = moduleMDX[p.name] ? moduleMDX[p.name] : false;
 
     return <Page header>
         <Grid>
             <Grid.Unit size={1/1}>
 
             <h1 className="compact">{p.name}</h1>
-            <small>v{p.version} | {p.clone ? <a href="#" onClick={() => setShowCloneScreen(true)}>CLONE</a> : 'READ-ONLY'} | <a href={etherscanLink(p.implementation)} target="_blank">CODE</a></small>
+            <small>v{p.version} | {p.configurator && <><a href="#" onClick={() => setShowCloneScreen(true)}>CONFIGURE</a> | </>} <a href={etherscanLink(p.implementation)} target="_blank">CODE</a></small>
             <br/>
             <br/>
             <p>{p.info}</p>
 
             </Grid.Unit>
             <Grid.Unit size={1/1}>
-            {p.clone &&
+            {p.configurator &&
             <ModuleInterfaceProvider name={p.name}>
                 <DeployModuleScreen polly={polly} onCancel={() => setShowCloneScreen(false)} show={showCloneScreen}/>
             </ModuleInterfaceProvider>
             }
             </Grid.Unit>
             <Grid.Unit>
-                {module && <MDX {...p}/>}
+                {MDX && <MDX {...p}/>}
             </Grid.Unit>
 
         </Grid>
@@ -143,17 +163,22 @@ export async function getStaticProps({params}){
     );
 
     const moduleContract = new ethers.Contract(module.implementation, moduleABI, provider);
-    const configContract = new ethers.Contract(await moduleContract.configurator(), configABI, provider);
-    const inputs = await configContract.inputs();
-    const outputs = await configContract.outputs();
+    const configurator = await moduleContract.configurator()
+    let inputs = [];
+    let outputs = [];
+    if(configurator != nullAddress){
+      const configContract = new ethers.Contract(configurator, configABI, provider);
+      inputs = await configContract.inputs();
+      outputs = await configContract.outputs();
+    }
 
     return {
         props: {
             name: module.name,
-            info: module.info,
             version: module.version.toNumber(),
             clone: module.clone,
             implementation: module.implementation,
+            configurator: configurator != nullAddress ? configurator : false,
             inputs: inputs,
             outputs: outputs,
         }

@@ -20,7 +20,7 @@ const Type = {
  * CHAINS
  */
 
-describe("MetaForIds module", async function(){
+describe("Meta module", async function(){
 
     const nullAddress = '0x'+'0'.repeat(40);
 
@@ -40,7 +40,7 @@ describe("MetaForIds module", async function(){
       [owner, user1, user2, user3] = await ethers.getSigners();
       polly = await hre.polly.deploy();
       await hre.polly.addModule('Json');
-      await hre.polly.addModule('MetaForIds');
+      await hre.polly.addModule('Meta');
     })
 
     // it("Use forked Polly", async function(){
@@ -58,18 +58,18 @@ describe("MetaForIds module", async function(){
     // })
 
 
-    // it("Add MetaForIds module to Polly", async function () {
+    // it("Add Meta module to Polly", async function () {
 
-    //     // MetaForIds
-    //     const MetaForIds = await ethers.getContractFactory("MetaForIds");
-    //     meta = await MetaForIds.deploy();
+    //     // Meta
+    //     const Meta = await ethers.getContractFactory("Meta");
+    //     meta = await Meta.deploy();
     //     await meta.deployed();
     //     expect(meta.address).to.be.properAddress;
 
 
     //     // Add meta handler to Polly
     //     await polly.updateModule(meta.address);
-    //     const meta_module = await polly.getModule("MetaForIds", 1);
+    //     const meta_module = await polly.getModule("Meta", 1);
     //     expect(meta_module.implementation).to.be.properAddress;
 
     // })
@@ -92,9 +92,9 @@ describe("MetaForIds module", async function(){
 
     it('Configure module', async function(){
 
-        // Configure MetaForIds
+        // Configure Meta
         const tx = await polly.configureModule(
-          'MetaForIds', // Name
+          'Meta', // Name
           0, // Latest version
           [], // No params
           true, // Store config in Polly
@@ -109,7 +109,7 @@ describe("MetaForIds module", async function(){
 
         const config = await polly.getConfigsForAddress(owner.address, 1, 1, false);
         expect(config[0].params[0]._address).to.be.properAddress;
-        meta = await ethers.getContractAt('MetaForIds', config[0].params[0]._address);
+        meta = await ethers.getContractAt('Meta', config[0].params[0]._address);
 
     });
 

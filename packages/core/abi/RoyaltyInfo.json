@@ -74,6 +74,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "bool",
+        "name": "pre_",
+        "type": "bool"
+      },
+      {
         "components": [
           {
             "internalType": "address",
@@ -117,6 +122,11 @@
         "internalType": "uint256",
         "name": "id_",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "pre_",
+        "type": "bool"
       },
       {
         "components": [
@@ -203,7 +213,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken.Meta[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "meta_",
         "type": "tuple[]"
       }
@@ -255,7 +265,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken.Meta[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -279,6 +289,11 @@
         "internalType": "uint256",
         "name": "amount_",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "pre_",
+        "type": "bool"
       },
       {
         "components": [
@@ -324,6 +339,11 @@
         "internalType": "uint256",
         "name": "id_",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "pre_",
+        "type": "bool"
       },
       {
         "components": [

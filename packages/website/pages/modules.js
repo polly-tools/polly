@@ -8,6 +8,25 @@ import {paramCase} from 'param-case'
 import Link from 'next/link'
 
 
+import styled from 'styled-components';
+import GridUnit from 'styled-components-grid/dist/cjs/mixins/gridUnit';
+
+const ModuleCard = styled.a`
+  display: block;
+  width: 100%;
+  color: #fff;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 10px;
+  background: ${p => p.theme.colors.main};
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  &:hover {
+
+  }
+`
+
 export default function Modules(p){
 
     const [modules, setModules] = useState(-1);
@@ -21,7 +40,7 @@ export default function Modules(p){
 
 
     useEffect(() => {
-        
+
         if(polly){
             setModules(-1);
             polly.read('getModules', {page_: 1, limit_: 50, ascending_: false}).then(response => {
@@ -38,22 +57,19 @@ export default function Modules(p){
         <Grid.Unit size={{sm: 1/1}} style={{marginBottom: '7em'}}>
             <h2>Modules</h2>
             {modules === -1 && <div>Loading...</div>}
+            <Grid>
             {modules.length > 0 && modules.map((module, index) => {
-                return <div key={index}>
-                    ________________________________
-                    <br/><br/>
-                    <div>
-                        <Link href={`/modules/${paramCase(module.name)}`}>
-                            <a>
-                                {module.name}
-                            </a>                        
-                        </Link>
-                        <br/>
-                        <small>v{module.version} | {module.clonable ? 'CLONABLE' : 'READ-ONLY'}</small>
-                        
-                    </div>
-                </div>
-            })}
+                return <Grid.Unit size={1/4} href={`/modules/${paramCase(module.name)}`} key={index}>
+                  <Link href={`/modules/${paramCase(module.name)}`}>
+                    <ModuleCard>
+                      {module.name}
+                    <br/>
+                    <small>v{module.version} | {module.clonable ? 'CLONABLE' : 'READ-ONLY'}</small>
+                    </ModuleCard>
+                  </Link>
+              </Grid.Unit>
+              })}
+            </Grid>
         </Grid.Unit>
     </Page>
 

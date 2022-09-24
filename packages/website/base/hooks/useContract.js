@@ -41,32 +41,39 @@ export default function useContract(options){
 
 
     async function read(method, args = false, controller = false){
+
         const {endpoint} = options;
-        let req = `${endpoint}/${method}`;
-        if(args){
-            let query = '?';
-            let first = true;
-            for (const key in args) {
+        const req = `${endpoint}/${method}`;
 
-                if (Object.hasOwnProperty.call(args, key)) {
-
-                    if(first){
-                        first = false;
-                    }
-                    else {
-                        query += '&';
-                    }
-
-                    query += key+'='+args[key];
-                }
-            }
-
-            req = req+query;
-        }
-
-        return await fetch(req, controller ? {signal: controller.signal} : null).then(req => req.json());
+        return _readGET(req, args, controller).then(res => res.json());
 
     }
+
+    function _readPOST(req, args = false, controller = false){
+
+      return fetch(req, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(args),
+        signal: controller ? controller.signal : null,
+      })
+
+    }
+
+    function _readGET(req, args = false, controller = false){
+
+      if(args)
+        req = req+'?data='+encodeURIComponent(JSON.stringify(args));
+
+      return fetch(req, {
+        method: 'GET',
+        signal: controller ? controller.signal : null,
+      })
+
+    }
+
 
 
     async function write(method, args, extra = null){

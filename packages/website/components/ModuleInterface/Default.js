@@ -2,7 +2,7 @@ import ModuleInput from "components/ModuleInputs/ModuleInput";
 import { useEffect } from "react";
 import { useModuleInterface } from "./ModuleInterface";
 
-export function HelloCreate(p){
+export function DefaultCreate(p){
 
     const {module, inputs, setUserInput} = useModuleInterface();
 
@@ -11,8 +11,8 @@ export function HelloCreate(p){
     </>
 }
 
-export function HelloEdit(p){
+export function DefaultEdit(p){
     return <div style={{marginBottom: '1em'}}>
-        HelloEdit
+        DefaultEdit
     </div>
 }

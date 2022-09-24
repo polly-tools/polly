@@ -50,13 +50,13 @@ const Buttons = styled.div`
     justify-content: ${p => p.position ? p.position : 'flex-end'};
     justify-items: ${p => p.position ? p.position : 'flex-end'};
     width: 100%;
-    
+
 `
 
 export const ModalActions = function({actions, ...p}){
 
     return <Buttons {...p}>
-        {actions && actions.map(action => <Button invertColors={action.cta} onClick={action.callback}>{action.label}</Button>)}
+        {actions && actions.map((action, index) => <Button key={index} invertColors={action.cta} onClick={action.callback}>{action.label}</Button>)}
     </Buttons>
 
 }

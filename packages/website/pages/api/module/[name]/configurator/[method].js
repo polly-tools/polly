@@ -1,9 +1,10 @@
 import configABI from '@polly-os/core/abi/PollyConfigurator.json';
 import { ethers } from "ethers";
-import ABIAPI from 'abiapi';
+import ABIAPI from '@polly-os/abiapi';
 import { getProvider } from "base/provider";
 import { isArray, isObject } from 'lodash';
 import getBaseUrl from 'base/url';
+import getQuery from 'base/api/getQuery';
 
 const abi = new ABIAPI(configABI);
 abi.supportedMethods = abi.getReadMethods();
@@ -35,7 +36,7 @@ abi.addGlobalParser(bigNumbersToNumber)
 
 function parseInputsOutputs(param){
 
-    const parts = param.split('|').map(part => part.trim());
+    const parts = param.split('||').map(part => part.trim());
 
     if(parts.length < 2){
         return false;
@@ -44,7 +45,16 @@ function parseInputsOutputs(param){
     return {
         type: parts[0],
         name: parts[1],
-        description: parts[2]
+        description: parts[2],
+        values: parts[3] ? parts[3].split(',').map(value => {
+
+          const parts = value.split(':');
+          return {
+            label: parts[1],
+            value: parts[0]
+          }
+
+        }) : []
     }
 }
 
@@ -81,7 +91,8 @@ abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => conf
 export default async (req, res) => {
 
     const data = {};
-    const {name, method, version, ...query} = req.query;
+    const {name, method, version, ...query} = getQuery(req);
+
 
     const configurator = await fetch(`${getBaseUrl()}/api/module/${name}/configurator?version_=${version ? version : 0}`).then(res => res.json()).then(res => res.result);
 

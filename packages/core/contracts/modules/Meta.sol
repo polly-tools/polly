@@ -6,10 +6,10 @@ import '../PollyConfigurator.sol';
 import './Json.sol';
 
 
-contract MetaForIds is PMClone {
+contract Meta is PMClone {
 
   Json private _json_parser;
-  string public constant override PMNAME = 'MetaForIds';
+  string public constant override PMNAME = 'Meta';
   uint public constant override PMVERSION = 1;
 
   struct Item {
@@ -29,7 +29,7 @@ contract MetaForIds is PMClone {
   }
 
   constructor() PMClone(){
-    _setConfigurator(address(new MetaForIdsConfigurator()));
+    _setConfigurator(address(new MetaConfigurator()));
   }
 
   function setJsonParser(address json_parser) public onlyManager {
@@ -201,21 +201,12 @@ contract MetaForIds is PMClone {
 }
 
 
-contract MetaForIdsConfigurator is PollyConfigurator {
-
-  function inputs() public pure override returns (string[] memory) {
-
-    string[] memory outputs_ = new string[](1);
-    outputs_[0] = "module | MetaForIds | the meta module";
-
-    return outputs_;
-
-  }
+contract MetaConfigurator is PollyConfigurator {
 
   function outputs() public pure override returns (string[] memory) {
 
     string[] memory outputs_ = new string[](1);
-    outputs_[0] = "module | MetaForIds | the meta module";
+    outputs_[0] = "module || Meta || address of the Meta module clone";
 
     return outputs_;
 
@@ -223,8 +214,8 @@ contract MetaForIdsConfigurator is PollyConfigurator {
 
   function run(Polly polly_, address for_, Polly.Param[] memory) public override payable returns(Polly.Param[] memory){
 
-    // Clone a MetaForIds module)
-    MetaForIds meta_ = MetaForIds(polly_.cloneModule('MetaForIds', 1));
+    // Clone a Meta module)
+    Meta meta_ = Meta(polly_.cloneModule('Meta', 1));
 
     // Set the json module to use
     meta_.setJsonParser(polly_.getModule('Json', 1).implementation);

@@ -43,7 +43,7 @@ describe("Token1155 module", async function(){
 
       polly = await hre.polly.deploy();
       await hre.polly.addModule('Json');
-      await hre.polly.addModule('MetaForIds');
+      await hre.polly.addModule('Meta');
       await hre.polly.addModule('Token1155');
 
       p1155 = await hre.polly.configureModule('Token1155', {

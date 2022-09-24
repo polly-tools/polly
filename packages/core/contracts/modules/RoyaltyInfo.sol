@@ -27,7 +27,7 @@ contract RoyaltyInfo is PMReadOnly, PollyTokenAux {
 
   function royaltyInfo(address parent_, uint id_, uint value_) public view override returns (address receiver_, uint royalty_) {
 
-    MetaForIds meta_ = PollyToken(parent_).getMetaHandler();
+    Meta meta_ = PollyToken(parent_).getMetaHandler();
 
     uint base_ = meta_.getUint(id_, 'royalty_base');
     receiver_ = meta_.getAddress(id_, 'royalty_recipient');

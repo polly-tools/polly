@@ -32,24 +32,26 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
     "tokenURI"
   ];
 
-  constructor(address polly_){
+  constructor(address polly_address_) {
+
+    _setConfigurator(address(new MusicTokenConfigurator()));
+
+    Polly polly_ = Polly(polly_address_);
 
     _json = Json(
-      Polly(polly_)
+      polly_
       .getModule('Json', 1)
       .implementation
     );
 
     _utils = TokenUtils(
-      Polly(polly_)
+      polly_
       .getModule('TokenUtils', 1)
       .implementation
     );
 
+
     _schema = new MusicTokenSchema();
-
-    _setConfigurator(address(new MusicTokenConfigurator()));
-
   }
 
 
@@ -64,28 +66,31 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
 
 
   /// @dev internal function to run on beforeMint1155 and beforeMint721
-  function _beforeMint(address parent_, uint id_, PollyAux.Msg memory msg_) private view {
+  function _beforeMint(address parent_, uint id_, bool pre_, PollyAux.Msg memory msg_) private view {
     require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
-    _utils.requireValidTime(parent_, id_);
+    if(!pre_)
+      _utils.requireValidTime(parent_, id_);
   }
 
 
-  function beforeMint1155(address parent_, uint id_, uint amount_, PollyAux.Msg memory msg_) public view override {
+  function beforeMint1155(address parent_, uint id_, uint amount_, bool pre_, PollyAux.Msg memory msg_) public view override {
 
-    _beforeMint(parent_, id_, msg_);
+    _beforeMint(parent_, id_, pre_, msg_);
 
     _utils.requireValidSupply1155(parent_, id_, amount_);
     _utils.requireValidAmount1155(parent_, id_, amount_);
-    _utils.requireValidPrice1155(parent_, id_, amount_, msg_._value);
+    if(!pre_)
+      _utils.requireValidPrice1155(parent_, id_, amount_, msg_._value);
 
   }
 
-  function beforeMint721(address parent_, uint id_, PollyAux.Msg memory msg_) public view override {
-    _beforeMint(parent_, id_, msg_);
-    _utils.requireValidPrice721(parent_, id_, msg_._value);
+  function beforeMint721(address parent_, uint id_, bool pre_, PollyAux.Msg memory msg_) public view override {
+    _beforeMint(parent_, id_, pre_, msg_);
+    if(!pre_)
+      _utils.requireValidPrice721(parent_, id_, msg_._value);
   }
 
-  function beforeCreateToken(address, uint id_, PollyToken.Meta[] memory meta_) public pure override returns(uint, PollyToken.Meta[] memory){
+  function beforeCreateToken(address, uint id_, PollyToken.MetaEntry[] memory meta_) public pure override returns(uint, PollyToken.MetaEntry[] memory){
     require(meta_.length > 0, 'EMPTY_META');
     return (id_, meta_);
   }
@@ -95,7 +100,7 @@ contract MusicToken is PMReadOnly, PollyTokenAux {
 
     require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
 
-    MetaForIds meta_ = PollyToken(parent_).getMetaHandler();
+    Meta meta_ = PollyToken(parent_).getMetaHandler();
 
     if(!_stringIsEmpty(meta_.getString(id_, 'metadata_uri')))
       return meta_.getString(id_, 'metadata_uri');
@@ -257,7 +262,7 @@ contract MusicTokenSchema {
 
   }
 
-  function populate(uint id_, PollyToken token_, MetaForIds meta_) public view returns(Json.Item[] memory){
+  function populate(uint id_, PollyToken token_, Meta meta_) public view returns(Json.Item[] memory){
 
     Json.Item[] memory items_ = get();
 
@@ -312,9 +317,11 @@ contract MusicTokenConfigurator is PollyConfigurator {
   }
 
 
-  function inputs() public pure override returns(Input[] memory){
+  function inputs() public pure override returns(string[] memory){
 
-    Input[] memory inputs_ = new Input[](4);
+    string[] memory inputs_ = new string[](4);
+
+    inputs_[0] = 'string || Token type || The type of token standard to use for this MusicToken || Token1155:ERC1155,Token721:ERC721';
 
     // Input one - Token type
     // KeyStringValuePair[] memory items_ = new KeyStringValuePair[](2);
@@ -334,9 +341,9 @@ contract MusicTokenConfigurator is PollyConfigurator {
   }
 
 
-  function output() public pure returns(Output[] memory){
+  function output() public pure returns(string[] memory){
 
-    Output[] memory outputs_ = new Output[](2);
+    string[] memory outputs_ = new string[](2);
 
     return outputs_;
 
@@ -384,6 +391,7 @@ contract MusicTokenConfigurator is PollyConfigurator {
         ''
       );
 
+
       if(custom_schema_){
         PollyToken token_ = PollyToken(token_config_[0]._address);
         token_.getMetaHandler().setAddress(0, 'metadata_schema', params_[3]._address);
@@ -392,10 +400,10 @@ contract MusicTokenConfigurator is PollyConfigurator {
 
       /// Permissions
       _transfer(token_config_[0]._address, for_); // transfer PollyToken module
-      _transfer(token_config_[1]._address, for_); // transfer MetaForIds module
+      _transfer(token_config_[1]._address, for_); // transfer Meta module
 
       rparams_[0]._address = token_config_[0]._address; // return PollyToken module
-      rparams_[1]._address = token_config_[1]._address; // return MetaForIds module
+      rparams_[1]._address = token_config_[1]._address; // return Meta module
 
       return rparams_;
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import useModule from 'base/hooks/useModule.js';
 import { parseParam } from '@polly-os/utils/js/Polly.js';
+import ModuleInput from 'components/ModuleInputs/ModuleInput.js';
 
 import * as Hello from './Hello.js';
 import * as Meta from './Meta.js';
@@ -8,6 +9,15 @@ import * as Meta from './Meta.js';
 const interfaces = {
     ...Hello,
     ...Meta
+}
+
+const defaultInterfaces = {
+  Create: () => {
+    const {module, inputs, setUserInput} = useModuleInterface();
+    return <>
+      {inputs && inputs.map((input, index) => <ModuleInput key={index} input={input} onChange={(value) => setUserInput(index, value)} />)}
+    </>
+  }
 }
 
 function createModuleInterface(name, version){
@@ -49,10 +59,9 @@ export function useModuleInterface() {
 
 
 export default function ModuleInterface({create}){
-
     const {name} = useModuleInterface();
     const iname = name + (create ? 'Create' : 'Edit');
-    const Interface = interfaces[iname] ? interfaces[iname] : false;
+    const Interface = interfaces[iname] ? interfaces[iname] : defaultInterfaces[create ? 'Create' : 'Edit'];
 
     return <>{Interface && <Interface/>}</>
 

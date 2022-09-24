@@ -7,45 +7,12 @@ import './PollyModule.sol';
 
 abstract contract PollyConfigurator {
 
-  enum InputType {
-    STRING,
-    ADDRESS,
-    NUMBER,
-    BOOL,
-    MODULE,
-    SELECT
-  }
-
-  enum OutputType {
-    STRING,
-    ADDRESS,
-    UINT,
-    BOOL,
-    MODULE
-  }
-
-
-  struct Input {
-    InputType type_;
-    string _label;
-    string _info;
-    bool _list;
-    Polly.Param[] _values; // Multiple choice
-  }
-
-  struct Output{
-    OutputType _type;
-    string _label;
-    string _info;
-    Polly.Param _value; // Only one return value
-  }
-
   string internal constant ADMIN = 'admin';
   string internal constant MANAGER = 'manager';
 
   function fee(Polly, address, Polly.Param[] memory) public view virtual returns(uint){return 0;}
-  function inputs() external view virtual returns (Input[] memory){return new Input[](0);}
-  function outputs() external view virtual returns (Output[] memory){return new Output[](0);}
+  function inputs() external view virtual returns (string[] memory){return new string[](0);}
+  function outputs() external view virtual returns (string[] memory){return new string[](0);}
   function run(Polly, address, Polly.Param[] memory) external virtual payable returns(Polly.Param[] memory){return new Polly.Param[](0);}
 
   function _transfer(address module_, address to_) internal {
@@ -84,74 +51,5 @@ abstract contract PollyConfigurator {
     m_.revokeRole(MANAGER, to_);
     m_.revokeRole(ADMIN, to_);
   }
-
-  // function _io(string memory type_, string memory name_, string memory description_) internal pure returns(string memory){
-  //   return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '"}'));
-  // }
-
-  // function _io(string memory type_, string memory name_, string memory description_, string[] memory choices_) internal pure returns(string memory){
-
-  //   string memory choices_string_;
-  //   for(uint i = 0; i < choices_.length; i++){
-  //     choices_string_ = string(abi.encodePacked(choices_string_, '"', choices_[i], '"'));
-  //     if(i < choices_.length - 1){
-  //       choices_string_ = string(abi.encodePacked(choices_string_, ','));
-  //     }
-  //   }
-
-  //   return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '", "choices": [', choices_string_, ']}'));
-
-  // }
-
-  // function _io(string memory type_, string memory name_, string memory description_, uint[] memory choices_) internal pure returns(string memory){
-
-  //   string memory choices_string_;
-
-  //   for(uint i = 0; i < choices_.length; i++){
-  //     choices_string_ = string(abi.encodePacked(choices_string_, '"', Strings.toString(choices_[i]), '"'));
-  //     if(i < choices_.length - 1){
-  //       choices_string_ = string(abi.encodePacked(choices_string_, ','));
-  //     }
-  //   }
-
-  //   return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '", "choices": [', choices_string_, ']}'));
-
-  // }
-
-  // function _io(string memory type_, string memory name_, string memory description_, KeyStringValuePair[] memory choices_) internal pure returns(string memory){
-
-  //     string memory choices_string_;
-
-  //     for(uint i = 0; i < choices_.length; i++){
-  //       choices_string_ = string(abi.encodePacked(choices_string_, '{"', choices_[i]._key, '": "', choices_[i]._value, '"}'));
-  //       if(i < choices_.length - 1){
-  //         choices_string_ = string(abi.encodePacked(choices_string_, ','));
-  //       }
-  //     }
-
-  //     return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '", "choices": [', choices_string_, ']}'));
-
-  // }
-
-
-  // function _json(string memory type_, string memory name_, string memory description_, KeyUintValuePair[] memory choices_) internal pure returns(string memory){
-
-  //     string memory choices_string_;
-
-  //     for(uint i = 0; i < choices_.length; i++){
-  //       choices_string_ = string(abi.encodePacked(choices_string_, '{"', choices_[i]._key, '": ', Strings.toString(choices_[i]._value), '}'));
-  //       if(i < choices_.length - 1){
-  //         choices_string_ = string(abi.encodePacked(choices_string_, ','));
-  //       }
-  //     }
-
-  //     return string(abi.encodePacked('{"type":"', type_, '","name":"', name_, '","description":"', description_, '", "choices": [', choices_string_, ']}'));
-
-  // }
-
-
-
-
-
 
 }

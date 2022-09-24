@@ -1,9 +1,10 @@
 import pollyABI from '@polly-os/core/abi/Polly.json';
 import { ethers } from "ethers";
-import ABIAPI from 'abiapi';
+import ABIAPI from '@polly-os/abiapi';
 import { getProvider } from "../../../base/provider";
 import { isArray, isObject } from 'lodash';
 import { parseConfig } from "base/utils";
+import getQuery from 'base/api/getQuery';
 
 const abi = new ABIAPI(pollyABI);
 abi.supportedMethods = abi.getReadMethods();
@@ -35,12 +36,11 @@ abi.addGlobalParser(bigNumbersToNumber)
 
 function moduleParser(module){
 
-  return {
+    return {
       name: module[0],
       version: module[1],
-      info: module[2],
-      implementation: module[3],
-      clonable: module[4]
+      implementation: module[2],
+      clonable: module[3]
   }
 
 }
@@ -51,7 +51,7 @@ abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => conf
 export default async (req, res) => {
 
     const data = {};
-    const {method, ...query} = req.query;
+    const {method, ...query} = getQuery(req);
 
     if(abi.supportsMethod(method)){
 

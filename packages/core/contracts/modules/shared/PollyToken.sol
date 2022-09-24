@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 import '@openzeppelin/contracts/utils/introspection/ERC165.sol';
 import '../../Polly.sol';
 import '../../PollyAux.sol';
-import '../MetaForIds.sol';
+import '../Meta.sol';
 
 
 
@@ -26,14 +26,14 @@ interface IERC2981Royalties {
 
 contract PollyToken is PollyAuxParent, ERC165, IERC2981Royalties {
 
-  struct Meta {
+  struct MetaEntry {
     string _key;
     Polly.Param _value;
   }
 
   event TokenCreated(uint id);
 
-  MetaForIds internal _meta;
+  Meta internal _meta;
 
   mapping(uint => bool) private _created;
   mapping(uint => uint) internal _supply;
@@ -41,16 +41,16 @@ contract PollyToken is PollyAuxParent, ERC165, IERC2981Royalties {
 
   function _setMetaHandler(address handler_) internal {
     require(address(_meta) == address(0), 'META_HANDLER_SET');
-    _meta = MetaForIds(handler_);
+    _meta = Meta(handler_);
   }
 
-  function getMetaHandler() public view returns (MetaForIds) {
+  function getMetaHandler() public view returns (Meta) {
     return _meta;
   }
 
 
   /// @dev create a new token
-  function _createToken(Meta[] memory meta_) internal returns (uint) {
+  function _createToken(MetaEntry[] memory meta_) internal returns (uint) {
 
     uint id_ = _token_count+1;
 
@@ -105,10 +105,10 @@ contract PollyToken is PollyAuxParent, ERC165, IERC2981Royalties {
 
   /// @dev get the token by id
   /// @param id_ the id of the token
-  function getTokenMeta(uint id_, string[] memory keys_) public view returns (Meta[] memory) {
-    Meta[] memory meta_ = new Meta[](keys_.length);
+  function getTokenMeta(uint id_, string[] memory keys_) public view returns (MetaEntry[] memory) {
+    MetaEntry[] memory meta_ = new MetaEntry[](keys_.length);
     for(uint i=0; i<keys_.length; i++){
-      meta_[i] = Meta(keys_[i], _meta.get(id_, keys_[i]));
+      meta_[i] = MetaEntry(keys_[i], _meta.get(id_, keys_[i]));
     }
     return meta_;
   }
@@ -148,7 +148,7 @@ contract PollyToken is PollyAuxParent, ERC165, IERC2981Royalties {
   /// @dev batch set meta for id
   /// @param id_ the id of the token
   /// @param meta_ the meta of the token
-  function _batchSetMetaForId(uint id_, Meta[] memory meta_) internal {
+  function _batchSetMetaForId(uint id_, MetaEntry[] memory meta_) internal {
     for(uint i = 0; i < meta_.length; i++) {
       _meta.set(id_, meta_[i]._key, meta_[i]._value);
     }
@@ -181,12 +181,12 @@ abstract contract PollyTokenAux is PollyAux {
   ];
 
 
-  function beforeCreateToken(address parent_, uint id_, PollyToken.Meta[] memory meta_) external virtual returns(uint, PollyToken.Meta[] memory) {return (id_, meta_);}
+  function beforeCreateToken(address parent_, uint id_, PollyToken.MetaEntry[] memory meta_) external virtual returns(uint, PollyToken.MetaEntry[] memory) {return (id_, meta_);}
   function afterCreateToken(address parent_, uint id_) external virtual {}
-  function beforeMint721(address parent_, uint id_, Msg memory msg_) external virtual {} // For ERC721
-  function afterMint721(address parent_, uint id_, Msg memory msg_) external virtual {} // For ERC721
-  function beforeMint1155(address parent_, uint id_, uint amount_, Msg memory msg_) external virtual {} // For ERC1155
-  function afterMint1155(address parent_, uint id_, uint amount_, Msg memory msg_) external virtual{} // For ERC1155
+  function beforeMint721(address parent_, uint id_, bool pre_, Msg memory msg_) external virtual {} // For ERC721
+  function afterMint721(address parent_, uint id_, bool pre_, Msg memory msg_) external virtual {} // For ERC721
+  function beforeMint1155(address parent_, uint id_, uint amount_, bool pre_, Msg memory msg_) external virtual {} // For ERC1155
+  function afterMint1155(address parent_, uint id_, uint amount_, bool pre_, Msg memory msg_) external virtual{} // For ERC1155
   function tokenImage(address parent_, uint id_) external view virtual returns (string memory){}
   function tokenURI(address parent_, uint id_) external view virtual returns (string memory){}
   function contractURI(address parent_) external view virtual returns (string memory){}

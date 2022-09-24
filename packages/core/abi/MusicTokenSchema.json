@@ -65,7 +65,7 @@
         "type": "address"
       },
       {
-        "internalType": "contract MetaForIds",
+        "internalType": "contract Meta",
         "name": "meta_",
         "type": "address"
       }
