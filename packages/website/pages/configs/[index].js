@@ -27,8 +27,7 @@ export default function Config({p}){
 
     async function fetchConfig(address, index){
         const _config = await polly.read('getConfigsForAddress', {address_: address, limit_: 1, page_: index, ascending_: false}).then(res => res.result[0]);
-        const version = await fetch(`/api/module/${_config.module}/at/${_config.params[0]._address}/PMVERSION`).then(res => res.json()).then(res => res.result);
-        const _outputs = await fetch(`/api/module/${_config.module}/configurator/outputs?version=${version}`).then(res => res.json()).then(res => res.result);
+        const _outputs = await fetch(`/api/module/${_config.module}/configurator/outputs?version=${_config.version}`).then(res => res.json()).then(res => res.result);
         setConfig(_config)
         setOutputs(_outputs)
     }

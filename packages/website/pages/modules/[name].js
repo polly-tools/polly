@@ -54,9 +54,6 @@ export async function handleConfigure(account, polly, name, version, params, sto
       value_: conf_fee
     }).then(fee => fee.result)
 
-    console.log('conf_fee', conf_fee)
-    console.log('fee', fee)
-
     await polly.write('configureModule', {
         name_: name,
         version_: version,

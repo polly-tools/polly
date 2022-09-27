@@ -75,19 +75,6 @@
   },
   {
     "inputs": [],
-    "name": "output",
-    "outputs": [
-      {
-        "internalType": "string[]",
-        "name": "",
-        "type": "string[]"
-      }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "outputs",
     "outputs": [
       {
@@ -96,7 +83,7 @@
         "type": "string[]"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {

@@ -70,6 +70,7 @@ contract Polly is Ownable {
     struct Config {
       string name;
       string module;
+      uint version;
       Param[] params;
     }
 
@@ -330,6 +331,7 @@ contract Polly is Ownable {
         uint new_count_ = _configs_count[msg.sender] + 1; // get new config count for storing
         _configs[msg.sender][new_count_].name = config_name_; // store config name
         _configs[msg.sender][new_count_].module = name_; // store module name
+        _configs[msg.sender][new_count_].version = version_; // store module name
 
         for (uint i = 0; i < rparams_.length; i++){ // store each config params
           _configs[msg.sender][new_count_].params.push(rparams_[i]);

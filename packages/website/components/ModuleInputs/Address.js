@@ -1,6 +1,6 @@
 import Grid from "styled-components-grid";
 
-export default function String({input, module, ...p}){
+export default function Address({input, module, ...p}){
 
     function handleChange(e){
         p.onChange(e.target.value);

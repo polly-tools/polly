@@ -312,6 +312,11 @@
             "type": "string"
           },
           {
+            "internalType": "uint256",
+            "name": "version",
+            "type": "uint256"
+          },
+          {
             "components": [
               {
                 "internalType": "uint256",
@@ -388,6 +393,11 @@
             "internalType": "string",
             "name": "module",
             "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "version",
+            "type": "uint256"
           },
           {
             "components": [

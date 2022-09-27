@@ -13,50 +13,72 @@ abi.cacheTTL = 60*60;
 // NUMBER PARSER
 function bigNumbersToNumber(value){
 
-    if(value._isBigNumber){
-        return value.toNumber();
-    }
-    else if(isArray(value)){
-        return value.map(bigNumbersToNumber);
-    }
-    else if(isObject(value)){
+  if(value._isBigNumber){
+    return value.toNumber();
+  }
+  else if(isArray(value)){
+    return value.map(bigNumbersToNumber);
+  }
+  else if(isObject(value)){
 
-        for(const key in value) {
-            if (Object.hasOwnProperty.call(value, key)) {
-                value[key] = bigNumbersToNumber(value[key])
-            }
-        }
-        return value;
+    for(const key in value) {
+      if (Object.hasOwnProperty.call(value, key)) {
+        value[key] = bigNumbersToNumber(value[key])
+      }
     }
-
     return value;
+  }
+
+  return value;
 
 }
 abi.addGlobalParser(bigNumbersToNumber)
 
 function parseInputsOutputs(param){
 
-    const parts = param.split('||').map(part => part.trim());
+  const parsed = {};
 
-    if(parts.length < 2){
-        return false;
+  const parts = param.split('||').map(part => part.trim());
+
+  if(parts[0])
+    parsed.type = parts[0];
+  if(parts[1])
+    parsed.name = parts[1];
+  if(parts[2])
+    parsed.description = parts[2];
+
+  if(parts[3]){
+
+    let matches;
+    // Test for range
+    matches = [...parts[3].matchAll(/(\d+)-(\d+)/ig)]
+    if(matches.length > 0){
+      parsed.range = {
+        min: parseInt(matches[0][1]),
+        max: parseInt(matches[0][2])
+      }
     }
 
-    return {
-        type: parts[0],
-        name: parts[1],
-        description: parts[2],
-        values: parts[3] ? parts[3].split(',').map(value => {
+    // Test for options
+    matches = [...parts[3].matchAll(/([\w\d_-]+):([\w\d_-]+)/ig)]
+    if(matches.length > 0){
+      parsed.options = []
+      for(const match of matches){
+        parsed.options.push({
+          value: parsed.type == 'uint' ? parseInt(match[1]) : match[1],
+          label: match[2]
+        })
+      }
 
-          const parts = value.split(':');
-          return {
-            label: parts[1],
-            value: parts[0]
-          }
-
-        }) : []
     }
+
+  }
+
+  return parsed;
+
 }
+
+
 
 abi.addParser('inputs', (inputs) => {
   return inputs.map(parseInputsOutputs).filter(res => res);
@@ -68,21 +90,21 @@ abi.addParser('outputs', (outputs) => {
 
 function parseReturnParam(param){
 
-    return {
-        _string: param[0],
-        _uint: param[1],
-        _int: param[2],
-        _bool: param[3],
-        _address: param[4]
-    };
+  return {
+    _string: param[0],
+    _uint: param[1],
+    _int: param[2],
+    _bool: param[3],
+    _address: param[4]
+  };
 
 }
 
 function parseConfig(config){
-    return {
-        name: config[0],
-        params: config[1].map(parseReturnParam)
-    }
+  return {
+    name: config[0],
+    params: config[1].map(parseReturnParam)
+  }
 
 }
 
@@ -90,36 +112,36 @@ abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => conf
 
 export default async (req, res) => {
 
-    const data = {};
-    const {name, method, version, ...query} = getQuery(req);
+  const data = {};
+  const {name, method, version, ...query} = getQuery(req);
 
 
-    const configurator = await fetch(`${getBaseUrl()}/api/module/${name}/configurator?version_=${version ? version : 0}`).then(res => res.json()).then(res => res.result);
+  const configurator = await fetch(`${getBaseUrl()}/api/module/${name}/configurator?version_=${version ? version : 0}`).then(res => res.json()).then(res => res.result);
 
-    if(abi.supportsMethod(method)){
+  if(abi.supportsMethod(method)){
 
-        const provider = getProvider();
-        const contract = new ethers.Contract(configurator, configABI, provider);
+    const provider = getProvider();
+    const contract = new ethers.Contract(configurator, configABI, provider);
 
-        try {
-            data.result = await contract[method](...abi.methodParamsFromQuery(method, query));
-            data.result = abi.parse(method, data.result);
-        }
-        catch(e){
-            data.error = e.toString();
-        }
-
+    try {
+      data.result = await contract[method](...abi.methodParamsFromQuery(method, query));
+      data.result = abi.parse(method, data.result);
     }
-    else{
-        data.error = 'Unsupported method';
+    catch(e){
+      data.error = e.toString();
     }
 
-    const status = data.error ? 400 : 200;
+  }
+  else{
+    data.error = 'Unsupported method';
+  }
 
-    if(status == 200)
-        res.setHeader(`Cache-Control`, `s-maxage=${abi.getMethodCacheTTL(method)}, stale-while-revalidate`)
+  const status = data.error ? 400 : 200;
 
-    res.status(status).json(data);
+  if(status == 200)
+  res.setHeader(`Cache-Control`, `s-maxage=${abi.getMethodCacheTTL(method)}, stale-while-revalidate`)
+
+  res.status(status).json(data);
 
 
 }

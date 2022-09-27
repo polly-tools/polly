@@ -33,7 +33,8 @@ export function parseConfig(config){
   return {
       name: config[0],
       module: config[1],
-      params: config[2].map(parseReturnParam)
+      version: config[2],
+      params: config[3].map(parseReturnParam)
   }
 
 }

@@ -319,31 +319,26 @@ contract MusicTokenConfigurator is PollyConfigurator {
 
   function inputs() public pure override returns(string[] memory){
 
-    string[] memory inputs_ = new string[](4);
+    string[] memory inputs_ = new string[](6);
 
     inputs_[0] = 'string || Token type || The type of token standard to use for this MusicToken || Token1155:ERC1155,Token721:ERC721';
-
-    // Input one - Token type
-    // KeyStringValuePair[] memory items_ = new KeyStringValuePair[](2);
-    // items_[0]._key = 'ERC1155';
-    // items_[0]._value = 'Token1155';
-    // items_[1]._key = 'ERC721';
-    // items_[1]._value = 'Token721';
-    // inputs_[0] = _json('string', 'Token type', 'The token type to extend', items_);
-
-    // // Input two - Royalities
-    // inputs_[1] = _json('bool', 'Royalties', 'Enable royalties');
-
-
+    inputs_[1] = 'string || Collection name || The name of your collection';
+    inputs_[2] = 'string || Collection description || A short description of your collection';
+    inputs_[3] = 'string || Collection image || an image for this collection';
+    inputs_[4] = 'uint || Royalty basis points || the default royalty if not set per token || 0-10000';
+    inputs_[5] = 'address || Royalty recipient || the default royalty recipient if not set per token';
 
     return inputs_;
 
   }
 
 
-  function output() public pure returns(string[] memory){
+  function outputs() public pure override returns(string[] memory){
 
     string[] memory outputs_ = new string[](2);
+
+    outputs_[0] = 'module || Token module || The token module used for this MusicToken';
+    outputs_[1] = 'module || Meta module || The meta module used for this MusicToken';
 
     return outputs_;
 
@@ -363,25 +358,18 @@ contract MusicTokenConfigurator is PollyConfigurator {
 
   function run(Polly polly_, address for_, Polly.Param[] memory params_) external virtual override payable returns(Polly.Param[] memory){
 
+      require(params_.length == inputs().length, 'INVALID_PARAMS_COUNT');
       require(_isValidPollyTokenName(params_[0]._string), 'INVALID_TOKEN_NAME');
 
-      Polly.Param[] memory rparams_ = new Polly.Param[](3);
+      Polly.Param[] memory rparams_ = new Polly.Param[](outputs().length);
 
       MusicToken mt_ = MusicToken(polly_.getModule('MusicToken', 1).implementation);
       RoyaltyInfo ri_ = RoyaltyInfo(polly_.getModule('RoyaltyInfo', 1).implementation);
 
-      // Setup PollyToken params
-      bool aux_image_ = (params_.length > 1 && params_[1]._address != address(0)); // Valid royalty aux address
-      bool aux_royalties_ = (params_.length > 2 && params_[2]._address != address(0)); // Valid royalty aux address
-      bool custom_schema_ = (params_.length > 3 && params_[3]._address != address(0)); // Valid royalty aux address
-
       Polly.Param[] memory token_params_ = new Polly.Param[](4);
       token_params_[0]._address = address(mt_);
       token_params_[1]._address = address(ri_);
-      if(aux_image_)
-        token_params_[2]._address = params_[1]._address;
-      if(aux_royalties_)
-        token_params_[1]._address = params_[2]._address;
+
 
       Polly.Param[] memory token_config_ = Polly(polly_).configureModule(
         params_[0]._string,
@@ -391,10 +379,20 @@ contract MusicTokenConfigurator is PollyConfigurator {
         ''
       );
 
+      PollyToken token_ = PollyToken(token_config_[0]._address);
+      Meta meta_ = token_.getMetaHandler();
 
-      if(custom_schema_){
-        PollyToken token_ = PollyToken(token_config_[0]._address);
-        token_.getMetaHandler().setAddress(0, 'metadata_schema', params_[3]._address);
+
+      // Setup collection
+      meta_.setString(0, 'name', params_[1]._string);
+      meta_.setString(0, 'description', params_[2]._string);
+      meta_.setString(0, 'image', params_[3]._string);
+
+
+      // Setup royalties
+      if(params_.length > 5){
+        meta_.setUint(0, 'royaltyBase', params_[4]._uint);
+        meta_.setAddress(0, 'royaltyRecipient', params_[5]._address);
       }
 
 
@@ -402,8 +400,13 @@ contract MusicTokenConfigurator is PollyConfigurator {
       _transfer(token_config_[0]._address, for_); // transfer PollyToken module
       _transfer(token_config_[1]._address, for_); // transfer Meta module
 
-      rparams_[0]._address = token_config_[0]._address; // return PollyToken module
+      rparams_[0]._string = params_[0]._string;
+      rparams_[0]._address = token_config_[0]._address;
+      rparams_[0]._uint = 1;
+
+      rparams_[1]._string = 'Meta'; // return Meta module
       rparams_[1]._address = token_config_[1]._address; // return Meta module
+      rparams_[1]._uint = token_config_[1]._uint; // return Meta module
 
       return rparams_;
 
