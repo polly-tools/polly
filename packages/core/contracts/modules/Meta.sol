@@ -225,7 +225,9 @@ contract MetaConfigurator is PollyConfigurator {
 
     // Return the cloned module as part of the return parameters
     Polly.Param[] memory return_ = new Polly.Param[](1);
+    return_[0]._string = 'Meta';
     return_[0]._address = address(meta_); // The address of newly cloned and configured meta module
+    return_[0]._uint = 1; // The version of the module
 
     return return_;
 

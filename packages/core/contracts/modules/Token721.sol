@@ -149,7 +149,9 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
 
     // Clone the Token721 module
     Token721 p721_ = Token721(polly_.cloneModule('Token721', 1));
+    rparams_[0]._string = 'Token721';
     rparams_[0]._address = address(p721_);
+    rparams_[0]._uint = 1;
 
     // Configure a Meta module
     Polly.Param[] memory meta_params_ = polly_.configureModule(
@@ -164,7 +166,7 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
     p721_.grantRole('manager', for_);
     p721_.grantRole('manager', meta_params_[0]._address);
 
-    rparams_[1]._address = meta_params_[0]._address;
+    rparams_[1] = meta_params_[0];
 
 
     /// Configure a Token1155Aux module if a valid one is passed to the contract

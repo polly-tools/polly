@@ -165,7 +165,9 @@ contract Token1155Configurator is PollyConfigurator {
 
     // Clone the Token1155 module
     Token1155 p1155_ = Token1155(polly_.cloneModule('Token1155', 1));
+    rparams_[0]._string = 'Token1155';
     rparams_[0]._address = address(p1155_);
+    rparams_[0]._uint = 1;
 
     // Configure a Meta module
     uint meta_fee_ = polly_.getConfiguratorFee(for_, 'Meta', 1, new Polly.Param[](0));
@@ -179,7 +181,8 @@ contract Token1155Configurator is PollyConfigurator {
     );
 
     // Store return param and init the module
-    rparams_[1]._address = meta_params_[0]._address;
+    rparams_[1] = meta_params_[0];
+
     Meta meta_ = Meta(meta_params_[0]._address);
 
     // Connect p1155 to meta

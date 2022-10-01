@@ -400,13 +400,8 @@ contract MusicTokenConfigurator is PollyConfigurator {
       _transfer(token_config_[0]._address, for_); // transfer PollyToken module
       _transfer(token_config_[1]._address, for_); // transfer Meta module
 
-      rparams_[0]._string = params_[0]._string;
-      rparams_[0]._address = token_config_[0]._address;
-      rparams_[0]._uint = 1;
-
-      rparams_[1]._string = 'Meta'; // return Meta module
-      rparams_[1]._address = token_config_[1]._address; // return Meta module
-      rparams_[1]._uint = token_config_[1]._uint; // return Meta module
+      rparams_[0] = token_config_[0]; // return the token module
+      rparams_[1] = token_config_[1]; // return Meta module
 
       return rparams_;
 
