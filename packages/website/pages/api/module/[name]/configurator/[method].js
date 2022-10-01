@@ -1,6 +1,6 @@
 import configABI from '@polly-os/core/abi/PollyConfigurator.json';
 import { ethers } from "ethers";
-import ABIAPI from '@polly-os/abiapi';
+import ABIAPI from 'abiapi';
 import { getProvider } from "base/provider";
 import { isArray, isObject } from 'lodash';
 import getBaseUrl from 'base/url';
