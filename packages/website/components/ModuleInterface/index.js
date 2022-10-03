@@ -5,10 +5,12 @@ import ModuleInput from 'components/ModuleInputs/ModuleInput.js';
 
 import * as Hello from './Hello.js';
 import * as Meta from './Meta.js';
+import * as Token1155 from './Token1155.js';
 
 const interfaces = {
     ...Hello,
-    ...Meta
+    ...Meta,
+    ...Token1155
 }
 
 const defaultInterfaces = {
@@ -20,11 +22,12 @@ const defaultInterfaces = {
   }
 }
 
-function createModuleInterface(name, version){
+function createModuleInterface(address, name, version){
 
-    const {module, fetching, inputs, outputs} = useModule({
-        name, version
+    const module = useModule({
+      address, name, version
     });
+
 
     const [userInputs, setUserInputs] = useState([]);
 
@@ -36,15 +39,15 @@ function createModuleInterface(name, version){
         })
     }
 
-    return {name, version, fetching, module, inputs, outputs, userInputs, setUserInput};
+    return {...module, userInputs, setUserInput};
 
 }
 
 const ModuleInterfaceCtx = React.createContext();
 
 export const ModuleInterfaceProvider = ({children, ...props}) => {
-    const moduleInterface = createModuleInterface(props.name, props.version);
-    return <ModuleInterfaceCtx.Provider value={moduleInterface}>{children}</ModuleInterfaceCtx.Provider>
+  const moduleInterface = createModuleInterface(props.address, props.name, props.version);
+  return <ModuleInterfaceCtx.Provider value={moduleInterface}>{children}</ModuleInterfaceCtx.Provider>
 };
 
 
@@ -59,8 +62,9 @@ export function useModuleInterface() {
 
 
 export default function ModuleInterface({create}){
-    const {name} = useModuleInterface();
-    const iname = name + (create ? 'Create' : 'Edit');
+
+    const {module} = useModuleInterface();
+    const iname = module.name + (create ? 'Create' : 'Edit');
     const Interface = interfaces[iname] ? interfaces[iname] : defaultInterfaces[create ? 'Create' : 'Edit'];
 
     return <>{Interface && <Interface/>}</>
