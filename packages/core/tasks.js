@@ -1,7 +1,8 @@
 const { task } = require("hardhat/config");
 const { types } = require("hardhat/config")
-
+const fs = require("fs");
 const module_scripts = require('./module-scripts.js');
+const modules = require('./modules.js');
 
 require("colors");
 
@@ -60,3 +61,14 @@ task('polly:update-module', 'Update a module in Polly', async ({implementation})
 })
 .addParam("implementation", "The module contract name")
 
+task('polly:deploy-all-modules', 'Deploy all modules', async ({update}) => {
+
+  await hre.run('compile');
+  console.log(`Deploying all modules to network ${hre.network.name}`);
+
+  for(let index in modules){
+    await hre.run('polly:deploy-module', {name: modules[index], update: update});
+  }
+
+})
+.addOptionalParam("update", "Update modules after deployment", false, types.boolean)
