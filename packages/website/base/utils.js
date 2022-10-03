@@ -31,7 +31,7 @@ export function parseReturnParam(param){
 
 export function parseConfig(config){
   return {
-      name: config[0],
+      name: config[0] ? config[0] : config[1],
       module: config[1],
       version: config[2],
       params: config[3].map(parseReturnParam)

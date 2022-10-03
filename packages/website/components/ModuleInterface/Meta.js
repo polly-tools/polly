@@ -1,11 +1,11 @@
-import { useModuleInterface } from "./ModuleInterface";
+import { useModuleInterface } from ".";
 
 
 export function MetaEdit(p){
 
     const {module, info, setInput} = useModuleInterface();
     const {address} = p;
-    
+
     return <>
         <h5>Deployed at {address}</h5>
     </>

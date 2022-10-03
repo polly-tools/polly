@@ -1,6 +1,6 @@
 import ModuleInput from "components/ModuleInputs/ModuleInput";
 import { useEffect } from "react";
-import { useModuleInterface } from "./ModuleInterface";
+import { useModuleInterface } from ".";
 
 export function DefaultCreate(p){
 

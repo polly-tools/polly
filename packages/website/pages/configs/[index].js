@@ -43,6 +43,7 @@ export default function Config({p}){
         {(account && !config && !outputs) && <>Loading...</>}
         {(account && config && outputs) && <Grid.Unit>
             <h1>{config.name}</h1>
+
             {outputs && outputs.map((output, index) => {
                 return <ModuleOutput param={config.params[index]} output={output}/>
             })}

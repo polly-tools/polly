@@ -1,7 +1,7 @@
 import pollyABI from '@polly-os/core/abi/Polly.json';
 import { ethers } from "ethers";
 import ABIAPI from 'abiapi';
-import { getProvider } from "../../../base/provider";
+import { getProvider } from "base/provider";
 import { isArray, isObject } from 'lodash';
 import { parseConfig } from "base/utils";
 import getQuery from 'base/api/getQuery';
@@ -46,13 +46,12 @@ function moduleParser(module){
 }
 abi.addParser('getModule', moduleParser)
 abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').map(moduleParser))
-abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => config[0] !== '').map(parseConfig));
+abi.addParser('getConfigsForAddress', (configs) => configs.map(parseConfig));
 
 export default async (req, res) => {
 
     const data = {};
     const {method, ...query} = getQuery(req);
-
     if(abi.supportsMethod(method)){
 
         const provider = getProvider();

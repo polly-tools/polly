@@ -319,14 +319,10 @@ contract MusicTokenConfigurator is PollyConfigurator {
 
   function inputs() public pure override returns(string[] memory){
 
-    string[] memory inputs_ = new string[](6);
+    string[] memory inputs_ = new string[](2);
 
-    inputs_[0] = 'string || Token type || The type of token standard to use for this MusicToken || Token1155:ERC1155,Token721:ERC721';
-    inputs_[1] = 'string || Collection name || The name of your collection';
-    inputs_[2] = 'string || Collection description || A short description of your collection';
-    inputs_[3] = 'string || Collection image || an image for this collection';
-    inputs_[4] = 'uint || Royalty basis points || the default royalty if not set per token || 0-10000';
-    inputs_[5] = 'address || Royalty recipient || the default royalty recipient if not set per token';
+    inputs_[0] = 'string || Collection name || The name as you want it to appear where this collection is displayed';
+    inputs_[1] = 'string || Token type || The token standard to use for this MusicToken || Token1155:ERC1155,Token721:ERC721';
 
     return inputs_;
 
@@ -359,7 +355,7 @@ contract MusicTokenConfigurator is PollyConfigurator {
   function run(Polly polly_, address for_, Polly.Param[] memory params_) external virtual override payable returns(Polly.Param[] memory){
 
       require(params_.length == inputs().length, 'INVALID_PARAMS_COUNT');
-      require(_isValidPollyTokenName(params_[0]._string), 'INVALID_TOKEN_NAME');
+      require(_isValidPollyTokenName(params_[1]._string), 'INVALID_TOKEN_NAME');
 
       Polly.Param[] memory rparams_ = new Polly.Param[](outputs().length);
 
@@ -372,7 +368,7 @@ contract MusicTokenConfigurator is PollyConfigurator {
 
 
       Polly.Param[] memory token_config_ = Polly(polly_).configureModule(
-        params_[0]._string,
+        params_[1]._string,
         1,
         token_params_,
         false,
@@ -383,18 +379,8 @@ contract MusicTokenConfigurator is PollyConfigurator {
       Meta meta_ = token_.getMetaHandler();
 
 
-      // Setup collection
-      meta_.setString(0, 'name', params_[1]._string);
-      meta_.setString(0, 'description', params_[2]._string);
-      meta_.setString(0, 'image', params_[3]._string);
-
-
-      // Setup royalties
-      if(params_.length > 5){
-        meta_.setUint(0, 'royaltyBase', params_[4]._uint);
-        meta_.setAddress(0, 'royaltyRecipient', params_[5]._address);
-      }
-
+      // Setup collection name
+      meta_.setString(0, 'name', params_[0]._string);
 
       /// Permissions
       _transfer(token_config_[0]._address, for_); // transfer PollyToken module

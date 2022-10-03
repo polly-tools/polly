@@ -18,7 +18,7 @@ import { paramCase } from "param-case";
 import { ethers } from "ethers";
 import moduleMDX from "mdx/modules"
 import useModule from "base/hooks/useModule";
-import ModuleInterface, { ModuleInterfaceProvider, useModuleInterface } from "components/ModuleInterface/ModuleInterface";
+import ModuleInterface, { ModuleInterfaceProvider, useModuleInterface } from "components/ModuleInterface";
 
 const nullAddress = '0x0000000000000000000000000000000000000000';
 
@@ -79,14 +79,14 @@ export function DeployModuleScreen(p){
         <ModalInner>
             {(module) ? <>
 
-                <h1>Clone module</h1>
+                <h1>Configure</h1>
                 <p>
                     You are about to create a configuration of the module <em>{module.name}</em> and any dependencies it might have.
                 </p>
 
                 <div style={{marginBottom: '1em'}}>
 
-                <label>Start by giving your new configuration a name</label>
+                <label>Start by giving your new configuration a name for future reference</label>
                 <input placeholder={module.name} type="text" onKeyUp={e => setConfigName(e.target.value)}/>
 
                 </div>
