@@ -6,6 +6,13 @@ import { useEffect, useState } from "react";
 import Grid from "styled-components-grid";
 import Page from "templates/Page";
 import ModuleOutput from "components/ModuleOutputs/ModuleOutput";
+import ModuleInterface, { ModuleInterfaceProvider } from "components/ModuleInterface";
+import styled from "styled-components";
+
+
+const ConfigTitle = styled.h2`
+margin: 0;
+`
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -42,11 +49,16 @@ export default function Config({p}){
         {!account && <>Connect to view your configuration</>}
         {(account && !config && !outputs) && <>Loading...</>}
         {(account && config && outputs) && <Grid.Unit>
-            <h1>{config.name}</h1>
-
-            {outputs && outputs.map((output, index) => {
+            <h2>
+              <small>{config.module} v{config.version}</small><br/>
+              {config.name}
+            </h2>
+            {config && <ModuleInterfaceProvider name={config.module} version={config.version}>
+                <ModuleInterface edit/>
+            </ModuleInterfaceProvider>}
+            {/* {outputs && outputs.map((output, index) => {
                 return <ModuleOutput param={config.params[index]} output={output}/>
-            })}
+            })} */}
         </Grid.Unit>}
     </Page>
 

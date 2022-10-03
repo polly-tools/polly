@@ -62,6 +62,10 @@ const GlobalStyle = createGlobalStyle`
     margin-bottom: 0;
   }
 
+  small {
+    font-size: 0.8rem;
+  }
+
   p {
     margin: 0 0 20px 0;
   }

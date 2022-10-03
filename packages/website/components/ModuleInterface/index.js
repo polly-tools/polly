@@ -6,11 +6,13 @@ import ModuleInput from 'components/ModuleInputs/ModuleInput.js';
 import * as Hello from './Hello.js';
 import * as Meta from './Meta.js';
 import * as Token1155 from './Token1155.js';
+import * as MusicToken from './MusicToken.js';
 
 const interfaces = {
     ...Hello,
     ...Meta,
-    ...Token1155
+    ...Token1155,
+    ...MusicToken
 }
 
 const defaultInterfaces = {
