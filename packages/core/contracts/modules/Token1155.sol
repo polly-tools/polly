@@ -144,7 +144,7 @@ contract Token1155Configurator is PollyConfigurator {
   function inputs() public pure override virtual returns (string[] memory) {
 
     string[] memory inputs_ = new string[](1);
-    inputs_[0] = '...address || Aux addresses || addresses for all aux contracts to attach';
+    inputs_[0] = '...address || Aux addresses || addresses of the aux contracts to attach';
     return inputs_;
   }
 
