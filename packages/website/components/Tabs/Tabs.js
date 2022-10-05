@@ -41,17 +41,30 @@ const TabTitle = styled.div`
   font-weight: 500;
   color: ${p => p.theme.colors.main};
   transition: all 0.2s ease-in-out;
+
   &:hover {
     background: #f5f5f5;
   }
-  &.active {
+
+  ${p => p.active && `
     color: white;
-    background: ${p => p.theme.colors.main};
-  }
+    background: ${p.theme.colors.main};
+  `}
+
+`;
+
+const TabContentWrapper = styled.div`
+  position: relative;
 `;
 
 const TabContent = styled.div`
-  display: block;
+  display: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  ${p => p.active && `
+    display: block;
+  `}
 `;
 
 
@@ -59,16 +72,23 @@ const TabContent = styled.div`
 
 export default function Tabs({defaultTab, ...props}){
 
-  const [tab, setTab] = useState(defaultTab || 0);
+  const [currTab, setCurrTab] = useState(defaultTab || 0);
   const children = React.Children.toArray(props.children);
   const tabs = children.filter(c => c.type === Tab);
+
   return <Wrapper>
 
     <TabTitles>
-      {tabs.map((t, i) => <TabTitle key={i} onClick={() => setTab(i)} className={i === tab ? 'active' : ''}>{t.props.title}</TabTitle>)}
+      {tabs.map((t, i) => <TabTitle key={i} onClick={() => setCurrTab(i)} active={i === currTab}>{t.props.title}</TabTitle>)}
     </TabTitles>
-    <TabContent>
-      {tabs && tabs[tab]?.props.children}
-    </TabContent>
+
+    <TabContentWrapper>
+    {tabs && tabs.map((tab, index) =>
+    <TabContent active={index === currTab} key={index}>
+      {tabs[index].props.children}
+    </TabContent>)
+    }
+    </TabContentWrapper>
+
   </Wrapper>
 }

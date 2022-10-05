@@ -8,7 +8,7 @@ import Page from "templates/Page";
 import ModuleOutput from "components/ModuleOutputs/ModuleOutput";
 import ModuleInterface, { ModuleInterfaceProvider } from "components/ModuleInterface";
 import styled from "styled-components";
-
+import ConfigInterface from "components/ConfigInterface";
 
 const ConfigTitle = styled.h2`
 margin: 0;
@@ -53,12 +53,7 @@ export default function Config({p}){
               <small>{config.module} v{config.version}</small><br/>
               {config.name}
             </h2>
-            {config && <ModuleInterfaceProvider name={config.module} version={config.version}>
-                <ModuleInterface edit/>
-            </ModuleInterfaceProvider>}
-            {/* {outputs && outputs.map((output, index) => {
-                return <ModuleOutput param={config.params[index]} output={output}/>
-            })} */}
+            {config && <ConfigInterface config={config}/>}
         </Grid.Unit>}
     </Page>
 

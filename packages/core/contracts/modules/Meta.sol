@@ -37,9 +37,9 @@ contract Meta is PMClone {
   }
 
   function _reqValidKeyID(uint id_, string memory key_) private view {
-    require(!isLockedId(id_), 'ID_KEY_LOCKED');
-    require(!isLockedKey(key_), 'KEY_LOCKED');
-    require(!isLockedIdKey(id_, key_), 'KEY_LOCKED');
+    require(!isLockedId(id_), string(abi.encodePacked('ID_KEY_LOCKED', Strings.toString(id_))));
+    require(!isLockedKey(key_), string(abi.encodePacked('KEY_LOCKED', key_)));
+    require(!isLockedIdKey(id_, key_), string(abi.encodePacked('KEY_LOCKED', Strings.toString(id_), ':', key_)));
   }
 
 
@@ -103,6 +103,10 @@ contract Meta is PMClone {
 
   function isLockedIdKey(uint id_, string memory key_) public view returns (bool) {
     return _locked_id_keys[id_][key_];
+  }
+
+  function isLocked(uint id_, string memory key_) public view returns (bool) {
+    return isLockedKey(key_) || isLockedId(id_) || isLockedIdKey(id_, key_);
   }
 
 
@@ -196,6 +200,23 @@ contract Meta is PMClone {
   /// @return the value of the key
   function getAddress(uint id_, string memory key_) public view returns (address) {
     return _keys[id_][key_]._address;
+  }
+
+
+  function getBatchForId(uint id_, string[] memory keys_) public view returns (Polly.Param[] memory) {
+    Polly.Param[] memory params_ = new Polly.Param[](keys_.length);
+    for (uint i = 0; i < keys_.length; i++) {
+      params_[i] = _keys[id_][keys_[i]];
+    }
+    return params_;
+  }
+
+  function setBatchForId(uint id_, string[] memory keys_, Polly.Param[] memory values_) public onlyManager {
+    require(keys_.length == values_.length, "KEY_VALUE_LENGHT_MISMATCH");
+    for (uint i = 0; i < keys_.length; i++) {
+      _reqValidKeyID(id_, keys_[i]);
+      _keys[id_][keys_[i]] = values_[i];
+    }
   }
 
 }

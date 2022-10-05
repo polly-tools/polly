@@ -19,6 +19,7 @@ import { ethers } from "ethers";
 import moduleMDX from "mdx/modules"
 import useModule from "base/hooks/useModule";
 import ModuleInterface, { ModuleInterfaceProvider, useModuleInterface } from "components/ModuleInterface";
+import Address from "components/Address";
 
 const nullAddress = '0x0000000000000000000000000000000000000000';
 
@@ -126,7 +127,7 @@ export default function Module(p){
             <Grid.Unit size={1/1}>
 
             <h1 className="compact">{p.name}</h1>
-            <small>v{p.version} | {p.configurator && <><a href="#" onClick={() => setShowCloneScreen(true)}>CONFIGURE</a> | </>} <a href={etherscanLink(p.implementation)} target="_blank">CODE</a></small>
+            <small>v{p.version} | <Address address={p.implementation}/> | {p.configurator && <><a href="#" onClick={() => setShowCloneScreen(true)}>CONFIGURE</a> | </>} <a href={etherscanLink(p.implementation)} target="_blank">CODE</a></small>
             <br/>
             <br/>
             <p>{p.info}</p>

@@ -13,6 +13,25 @@
     "type": "event"
   },
   {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "hook_",
+        "type": "string"
+      }
+    ],
+    "name": "addressForHook",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "contractURI",
     "outputs": [

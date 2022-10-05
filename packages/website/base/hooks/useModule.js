@@ -11,7 +11,7 @@ export default function useModule(options = {}){
     const [module, setModule] = useState(false);
     const [inputs, setInputs] = useState(false);
     const [outputs, setOutputs] = useState(false);
-    const [fetching, setFetching] = useState(false);
+    const [fetching, setFetching] = useState(true);
     const polly = usePolly();
 
     async function fetchModuleFromAddress(address){

@@ -124,20 +124,19 @@ contract Token721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
 
 contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
 
-  function inputs() public pure override returns (string[] memory) {
+  function inputs() public pure override virtual returns (string[] memory) {
 
     string[] memory inputs_ = new string[](1);
-    inputs_[0] = 'address.Aux.address of an optional auxiliary contract';
-
-    return new string[](0);
+    inputs_[0] = '...address || Aux addresses || addresses of the aux contracts to attach';
+    return inputs_;
   }
 
-  function outputs() public pure override returns (string[] memory) {
+  function outputs() public pure override virtual returns (string[] memory) {
 
-    string[] memory outputs_ = new string[](3);
-    outputs_[0] = 'module.Token721.address of the Token721 contract';
-    outputs_[1] = 'module.Meta.address of the Meta contract';
-    outputs_[2] = 'module.Token721Aux.address of the Token721Aux contract';
+    string[] memory outputs_ = new string[](2);
+
+    outputs_[0] = 'module || Token1155 || the main Token1155 module address';
+    outputs_[1] = 'module || Meta || the meta handler address';
 
     return outputs_;
 
@@ -163,7 +162,6 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
     );
 
     p721_.setMetaHandler(meta_params_[0]._address);
-    p721_.grantRole('manager', for_);
     p721_.grantRole('manager', meta_params_[0]._address);
 
     rparams_[1] = meta_params_[0];
@@ -181,6 +179,10 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
       p721_.addAux(auxs_);
 
     }
+
+    // Transfer to sender
+    _transfer(address(p721_), for_);
+    _transfer(meta_params_[0]._address, for_);
 
     return rparams_;
 

@@ -59,4 +59,8 @@ abstract contract PollyAuxParent {
     return _aux_hooks[hook_] != address(0);
   }
 
+  function addressForHook(string memory hook_) public view returns (address) {
+    return _aux_hooks[hook_];
+  }
+
 }

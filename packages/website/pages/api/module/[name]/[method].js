@@ -33,7 +33,6 @@ function bigNumbersToNumber(value){
     return value;
 
 }
-abi.addGlobalParser(bigNumbersToNumber)
 
 function moduleParser(module){
 
@@ -46,14 +45,23 @@ function moduleParser(module){
     }
 
 }
-abi.addParser('getModule', moduleParser)
-abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').map(moduleParser))
-abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => config[0] !== '').map(parseConfig));
 
 export default async (req, res) => {
 
-  const data = {};
-  const {name, method, version, ...query} = getQuery(req);
+    const data = {};
+    const {name, method, version, ...query} = getQuery(req);
+
+    const _abi = await require(`@polly-os/core/abi/${name}.json`)
+    console.log(_abi);
+
+    const abi = new ABIAPI(_abi);
+    abi.supportedMethods = abi.getReadMethods();
+    abi.cacheTTL = 60*60;
+
+    abi.addGlobalParser(bigNumbersToNumber)
+    abi.addParser('getModule', moduleParser)
+    abi.addParser('getModules', (modules) => modules.filter(mod => mod[0] !== '').map(moduleParser))
+    abi.addParser('getConfigsForAddress', (configs) => configs.filter(config => config[0] !== '').map(parseConfig));
 
 
     const module = await fetch(`${getBaseUrl()}/api/polly/getModule?name_=${name}&version_=${version ? version : 0}`).then(res => res.json()).then(res => res.result);
@@ -62,7 +70,7 @@ export default async (req, res) => {
 
         const provider = getProvider();
 
-        const contract = new ethers.Contract(module.implementation, moduleABI, provider);
+        const contract = new ethers.Contract(module.implementation, _abi, provider);
 
         try {
             data.result = await contract[method](...abi.methodParamsFromQuery(method, query));

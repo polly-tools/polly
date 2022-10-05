@@ -22,6 +22,7 @@
     "prompt-confirm": "^2.0.4",
     "react": "^18.0.0",
     "react-aspect-ratio": "^1.0.49",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.0.0",
     "react-syntax-highlighter": "^15.5.0",
     "styled-components": "^5.0.0",
