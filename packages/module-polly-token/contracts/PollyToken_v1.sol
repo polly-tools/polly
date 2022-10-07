@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 import '@openzeppelin/contracts/utils/introspection/ERC165.sol';
-import '../../Polly.sol';
-import '../../PollyAux.sol';
-import '../Meta.sol';
+import '@polly-os/core/contracts/Polly.sol';
+import '@polly-os/core/contracts/PollyAux.sol';
+import '@polly-os/module-meta/contracts/Meta_v1.sol';
 
 
 
