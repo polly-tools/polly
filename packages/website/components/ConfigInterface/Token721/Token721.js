@@ -1,7 +1,7 @@
 import Tabs, {Tab} from "components/Tabs/Tabs"
 import useModule from "base/hooks/useModule";
 import Aux from './Aux.js';
-import Meta from './Meta.js';
+import Collection from './Collection.js';
 
 export default function Token721({config}){
 
@@ -25,8 +25,8 @@ export default function Token721({config}){
       <Tab title="Tokens">
 
       </Tab>
-      <Tab title="Meta">
-        <Meta config={config} token721={token721} meta={meta}/>
+      <Tab title="Collection">
+        <Collection config={config} token721={token721} meta={meta}/>
       </Tab>
       <Tab title="Aux">
         <Aux config={config} token721={token721} meta={meta}/>

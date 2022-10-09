@@ -8,12 +8,11 @@
     "polly:dev": "npx nodemon -e sol,js --exec \"npm run polly:test\""
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
     "@nomiclabs/hardhat-ethers": "^2.0.3",
-    "@nomiclabs/hardhat-etherscan": "^2.1.6",
-    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@nomiclabs/hardhat-etherscan": "^3.0.0",
     "chai": "^4.3.4",
     "dotenv": "^10.0.0",
-    "ethereum-waffle": "^3.4.0",
     "ethers": "^5.5.2",
     "hardhat": "^2.8.0",
     "hardhat-abi-exporter": "^2.3.0",

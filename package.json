@@ -10,9 +10,13 @@
     "website:dev": "vercel dev",
     "core:coverage": "cd packages/core && npx hardhat coverage --network localhost",
     "core:compile": "cd packages/core && npx hardhat compile --force",
+    "polly:deploy": "cd packages/core && npx hardhat polly:deploy --network localhost",
     "polly:test": "cd packages/core && npx hardhat test test/polly.js",
     "polly:watch": "npx nodemon --watch packages/core/contracts --watch packages/core/test -e sol,js --exec \"npm run polly:test\"",
-    "module:test": "cd packages/core && npx hardhat test test/modules/$npm_config_name.js",
+    "module:test": "node scripts/test-module.js $npm_config_name",
     "module:watch": "npx nodemon --watch packages/core/contracts --watch packages/core/test -e sol,js --exec \"npm run module:test --name=$npm_config_name\""
+  },
+  "dependencies": {
+    "yargs": "^17.6.0"
   }
 }

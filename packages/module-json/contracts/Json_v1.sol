@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import '@polly-os/core/contracts/Polly.sol';
 
-contract Json is PMReadOnly {
+contract Json_v1 is PMReadOnly {
 
   enum Type {
     STRING, BOOL, NUMBER, OBJECT, ARRAY

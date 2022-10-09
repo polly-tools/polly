@@ -1,9 +1,11 @@
+require('./tasks.js')
+
 extendEnvironment(async (hre) => {
 
   let polly;
 
-  const {verbose} = hre.config.polly;
-  const fork = hre.config.polly.fork[hre.network.name];
+  const verbose = hre.config?.polly?.verbose;
+  const fork = hre.config?.polly?.fork[hre.network.name];
 
   function log(msg){
     if(verbose)
@@ -33,6 +35,12 @@ extendEnvironment(async (hre) => {
     }
   }
 
+  hre.polly.use = async function(address){
+    polly = await hre.ethers.getContractAt('Polly', address);
+    log('Using Polly at -> '+polly.address.green);
+    return polly;
+  }
+
 
   hre.polly.contract = polly;
 
@@ -45,8 +53,12 @@ extendEnvironment(async (hre) => {
     await module.deployed();
 
     // Add module handler to Polly
-    await polly.updateModule(module.address);
-    const polly_module = await polly.getModule(name, 0);
+    const tx = await polly.updateModule(module.address);
+    const receipt = await tx.wait();
+
+    const events = receipt.events.filter(e => e.event === 'moduleUpdated');
+    const [indexedname, _name, _version, address] = events[events.length-1].args;
+    const polly_module = await polly.getModule(_name, _version);
 
     return polly_module;
 
@@ -83,7 +95,7 @@ extendEnvironment(async (hre) => {
     const args = receipt.events.filter(x => x.event === "moduleConfigured").map(event => event.args[2]);
     const index = args[args.length-1];
     const config = await polly.getConfigForAddress(signer.address, index);
-    module = await ethers.getContractAt(name, config.params[0]._address);
+    module = await ethers.getContractAt(`${name}_v${o.version}`, config.params[0]._address);
     return [module, config];
 
   }

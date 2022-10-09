@@ -6,11 +6,11 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import '@polly-os/core/contracts/Polly.sol';
 import '@polly-os/core/contracts/PollyConfigurator.sol';
 import '@polly-os/core/contracts/PollyAux.sol';
-import '@polly-os/module-polly-token/contracts/PollyToken_v1.sol';
+import '@polly-os/polly-token/contracts/PollyToken_v1.sol';
 import '@polly-os/module-json/contracts/Json_v1.sol';
 import '@polly-os/module-meta/contracts/Meta_v1.sol';
 
-contract Token721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
+contract Token721_v1 is PollyToken_v1, ERC721, PMClone, ReentrancyGuard {
 
 
   string public constant override PMNAME = 'Token721';
@@ -29,7 +29,7 @@ contract Token721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
   */
 
   /// @dev create a new token
-  function createToken(PollyToken.MetaEntry[] memory meta_, address[] memory mint_) public onlyRole('manager') returns (uint) {
+  function createToken(PollyToken_v1.MetaEntry[] memory meta_, address[] memory mint_) public onlyRole('manager') returns (uint) {
 
     uint id_ = _createToken(meta_);
 
@@ -89,8 +89,8 @@ contract Token721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
     _addAux(auxs_);
   }
 
-  function getAux(string memory hook_) public view returns (PollyTokenAux) {
-    return PollyTokenAux(_aux_hooks[hook_]);
+  function getAux(string memory hook_) public view returns (PollyTokenAux_v1) {
+    return PollyTokenAux_v1(_aux_hooks[hook_]);
   }
 
 
@@ -102,13 +102,13 @@ contract Token721 is PollyToken, ERC721, PMClone, ReentrancyGuard {
     _setMetaHandler(handler_);
   }
 
-  function setMetaForId(uint id_, PollyToken.MetaEntry[] memory meta_) public onlyRole('manager') {
+  function setMetaForId(uint id_, PollyToken_v1.MetaEntry[] memory meta_) public onlyRole('manager') {
     _batchSetMetaForId(id_, meta_);
   }
 
 
   /// Override
-  function supportsInterface(bytes4 interfaceId) public view virtual override(PollyToken, ERC721) returns (bool){
+  function supportsInterface(bytes4 interfaceId) public view virtual override(PollyToken_v1, ERC721) returns (bool){
       return super.supportsInterface(interfaceId);
   }
 
@@ -147,9 +147,9 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
     Polly.Param[] memory rparams_ = new Polly.Param[](3);
 
     // Clone the Token721 module
-    Token721 p721_ = Token721(polly_.cloneModule('Token721', 1));
+    Token721_v1 token_ = Token721_v1(polly_.cloneModule('Token721', 1));
     rparams_[0]._string = 'Token721';
-    rparams_[0]._address = address(p721_);
+    rparams_[0]._address = address(token_);
     rparams_[0]._uint = 1;
 
     // Configure a Meta module
@@ -161,8 +161,8 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
       '' // No config name
     );
 
-    p721_.setMetaHandler(meta_params_[0]._address);
-    p721_.grantRole('manager', meta_params_[0]._address);
+    token_.setMetaHandler(meta_params_[0]._address);
+    token_.grantRole('manager', meta_params_[0]._address);
 
     rparams_[1] = meta_params_[0];
 
@@ -176,12 +176,12 @@ contract Token721Configurator is PollyConfigurator, ReentrancyGuard {
         auxs_[i] = inputs_[i]._address;
       }
 
-      p721_.addAux(auxs_);
+      token_.addAux(auxs_);
 
     }
 
     // Transfer to sender
-    _transfer(address(p721_), for_);
+    _transfer(address(token_), for_);
     _transfer(meta_params_[0]._address, for_);
 
     return rparams_;

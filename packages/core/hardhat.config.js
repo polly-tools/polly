@@ -1,11 +1,9 @@
 require("dotenv").config({path: '.env'});
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-etherscan");
+require("@nomicfoundation/hardhat-toolbox");
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
 require('solidity-coverage');
 require("@polly-os/hardhat-polly");
-require("./tasks.js");
 
 const accounts = require('./hhaccounts.js');
 accounts[0] = {privateKey: process.env.DEPLOYER_KEY, balance: '10000000000000000000000'};
