@@ -46,7 +46,7 @@ export default async (req, res) => {
     const data = {};
     const {name, address, method, version, ...query} = getQuery(req);
 
-    const moduleABI = ModuleABIs[name];
+    const moduleABI = ModuleABIs[name][version];
     const abi = new ABIAPI(moduleABI);
     abi.supportedMethods = abi.getReadMethods();
     abi.cacheTTL = 60*60;

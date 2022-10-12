@@ -29,21 +29,16 @@ describe("Polly", function () {
       contracts.polly = await hre.polly.deploy();
 
       // Read only
-      const TestReadOnly = await ethers.getContractFactory("TestReadOnly");
+      const TestReadOnly = await ethers.getContractFactory("TestReadOnly_v1");
       contracts.testReadOnly = await TestReadOnly.deploy();
 
       // Clonable
-      const TestClone = await ethers.getContractFactory("TestClone");
+      const TestClone = await ethers.getContractFactory("TestClone_v1");
       contracts.testClone = await TestClone.deploy();
-
-      // Clonable
-      const TestCloneKeystore = await ethers.getContractFactory("TestCloneKeystore");
-      contracts.testCloneKeystore = await TestCloneKeystore.deploy();
 
       // console.log(`   Polly -> `, contracts.polly.address.yellow);
       // console.log(`   TestModule -> `, contracts.testReadOnly.address.yellow);
       // console.log(`   TestClone -> `, contracts.testClone.address.yellow);
-      // console.log(`   TestCloneKeystore -> `, contracts.testCloneKeystore.address.yellow);
 
       users[1] = await contracts.polly.connect(wallet1);
       users[2] = await contracts.polly.connect(wallet2);
@@ -61,14 +56,13 @@ describe("Polly", function () {
       });
 
       it("allows owner to add modules", async function(){
+
         expect(contracts.polly.updateModule(contracts.testReadOnly.address))
         .to.emit(contracts.polly, 'moduleUpdated')
 
         expect(contracts.polly.updateModule(contracts.testClone.address))
         .to.emit(contracts.polly, 'moduleUpdated')
 
-        expect(contracts.polly.updateModule(contracts.testCloneKeystore.address))
-        .to.emit(contracts.polly, 'moduleUpdated')
       });
 
     });
@@ -102,29 +96,16 @@ describe("Polly", function () {
         expect(tModule2_1.implementation).to.equal(contracts.testClone.address);
         expect(tModule2_1.clone).to.equal(true);
 
-        const tModule3 = await contracts.polly.getModule('TestCloneKeystore', 0);
-        expect(tModule3.name).to.equal('TestCloneKeystore');
-        expect(tModule3.version).to.equal(1);
-        expect(tModule3.implementation).to.equal(contracts.testCloneKeystore.address);
-        expect(tModule3.clone).to.equal(true);
 
-
-        const tModule3_1 = await contracts.polly.getModule('TestCloneKeystore', 1);
-        expect(tModule3_1.name).to.equal('TestCloneKeystore');
-        expect(tModule3_1.version).to.equal(1);
-        expect(tModule3_1.implementation).to.equal(contracts.testCloneKeystore.address);
-        expect(tModule3_1.clone).to.equal(true);
 
       });
 
       it("reverts on invalid modules", async function(){
 
         await expect(contracts.polly.getModule('TestReadOnly', 10))
-        .to.be.revertedWith('INVALID_MODULE_OR_VERSION');
+        .to.be.revertedWith('INVALID_MODULE_OR_VERSION: TestReadOnly@10');
         await expect(contracts.polly.getModule('TestClone', 10))
-        .to.be.revertedWith('INVALID_MODULE_OR_VERSION');
-        await expect(contracts.polly.getModule('TestCloneKeystore', 10))
-        .to.be.revertedWith('INVALID_MODULE_OR_VERSION');
+        .to.be.revertedWith('INVALID_MODULE_OR_VERSION: TestClone@10');
 
       });
 
@@ -137,7 +118,6 @@ describe("Polly", function () {
         const page1 = await contracts.polly.getModules(1, 1, false);
         const page2 = await contracts.polly.getModules(1, 2, false);
         const page3 = await contracts.polly.getModules(1, 3, false);
-        const page4 = await contracts.polly.getModules(1, 4, false);
 
         const allASC = await contracts.polly.getModules(0, 0, true);
         const allDSC = await contracts.polly.getModules(0, 0, false);
@@ -147,18 +127,15 @@ describe("Polly", function () {
 
         expect(page1.length).to.equal(1);
         expect(page2.length).to.equal(1);
-        expect(page3.length).to.equal(1);
-        expect(page4.length).to.equal(0);
+        expect(page3.length).to.equal(0);
 
-        expect(allASC.length).to.equal(3);
+        expect(allASC.length).to.equal(2);
         expect(allASC[0].name).to.equal('TestReadOnly');
         expect(allASC[1].name).to.equal('TestClone');
-        expect(allASC[2].name).to.equal('TestCloneKeystore');
 
-        expect(allDSC.length).to.equal(3);
-        expect(allDSC[0].name).to.equal('TestCloneKeystore');
-        expect(allDSC[1].name).to.equal('TestClone');
-        expect(allDSC[2].name).to.equal('TestReadOnly');
+        expect(allDSC.length).to.equal(2);
+        expect(allDSC[0].name).to.equal('TestClone');
+        expect(allDSC[1].name).to.equal('TestReadOnly');
 
       });
 
@@ -200,17 +177,12 @@ describe("Polly", function () {
         await expect(contracts.polly.configureModule('TestClone', 1, [], true, 'My config2'))
         .to.emit(contracts.polly, 'moduleConfigured');
 
-        await expect(contracts.polly.configureModule('TestCloneKeystore', 1, [
-          parseParam(1000),
-        ], true, 'My config3'))
-        .to.emit(contracts.polly, 'moduleConfigured');
-
         await expect(contracts.polly.configureModule('TestClone', 2, [], true, ''))
-        .to.be.revertedWith('INVALID_MODULE_OR_VERSION');
+        .to.be.revertedWith('INVALID_MODULE_OR_VERSION: TestClone@2');
 
         const configs = await contracts.polly.getConfigsForAddress(owner.address, 10, 1, true);
         // console.log(configs)
-        expect(configs.length).to.equal(3);
+        expect(configs.length).to.equal(2);
         expect(configs[0].params[0]._address).to.be.properAddress;
 
       })
@@ -227,7 +199,9 @@ describe("Polly", function () {
 
       it('can init once', async function(){
 
-        const [localClone, config] = await hre.polly.configureModule('TestClone', {});
+        const [localClone, config] = await hre.polly.configureModule('TestClone', {
+          version: 1
+        });
         await expect(localClone.init(wallet1.address)).to.be.revertedWith('ALREADY_INITIALIZED');
 
       })
@@ -239,28 +213,6 @@ describe("Polly", function () {
 
   })
 
-  // describe("No one can...", async function(){
-
-
-  //   it("use a non-existing module", async function(){
-  //     await expect(users[2].cloneModule('fakeModule', 1)).to.be.revertedWith('INVALID_MODULE_OR_VERSION: fakeModule');
-  //   });
-
-  //   it("use other peoples's modules", async function(){
-
-  //     const configs = await contracts.polly.getConfigsForAddress(owner.address, 10, 1, true);
-  //     const TestCloneKeystore = await ethers.getContractFactory("TestCloneKeystore");
-  //     const testCloneKeystore = await TestCloneKeystore.attach(configs[2].params[0]._address);
-
-  //     await testCloneKeystore.set(Enums.ParamType.STRING, 'test', parseParam('should work'));
-  //     const test = await testCloneKeystore.get('test');
-  //     await expect(test._string).to.equal('should work');
-
-  //     await expect(testCloneKeystore.connect(wallet2).set(Enums.ParamType.STRING, 'test', parseParam('should fail'))).to.be.revertedWith('MISSING_ROLE');
-
-  //   })
-
-  // });
 
 
 

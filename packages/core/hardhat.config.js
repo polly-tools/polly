@@ -33,7 +33,7 @@ module.exports = {
     },
   },
   polly: {
-    verbose: true,
+    verbose: false,
     fork: {
       // hardhat: process.env.POLLY_ADDRESS
     }
@@ -46,7 +46,7 @@ module.exports = {
   },
   gasReporter: {
     enabled: true,
-    gasPrice: 10,
+    gasPrice: 30,
     currency: 'ETH',
     coinmarketcap: process.env.CMC_API_KEY
   },

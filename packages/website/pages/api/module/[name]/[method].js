@@ -6,6 +6,7 @@ import { isArray, isArrayLikeObject, isObject, isObjectLike } from 'lodash';
 import getBaseUrl from 'base/url';
 import { parseConfig } from "base/utils";
 import getQuery from 'base/api/getQuery';
+import { paramCase } from 'param-case';
 
 const abi = new ABIAPI(moduleABI);
 abi.supportedMethods = abi.getReadMethods();
@@ -51,8 +52,7 @@ export default async (req, res) => {
     const data = {};
     const {name, method, version, ...query} = getQuery(req);
 
-    const _abi = await require(`@polly-os/core/abi/${name}.json`)
-    console.log(_abi);
+    const _abi = await require(`@polly-os/module-${paramCase(name)}/abi/v${version ? version : 1}/${name}_v${version ? version : 1}.json`)
 
     const abi = new ABIAPI(_abi);
     abi.supportedMethods = abi.getReadMethods();

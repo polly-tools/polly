@@ -52,51 +52,13 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "enum Json.Type",
-            "name": "_type",
-            "type": "uint8"
-          },
-          {
-            "internalType": "string",
-            "name": "_key",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "_bool",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "_uint",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Json.Item[]",
-        "name": "items_",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "enum Json.Format",
-        "name": "format_",
-        "type": "uint8"
-      }
-    ],
-    "name": "encode",
+    "inputs": [],
+    "name": "readValue",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "stateMutability": "pure",

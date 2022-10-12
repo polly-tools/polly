@@ -1,6 +1,11 @@
 [
   {
     "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
     "name": "PMNAME",
     "outputs": [
       {
@@ -68,52 +73,6 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "get",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "_uint",
-            "type": "uint256"
-          },
-          {
-            "internalType": "int256",
-            "name": "_int",
-            "type": "int256"
-          },
-          {
-            "internalType": "bool",
-            "name": "_bool",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct Polly.Param",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
         "name": "role_",
         "type": "string"
       },
@@ -167,64 +126,25 @@
   },
   {
     "inputs": [],
-    "name": "isLocked",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "isLockedKey",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "lock",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      }
-    ],
-    "name": "lockKey",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "owner",
     "outputs": [
       {
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "readValue",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -264,49 +184,12 @@
   {
     "inputs": [
       {
-        "internalType": "enum Polly.ParamType",
-        "name": "type_",
-        "type": "uint8"
-      },
-      {
-        "internalType": "string",
-        "name": "key_",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "_uint",
-            "type": "uint256"
-          },
-          {
-            "internalType": "int256",
-            "name": "_int",
-            "type": "int256"
-          },
-          {
-            "internalType": "bool",
-            "name": "_bool",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "_string",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "_address",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct Polly.Param",
-        "name": "value_",
-        "type": "tuple"
+        "internalType": "address",
+        "name": "new_owner_",
+        "type": "address"
       }
     ],
-    "name": "set",
+    "name": "setOwner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -314,12 +197,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "new_owner_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "value_",
+        "type": "uint256"
       }
     ],
-    "name": "setOwner",
+    "name": "writeValue",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
