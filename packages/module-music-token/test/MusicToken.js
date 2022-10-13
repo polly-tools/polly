@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const {parseParams, parseParam, Enums} = require('@polly-tools/utils/js/Polly.js')
+const {parseParams, parseParam, Enums} = require('@polly-tools/core/utils/Polly.js')
 
 
 function base64DataUrlToJson(base64) {
