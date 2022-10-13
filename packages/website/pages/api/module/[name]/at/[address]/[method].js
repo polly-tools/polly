@@ -4,7 +4,6 @@ import { getProvider } from "base/provider";
 import { isArray, isObject} from 'lodash';
 import getBaseUrl from 'base/url';
 import { parseConfig } from "base/utils";
-import ModuleABIs from '@polly-tools/utils/js/ModuleABIs';
 import getQuery from 'base/api/getQuery';
 
 // NUMBER PARSER
@@ -46,7 +45,7 @@ export default async (req, res) => {
     const data = {};
     const {name, address, method, version, ...query} = getQuery(req);
 
-    const moduleABI = ModuleABIs[name][version];
+    const moduleABI = await require(`base/abi/modules/${name}/${version ? version : 1}/${name}.json`);
     const abi = new ABIAPI(moduleABI);
     abi.supportedMethods = abi.getReadMethods();
     abi.cacheTTL = 60*60;

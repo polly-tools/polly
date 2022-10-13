@@ -1,4 +1,3 @@
-import useModule from "base/hooks/useModule";
 
 import Token721 from './Token721/Token721.js';
 
