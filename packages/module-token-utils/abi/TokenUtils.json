@@ -165,7 +165,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "parent_",
+        "name": "",
         "type": "address"
       },
       {
@@ -213,7 +213,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken_v1.MetaEntry[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "meta_",
         "type": "tuple[]"
       }
@@ -265,7 +265,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken_v1.MetaEntry[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -325,7 +325,7 @@
     ],
     "name": "beforeMint1155",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -375,7 +375,7 @@
     ],
     "name": "beforeMint721",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -427,6 +427,139 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount_",
+        "type": "uint256"
+      }
+    ],
+    "name": "requireValidAmount1155",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "requireValidBlock",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value_",
+        "type": "uint256"
+      }
+    ],
+    "name": "requireValidPrice1155",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "value_",
+        "type": "uint256"
+      }
+    ],
+    "name": "requireValidPrice721",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount_",
+        "type": "uint256"
+      }
+    ],
+    "name": "requireValidSupply1155",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "parent_address_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "requireValidTime",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "parent_",
         "type": "address"
       },
@@ -445,12 +578,12 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "receiver_",
+        "name": "receiver",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "royalty_",
+        "name": "royaltyAmount",
         "type": "uint256"
       }
     ],
