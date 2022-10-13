@@ -224,7 +224,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken_v1.MetaEntry[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "meta_",
         "type": "tuple[]"
       }
@@ -276,7 +276,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken_v1.MetaEntry[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "",
         "type": "tuple[]"
       }

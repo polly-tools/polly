@@ -1,29 +1,29 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
-import '@polly-os/core/contracts/Polly.sol';
-import '@polly-os/core/contracts/PollyConfigurator.sol';
-import '@polly-os/polly-token/contracts/PollyToken_v1.sol';
-import '@polly-os/module-royalty-info/contracts/RoyaltyInfo_v1.sol';
-import '@polly-os/module-token1155/contracts/Token1155_v1.sol';
-import '@polly-os/module-token721/contracts/Token721_v1.sol';
-import '@polly-os/module-token-utils/contracts/TokenUtils_v1.sol';
+import '@polly-tools/core/contracts/Polly.sol';
+import '@polly-tools/core/contracts/PollyConfigurator.sol';
+import '@polly-tools/polly-token/contracts/PollyToken.sol';
+import '@polly-tools/module-royalty-info/contracts/RoyaltyInfo.sol';
+import '@polly-tools/module-token1155/contracts/Token1155.sol';
+import '@polly-tools/module-token721/contracts/Token721.sol';
+import '@polly-tools/module-token-utils/contracts/TokenUtils.sol';
 import 'base64-sol/base64.sol';
 
 
-contract MusicToken_v1 is PMReadOnly, PollyTokenAux_v1 {
+contract MusicToken is PMReadOnly, PollyTokenAux {
 
   struct MetaItem {
     string _key;
-    Json_v1.Type _type;
+    Json.Type _type;
   }
 
   string public constant override PMNAME = "MusicToken";
   uint256 public constant override PMVERSION = 1;
 
   MusicTokenSchema private _schema;
-  Json_v1 private _json;
-  TokenUtils_v1 private _utils;
+  Json private _json;
+  TokenUtils private _utils;
 
   string[] private _hooks = [
     "beforeCreateToken",
@@ -38,13 +38,13 @@ contract MusicToken_v1 is PMReadOnly, PollyTokenAux_v1 {
 
     Polly polly_ = Polly(polly_address_);
 
-    _json = Json_v1(
+    _json = Json(
       polly_
       .getModule('Json', 1)
       .implementation
     );
 
-    _utils = TokenUtils_v1(
+    _utils = TokenUtils(
       polly_
       .getModule('TokenUtils', 1)
       .implementation
@@ -66,8 +66,8 @@ contract MusicToken_v1 is PMReadOnly, PollyTokenAux_v1 {
 
 
   /// @dev internal function to run on beforeMint1155 and beforeMint721
-  function _beforeMint(address parent_, uint id_, bool pre_, PollyAux.Msg memory msg_) private view {
-    require(PollyToken_v1(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
+  function _beforeMint(address parent_, uint id_, bool pre_, PollyAux.Msg memory) private view {
+    require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
     if(!pre_)
       _utils.requireValidTime(parent_, id_);
   }
@@ -90,7 +90,7 @@ contract MusicToken_v1 is PMReadOnly, PollyTokenAux_v1 {
       _utils.requireValidPrice721(parent_, id_, msg_._value);
   }
 
-  function beforeCreateToken(address, uint id_, PollyToken_v1.MetaEntry[] memory meta_) public pure override returns(uint, PollyToken_v1.MetaEntry[] memory){
+  function beforeCreateToken(address, uint id_, PollyToken.MetaEntry[] memory meta_) public pure override returns(uint, PollyToken.MetaEntry[] memory){
     require(meta_.length > 0, 'EMPTY_META');
     return (id_, meta_);
   }
@@ -98,9 +98,9 @@ contract MusicToken_v1 is PMReadOnly, PollyTokenAux_v1 {
 
   function tokenURI(address parent_, uint id_) public view override returns (string memory) {
 
-    require(PollyToken_v1(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
+    require(PollyToken(parent_).tokenExists(id_), 'TOKEN_NOT_FOUND');
 
-    Meta_v1 meta_ = PollyToken_v1(parent_).getMetaHandler();
+    Meta meta_ = PollyToken(parent_).getMetaHandler();
 
     if(!_stringIsEmpty(meta_.getString(id_, 'metadata_uri')))
       return meta_.getString(id_, 'metadata_uri');
@@ -114,12 +114,12 @@ contract MusicToken_v1 is PMReadOnly, PollyTokenAux_v1 {
       schema_ = MusicTokenSchema(meta_.getAddress(0, 'metadata_schema'));
     }
 
-    Json_v1.Item[] memory items_ = schema_.populate(id_, PollyToken_v1(parent_), meta_);
+    Json.Item[] memory items_ = schema_.populate(id_, PollyToken(parent_), meta_);
 
     return string(
       abi.encodePacked(
         'data:application/json;base64,',
-        Base64.encode(bytes(_json.encode(items_, Json_v1.Format.OBJECT)))
+        Base64.encode(bytes(_json.encode(items_, Json.Format.OBJECT)))
       )
     );
 
@@ -141,130 +141,130 @@ contract MusicTokenSchema {
     return keccak256(abi.encodePacked(string_)) == keccak256(abi.encodePacked(''));
   }
 
-  function get() public pure returns(Json_v1.Item[] memory){
+  function get() public pure returns(Json.Item[] memory){
 
-    Json_v1.Item[] memory items_ = new Json_v1.Item[](28);
+    Json.Item[] memory items_ = new Json.Item[](28);
 
     // version
     items_[0]._key = 'version';
-    items_[0]._type = Json_v1.Type.STRING;
+    items_[0]._type = Json.Type.STRING;
     items_[0]._string = SCHEMA_ID;
 
     // title
     items_[1]._key = 'title';
-    items_[1]._type = Json_v1.Type.STRING;
+    items_[1]._type = Json.Type.STRING;
 
     // artist
     items_[2]._key = 'artist';
-    items_[2]._type = Json_v1.Type.STRING;
+    items_[2]._type = Json.Type.STRING;
 
     // description
     items_[3]._key = 'description';
-    items_[3]._type = Json_v1.Type.STRING;
+    items_[3]._type = Json.Type.STRING;
 
     // duration
     items_[4]._key = 'duration';
-    items_[4]._type = Json_v1.Type.NUMBER;
+    items_[4]._type = Json.Type.NUMBER;
 
     // mimeType
     items_[5]._key = 'mimeType';
-    items_[5]._type = Json_v1.Type.STRING;
+    items_[5]._type = Json.Type.STRING;
 
     // trackNumber
     items_[6]._key = 'trackNumber';
-    items_[6]._type = Json_v1.Type.NUMBER;
+    items_[6]._type = Json.Type.NUMBER;
 
     // project
     items_[7]._key = 'project';
-    items_[7]._type = Json_v1.Type.STRING;
+    items_[7]._type = Json.Type.STRING;
 
     // artwork
     items_[8]._key = 'artwork';
-    items_[8]._type = Json_v1.Type.STRING;
+    items_[8]._type = Json.Type.STRING;
 
     // visualizer
     items_[9]._key = 'visualizer';
-    items_[9]._type = Json_v1.Type.STRING;
+    items_[9]._type = Json.Type.STRING;
 
     // genre
     items_[10]._key = 'genre';
-    items_[10]._type = Json_v1.Type.STRING;
+    items_[10]._type = Json.Type.STRING;
 
     // tags
     items_[11]._key = 'tags';
-    items_[11]._type = Json_v1.Type.STRING;
+    items_[11]._type = Json.Type.STRING;
 
     // lyrics
     items_[12]._key = 'lyrics';
-    items_[12]._type = Json_v1.Type.STRING;
+    items_[12]._type = Json.Type.STRING;
 
     // bpm
     items_[13]._key = 'bpm';
-    items_[13]._type = Json_v1.Type.NUMBER;
+    items_[13]._type = Json.Type.NUMBER;
 
     // key
     items_[14]._key = 'key';
-    items_[14]._type = Json_v1.Type.STRING;
+    items_[14]._type = Json.Type.STRING;
 
     // license
     items_[15]._key = 'license';
-    items_[15]._type = Json_v1.Type.STRING;
+    items_[15]._type = Json.Type.STRING;
 
     // isrc
     items_[16]._key = 'isrc';
-    items_[16]._type = Json_v1.Type.STRING;
+    items_[16]._type = Json.Type.STRING;
 
     // locationCreated
     items_[17]._key = 'locationCreated';
-    items_[17]._type = Json_v1.Type.STRING;
+    items_[17]._type = Json.Type.STRING;
 
     // originalReleaseDate
     items_[18]._key = 'originalReleaseDate';
-    items_[18]._type = Json_v1.Type.STRING;
+    items_[18]._type = Json.Type.STRING;
 
     // recordLabel
     items_[19]._key = 'recordLabel';
-    items_[19]._type = Json_v1.Type.STRING;
+    items_[19]._type = Json.Type.STRING;
 
     // publisher
     items_[20]._key = 'publisher';
-    items_[20]._type = Json_v1.Type.STRING;
+    items_[20]._type = Json.Type.STRING;
 
     // credits
     items_[21]._key = 'credits';
-    items_[21]._type = Json_v1.Type.STRING;
+    items_[21]._type = Json.Type.STRING;
 
     // losslessAudio
     items_[22]._key = 'losslessAudio';
-    items_[22]._type = Json_v1.Type.STRING;
+    items_[22]._type = Json.Type.STRING;
 
     // image
     items_[23]._key = 'image';
-    items_[23]._type = Json_v1.Type.STRING;
+    items_[23]._type = Json.Type.STRING;
 
     // name
     items_[24]._key = 'name';
-    items_[24]._type = Json_v1.Type.STRING;
+    items_[24]._type = Json.Type.STRING;
 
     // external_url
     items_[25]._key = 'external_url';
-    items_[25]._type = Json_v1.Type.STRING;
+    items_[25]._type = Json.Type.STRING;
 
     // animation_url
     items_[26]._key = 'animation_url';
-    items_[26]._type = Json_v1.Type.STRING;
+    items_[26]._type = Json.Type.STRING;
 
     // attributes
     items_[27]._key = 'attributes';
-    items_[27]._type = Json_v1.Type.STRING;
+    items_[27]._type = Json.Type.STRING;
 
     return items_;
 
   }
 
-  function populate(uint id_, PollyToken_v1 token_, Meta_v1 meta_) public view returns(Json_v1.Item[] memory){
+  function populate(uint id_, PollyToken token_, Meta meta_) public view returns(Json.Item[] memory){
 
-    Json_v1.Item[] memory items_ = get();
+    Json.Item[] memory items_ = get();
 
     string memory image_ = token_.image(id_);
     if(_stringIsEmpty(image_))
@@ -283,11 +283,11 @@ contract MusicTokenSchema {
         items_[i]._string = image_;
       }
       else
-      if(items_[i]._type == Json_v1.Type.STRING && !_stringIsEmpty(meta_.getString(id_, mt_key_))){
+      if(items_[i]._type == Json.Type.STRING && !_stringIsEmpty(meta_.getString(id_, mt_key_))){
         items_[i]._string = meta_.getString(id_, mt_key_);
       }
       else
-      if(items_[i]._type == Json_v1.Type.NUMBER){
+      if(items_[i]._type == Json.Type.NUMBER){
         items_[i]._uint = meta_.getUint(id_, mt_key_);
       }
 
@@ -359,8 +359,8 @@ contract MusicTokenConfigurator is PollyConfigurator {
 
       Polly.Param[] memory rparams_ = new Polly.Param[](outputs().length);
 
-      MusicToken_v1 mt_ = MusicToken_v1(polly_.getModule('MusicToken', 1).implementation);
-      RoyaltyInfo_v1 ri_ = RoyaltyInfo_v1(polly_.getModule('RoyaltyInfo', 1).implementation);
+      MusicToken mt_ = MusicToken(polly_.getModule('MusicToken', 1).implementation);
+      RoyaltyInfo ri_ = RoyaltyInfo(polly_.getModule('RoyaltyInfo', 1).implementation);
 
       Polly.Param[] memory token_params_ = new Polly.Param[](4);
       token_params_[0]._address = address(mt_);
@@ -375,8 +375,8 @@ contract MusicTokenConfigurator is PollyConfigurator {
         ''
       );
 
-      PollyToken_v1 token_ = PollyToken_v1(token_config_[0]._address);
-      Meta_v1 meta_ = token_.getMetaHandler();
+      PollyToken token_ = PollyToken(token_config_[0]._address);
+      Meta meta_ = token_.getMetaHandler();
 
 
       // Setup collection name

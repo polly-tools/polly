@@ -1,5 +1,5 @@
 {
-  "name": "@polly-os/utils",
+  "name": "@polly-tools/utils",
   "version": "1.0.0",
   "description": "utils for use with polly",
   "main": "index.js",

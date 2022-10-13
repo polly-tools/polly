@@ -90,9 +90,9 @@ contract Polly is Ownable {
     uint private _module_count; // the total number of registered modules
     mapping(string => uint) private _module_versions; // mapping of registered modules and their latest version - name => version
     mapping(address => mapping(uint => Config)) private _configs; // mapping of module configs - owner => (id => config)
-    mapping(address => uint) private _configs_count; // mapping of owner module configs
-    mapping(address => bool) private _configurators; // mapping of configurators
-    PollyFeeHandler private _fee_handler;
+    mapping(address => uint) private _configs_count; // mapping of owner config count - owner => count
+    mapping(address => bool) private _configurators; // mapping of configurators - address => bool
+    PollyFeeHandler private _fee_handler; // fee handler contract
     //////////////////
 
 
@@ -142,12 +142,12 @@ contract Polly is Ownable {
       if(version_ == 1)
         _module_names.push(name_); // This is a new module, add to module names mapping
 
-      address configurator_ = getConfigurator(name_, version_);
+      address configurator_ = getConfigurator(name_, version_); // get configurator address
 
       if(configurator_ != address(0))
-        _configurators[configurator_] = true;
+        _configurators[configurator_] = true; // Store the configurator address for this module
 
-      emit moduleUpdated(name_, name_, version_, implementation_);
+      emit moduleUpdated(name_, name_, version_, implementation_); // emit event moduleUpated
 
     }
 
@@ -370,7 +370,6 @@ contract Polly is Ownable {
       else
         id_ = page_ == 1 ? count_ : count_ - (limit_*(page_-1)); // calculate descending start id
 
-      //
 
       if(
         (ascending_ && id_ > count_) // ascending and id is greater than total number of configs

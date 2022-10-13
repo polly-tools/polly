@@ -4,7 +4,7 @@ import { getProvider } from "base/provider";
 import { isArray, isObject} from 'lodash';
 import getBaseUrl from 'base/url';
 import { parseConfig } from "base/utils";
-import ModuleABIs from '@polly-os/utils/js/ModuleABIs';
+import ModuleABIs from '@polly-tools/utils/js/ModuleABIs';
 import getQuery from 'base/api/getQuery';
 
 // NUMBER PARSER

@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const { parseParam, parseParams, Enums } = require("@polly-os/utils/js/Polly");
+const { parseParam, parseParams, Enums } = require("@polly-tools/utils/js/Polly");
 
 describe("Polly", function () {
 
@@ -29,11 +29,11 @@ describe("Polly", function () {
       contracts.polly = await hre.polly.deploy();
 
       // Read only
-      const TestReadOnly = await ethers.getContractFactory("TestReadOnly_v1");
+      const TestReadOnly = await ethers.getContractFactory("TestReadOnly");
       contracts.testReadOnly = await TestReadOnly.deploy();
 
       // Clonable
-      const TestClone = await ethers.getContractFactory("TestClone_v1");
+      const TestClone = await ethers.getContractFactory("TestClone");
       contracts.testClone = await TestClone.deploy();
 
       // console.log(`   Polly -> `, contracts.polly.address.yellow);

@@ -1,6 +1,6 @@
 {
-  "name": "@polly-os/core",
-  "version": "0.0.1",
+  "name": "@polly-tools/core",
+  "version": "1.0.0",
   "scripts": {
     "test": "npx hardhat test",
     "dev": "npx nodemon -e sol,js --exec \"npm run test\"",

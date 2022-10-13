@@ -1,7 +1,7 @@
 import Page from 'templates/Page.js';
 import Grid from 'styled-components-grid';
 import useContract from 'base/hooks/useContract';
-import pollyABI from '@polly-os/core/abi/Polly.json';
+import pollyABI from '@polly-tools/core/abi/Polly.json';
 import { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import {paramCase} from 'param-case'

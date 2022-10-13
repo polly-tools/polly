@@ -95,7 +95,7 @@ extendEnvironment(async (hre) => {
     const args = receipt.events.filter(x => x.event === "moduleConfigured").map(event => event.args[2]);
     const index = args[args.length-1];
     const config = await polly.getConfigForAddress(signer.address, index);
-    module = await ethers.getContractAt(`${name}_v${o.version}`, config.params[0]._address);
+    module = await ethers.getContractAt(`${name}`, config.params[0]._address);
     return [module, config];
 
   }

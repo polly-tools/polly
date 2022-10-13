@@ -1,4 +1,4 @@
-import pmABI from '@polly-os/core/abi/PollyModule.json';
+import pmABI from '@polly-tools/core/abi/PollyModule.json';
 import { ethers } from "ethers";
 import ABIAPI from 'abiapi';
 import { getProvider } from "base/provider";

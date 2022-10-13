@@ -1,8 +1,8 @@
 {
-  "name": "@polly-os/module-token1155",
+  "name": "@polly-tools/module-token1155",
   "version": "1.0.0",
   "dependencies": {
-    "@polly-os/hardhat-polly": "^0.0.1",
+    "@polly-tools/hardhat-polly": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "hardhat": "^2.11.2",

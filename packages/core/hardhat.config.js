@@ -3,7 +3,7 @@ require("@nomicfoundation/hardhat-toolbox");
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
 require('solidity-coverage');
-require("@polly-os/hardhat-polly");
+require("@polly-tools/hardhat-polly");
 
 const accounts = require('./hhaccounts.js');
 accounts[0] = {privateKey: process.env.DEPLOYER_KEY, balance: '10000000000000000000000'};
@@ -35,7 +35,7 @@ module.exports = {
   polly: {
     verbose: false,
     fork: {
-      // hardhat: process.env.POLLY_ADDRESS
+      hardhat: process.env.POLLY_ADDRESS
     }
   },
   paths: {
@@ -63,7 +63,7 @@ module.exports = {
     hardhat: {
       accounts: accounts,
       forking: {
-        blockNumber: 7523569,
+        blockNumber: 7762657,
         url: process.env.GOERLI_RPC_URL
       },
     },

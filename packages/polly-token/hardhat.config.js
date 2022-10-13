@@ -14,6 +14,6 @@ module.exports = {
     path: "./abi",
     only: ["{MODULE_NAME}"],
     clear: true,
-    rename: (name, contract) => name.replace(/contracts\/[\d\w_-]+_v(\d+).sol/, "v$1/" + contract),
+    flat: true,
   }
 };

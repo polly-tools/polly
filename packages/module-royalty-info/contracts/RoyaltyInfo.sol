@@ -2,15 +2,15 @@
 
 pragma solidity ^0.8.4;
 
-import '@polly-os/core/contracts/Polly.sol';
-import '@polly-os/core/contracts/PollyModule.sol';
-import '@polly-os/polly-token/contracts/PollyToken_v1.sol';
+import '@polly-tools/core/contracts/Polly.sol';
+import '@polly-tools/core/contracts/PollyModule.sol';
+import '@polly-tools/polly-token/contracts/PollyToken.sol';
 
 /// @title RoyaltyInfo
 /// @author troels_a
 /// @notice A PollyToken aux module for managing royalties
 
-contract RoyaltyInfo_v1 is PMReadOnly, PollyTokenAux_v1 {
+contract RoyaltyInfo is PMReadOnly, PollyTokenAux {
 
   string public constant override PMNAME = 'RoyaltyInfo';
   uint public constant override PMVERSION = 1;
@@ -27,7 +27,7 @@ contract RoyaltyInfo_v1 is PMReadOnly, PollyTokenAux_v1 {
 
   function royaltyInfo(address parent_, uint id_, uint value_) public view override returns (address receiver_, uint royalty_) {
 
-    Meta_v1 meta_ = PollyToken_v1(parent_).getMetaHandler();
+    Meta meta_ = PollyToken(parent_).getMetaHandler();
 
     uint base_ = meta_.getUint(id_, 'royalty_base');
     receiver_ = meta_.getAddress(id_, 'royalty_recipient');

@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const {parseParams, parseParam, Enums} = require('@polly-os/utils/js/Polly.js')
+const {parseParams, parseParam, Enums} = require('@polly-tools/utils/js/Polly.js')
 
 
 function base64DataUrlToJson(base64) {
@@ -48,13 +48,13 @@ describe("MusicToken module", async function(){
       [owner, user1, user2, user3] = await ethers.getSigners();
 
       polly = await hre.polly.deploy();
-      await hre.polly.addModule('Json_v1');
-      await hre.polly.addModule('Meta_v1');
-      await hre.polly.addModule('TokenUtils_v1');
-      await hre.polly.addModule('Token721_v1');
-      await hre.polly.addModule('Token1155_v1');
-      await hre.polly.addModule('RoyaltyInfo_v1');
-      await hre.polly.addModule('MusicToken_v1', polly.address);
+      await hre.polly.addModule('Json');
+      await hre.polly.addModule('Meta');
+      await hre.polly.addModule('TokenUtils');
+      await hre.polly.addModule('Token721');
+      await hre.polly.addModule('Token1155');
+      await hre.polly.addModule('RoyaltyInfo');
+      await hre.polly.addModule('MusicToken', polly.address);
 
       // Init Token1155 module
       const params = parseParams([
@@ -70,7 +70,7 @@ describe("MusicToken module", async function(){
         params: params,
       }, {value: fee});
 
-      p1155 = await ethers.getContractAt('Token1155_v1', config.params[0]._address);
+      p1155 = await ethers.getContractAt('Token1155', config.params[0]._address);
 
     })
 

@@ -1,5 +1,5 @@
 import useContract from "./useContract";
-import pollyABI from '@polly-os/core/abi/Polly.json';
+import pollyABI from '@polly-tools/core/abi/Polly.json';
 
 export function usePolly(){
     return useContract({

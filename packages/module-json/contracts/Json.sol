@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
-import '@polly-os/core/contracts/Polly.sol';
+import '@polly-tools/core/contracts/Polly.sol';
 
-contract Json_v1 is PMReadOnly {
+contract Json is PMReadOnly {
 
   enum Type {
     STRING, BOOL, NUMBER, OBJECT, ARRAY

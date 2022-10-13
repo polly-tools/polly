@@ -1,7 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-abi-exporter");
 require("hardhat-gas-reporter");
-require("@polly-os/hardhat-polly");
+require("@polly-tools/hardhat-polly");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -22,6 +22,6 @@ module.exports = {
     path: "./abi",
     only: ["MusicToken"],
     clear: true,
-    rename: (name, contract) => name.replace(/contracts\/[\d\w_-]+_v(\d+).sol/, "v$1/" + contract),
+    flat: true,
   }
 };

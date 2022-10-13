@@ -3,14 +3,14 @@ pragma solidity ^0.8.4;
 
 import "solmate/src/tokens/ERC1155.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import '@polly-os/polly-token/contracts/PollyToken_v1.sol';
-import '@polly-os/core/contracts/Polly.sol';
-import '@polly-os/core/contracts/PollyConfigurator.sol';
-import '@polly-os/core/contracts/PollyAux.sol';
-import '@polly-os/module-meta/contracts/Meta_v1.sol';
+import '@polly-tools/polly-token/contracts/PollyToken.sol';
+import '@polly-tools/core/contracts/Polly.sol';
+import '@polly-tools/core/contracts/PollyConfigurator.sol';
+import '@polly-tools/core/contracts/PollyAux.sol';
+import '@polly-tools/module-meta/contracts/Meta.sol';
 
 
-contract Token1155_v1 is PollyToken_v1, ERC1155, PMClone, ReentrancyGuard {
+contract Token1155 is PollyToken, ERC1155, PMClone, ReentrancyGuard {
 
 
   mapping(uint => uint) private _token_supply;
@@ -32,7 +32,7 @@ contract Token1155_v1 is PollyToken_v1, ERC1155, PMClone, ReentrancyGuard {
   */
 
   /// @dev create a new token
-  function createToken(PollyToken_v1.MetaEntry[] memory meta_, address[] memory mint_, uint[] memory amounts_) public returns (uint) {
+  function createToken(PollyToken.MetaEntry[] memory meta_, address[] memory mint_, uint[] memory amounts_) public returns (uint) {
     _requireRole('manager', msg.sender);
     require(!getMetaHandler().getBool(0, 'auto_create'), 'AUTO_CREATE_ENABLED');
 
@@ -54,7 +54,7 @@ contract Token1155_v1 is PollyToken_v1, ERC1155, PMClone, ReentrancyGuard {
   function _mintFor(address for_, uint id_, uint amount_, bool pre_, PollyAux.Msg memory msg_) private {
 
     if(getMetaHandler().getBool(id_, 'auto_create'))
-      id_ = _createToken(new PollyToken_v1.MetaEntry[](0));
+      id_ = _createToken(new PollyToken.MetaEntry[](0));
 
     if(_hasHook('beforeMint1155'))
       getAux('beforeMint1155').beforeMint1155(address(this), id_, amount_, pre_, msg_);
@@ -103,8 +103,8 @@ contract Token1155_v1 is PollyToken_v1, ERC1155, PMClone, ReentrancyGuard {
     _addAux(auxs_);
   }
 
-  function getAux(string memory hook_) public view returns (PollyTokenAux_v1) {
-    return PollyTokenAux_v1(_aux_hooks[hook_]);
+  function getAux(string memory hook_) public view returns (PollyTokenAux) {
+    return PollyTokenAux(_aux_hooks[hook_]);
   }
 
 
@@ -117,7 +117,7 @@ contract Token1155_v1 is PollyToken_v1, ERC1155, PMClone, ReentrancyGuard {
     _setMetaHandler(handler_);
   }
 
-  function setMetaForId(uint id_, PollyToken_v1.MetaEntry[] memory meta_) public {
+  function setMetaForId(uint id_, PollyToken.MetaEntry[] memory meta_) public {
     _requireRole('manager', msg.sender);
     _batchSetMetaForId(id_, meta_);
   }
@@ -125,7 +125,7 @@ contract Token1155_v1 is PollyToken_v1, ERC1155, PMClone, ReentrancyGuard {
 
 
   /// Override
-  function supportsInterface(bytes4 interfaceId) public view virtual override(PollyToken_v1, ERC1155) returns (bool){
+  function supportsInterface(bytes4 interfaceId) public view virtual override(PollyToken, ERC1155) returns (bool){
     return super.supportsInterface(interfaceId);
   }
 
@@ -163,7 +163,7 @@ contract Token1155Configurator is PollyConfigurator {
     Polly.Param[] memory rparams_ = new Polly.Param[](3);
 
     // Clone the Token1155 module
-    Token1155_v1 token1155_ = Token1155_v1(polly_.cloneModule('Token1155', 1));
+    Token1155 token1155_ = Token1155(polly_.cloneModule('Token1155', 1));
     rparams_[0]._string = 'Token1155';
     rparams_[0]._address = address(token1155_);
     rparams_[0]._uint = 1;
@@ -182,7 +182,7 @@ contract Token1155Configurator is PollyConfigurator {
     // Store return param and init the module
     rparams_[1] = meta_params_[0];
 
-    Meta_v1 meta_ = Meta_v1(meta_params_[0]._address);
+    Meta meta_ = Meta(meta_params_[0]._address);
 
     // Connect p1155 to meta
     _grantManager(address(token1155_), address(meta_));

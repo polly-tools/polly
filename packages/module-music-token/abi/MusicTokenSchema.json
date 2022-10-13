@@ -19,7 +19,7 @@
       {
         "components": [
           {
-            "internalType": "enum Json_v1.Type",
+            "internalType": "enum Json.Type",
             "name": "_type",
             "type": "uint8"
           },
@@ -44,7 +44,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct Json_v1.Item[]",
+        "internalType": "struct Json.Item[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -60,12 +60,12 @@
         "type": "uint256"
       },
       {
-        "internalType": "contract PollyToken_v1",
+        "internalType": "contract PollyToken",
         "name": "token_",
         "type": "address"
       },
       {
-        "internalType": "contract Meta_v1",
+        "internalType": "contract Meta",
         "name": "meta_",
         "type": "address"
       }
@@ -75,7 +75,7 @@
       {
         "components": [
           {
-            "internalType": "enum Json_v1.Type",
+            "internalType": "enum Json.Type",
             "name": "_type",
             "type": "uint8"
           },
@@ -100,7 +100,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct Json_v1.Item[]",
+        "internalType": "struct Json.Item[]",
         "name": "",
         "type": "tuple[]"
       }

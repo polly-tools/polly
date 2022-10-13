@@ -1,7 +1,7 @@
 import Page from 'templates/Page.js';
 import Grid from 'styled-components-grid';
 import useContract from 'base/hooks/useContract';
-import pollyABI from '@polly-os/core/abi/Polly.json';
+import pollyABI from '@polly-tools/core/abi/Polly.json';
 import { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { isArray } from 'lodash';
@@ -23,7 +23,7 @@ export default function Configs(p){
 
 
     useEffect(() => {
-        
+
         if(polly && account){
             setConfigs(-1);
             polly.read('getConfigsForAddress', {address_: account, limit_: 50, page_: page, ascending_: false}).then(response => {
@@ -56,7 +56,7 @@ export default function Configs(p){
                         </div>
                     </div>
                 })}
-            
+
             </>}
 
             {!account && <span><a href="#" onClick={e => {e.preventDefault(); setConnectIntent(true)}}>Connect</a> to view your configs</span>}

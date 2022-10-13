@@ -6,7 +6,7 @@ import './Polly.sol';
 
 
 
-contract TestReadOnly_v1 is PMReadOnly {
+contract TestReadOnly is PMReadOnly {
 
   string public constant override PMNAME = 'TestReadOnly';
   uint public constant override PMVERSION = 1;
@@ -19,7 +19,7 @@ contract TestReadOnly_v1 is PMReadOnly {
 
 
 
-contract TestClone_v1 is PMClone {
+contract TestClone is PMClone {
 
   string public constant override PMNAME = 'TestClone';
   uint public constant override PMVERSION = 1;
@@ -27,7 +27,7 @@ contract TestClone_v1 is PMClone {
   uint private _value;
 
   constructor() PMClone(){
-    _setConfigurator(address(new TestCloneConfigurator_v1()));
+    _setConfigurator(address(new TestCloneConfigurator()));
   }
 
   function readValue() public view returns(uint) {
@@ -41,7 +41,7 @@ contract TestClone_v1 is PMClone {
 }
 
 
-contract TestCloneConfigurator_v1 is PollyConfigurator {
+contract TestCloneConfigurator is PollyConfigurator {
 
   function inputs() public pure override returns (string[] memory) {
     /// Inputs
@@ -60,7 +60,7 @@ contract TestCloneConfigurator_v1 is PollyConfigurator {
   function run(Polly polly_, address for_, Polly.Param[] memory) public override payable returns(Polly.Param[] memory){
 
     // Clone a TestClone module
-    TestClone_v1 testClone_ = TestClone_v1(polly_.cloneModule('TestClone', 1));
+    TestClone testClone_ = TestClone(polly_.cloneModule('TestClone', 1));
 
     // Grant roles to the address calling the configurator
     _transfer(address(testClone_), for_);

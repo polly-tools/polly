@@ -56,7 +56,7 @@
       {
         "components": [
           {
-            "internalType": "enum Json_v1.Type",
+            "internalType": "enum Json.Type",
             "name": "_type",
             "type": "uint8"
           },
@@ -81,12 +81,12 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct Json_v1.Item[]",
+        "internalType": "struct Json.Item[]",
         "name": "items_",
         "type": "tuple[]"
       },
       {
-        "internalType": "enum Json_v1.Format",
+        "internalType": "enum Json.Format",
         "name": "format_",
         "type": "uint8"
       }

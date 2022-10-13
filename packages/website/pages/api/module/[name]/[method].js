@@ -1,4 +1,4 @@
-import moduleABI from '@polly-os/core/abi/PollyModule.json';
+import moduleABI from '@polly-tools/core/abi/PollyModule.json';
 import { ethers } from "ethers";
 import ABIAPI from 'abiapi';
 import { getProvider } from "base/provider";
@@ -52,7 +52,7 @@ export default async (req, res) => {
     const data = {};
     const {name, method, version, ...query} = getQuery(req);
 
-    const _abi = await require(`@polly-os/module-${paramCase(name)}/abi/v${version ? version : 1}/${name}_v${version ? version : 1}.json`)
+    const _abi = await require(`@polly-tools/module-${paramCase(name)}/abi/v${version ? version : 1}/${name}_v${version ? version : 1}.json`)
 
     const abi = new ABIAPI(_abi);
     abi.supportedMethods = abi.getReadMethods();

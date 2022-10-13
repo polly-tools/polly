@@ -11,9 +11,9 @@ import Button from "components/Button";
 import ModuleInput from "components/ModuleInputs/ModuleInput";
 import { ConnectIntent, useConnectIntent } from "components/ConnectButton";
 import { getProvider } from "base/provider";
-import pollyABI from '@polly-os/core/abi/Polly.json';
-import moduleABI from '@polly-os/core/abi/PollyModule.json';
-import configABI from '@polly-os/core/abi/PollyConfigurator.json';
+import pollyABI from '@polly-tools/core/abi/Polly.json';
+import moduleABI from '@polly-tools/core/abi/PollyModule.json';
+import configABI from '@polly-tools/core/abi/PollyConfigurator.json';
 import { paramCase } from "param-case";
 import { ethers } from "ethers";
 import moduleMDX from "mdx/modules"

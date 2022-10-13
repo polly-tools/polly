@@ -1,19 +1,19 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
-import '@polly-os/core/contracts/Polly.sol';
-import '@polly-os/core/contracts/PollyConfigurator.sol';
-import '@polly-os/module-json/contracts/Json_v1.sol';
+import '@polly-tools/core/contracts/Polly.sol';
+import '@polly-tools/core/contracts/PollyConfigurator.sol';
+import '@polly-tools/module-json/contracts/Json.sol';
 
 
-contract Meta_v1 is PMClone {
+contract Meta is PMClone {
 
-  Json_v1 private _json_parser;
+  Json private _json_parser;
   string public constant override PMNAME = 'Meta';
   uint public constant override PMVERSION = 1;
 
   struct Item {
-    Json_v1.Type _type;
+    Json.Type _type;
     string _key;
     string _inject;
   }
@@ -33,7 +33,7 @@ contract Meta_v1 is PMClone {
   }
 
   function setJsonParser(address json_parser) public onlyManager {
-    _json_parser = Json_v1(json_parser);
+    _json_parser = Json(json_parser);
   }
 
   function _reqValidKeyID(uint id_, string memory key_) private view {
@@ -45,9 +45,9 @@ contract Meta_v1 is PMClone {
 
 
   /// JSON
-  function getJSON(uint id_, Item[] memory items_, Json_v1.Format format_) public view returns (string memory) {
+  function getJSON(uint id_, Item[] memory items_, Json.Format format_) public view returns (string memory) {
 
-    Json_v1.Item[] memory json_items_ = new Json_v1.Item[](items_.length);
+    Json.Item[] memory json_items_ = new Json.Item[](items_.length);
     Item memory item;
 
     for (uint i = 0; i < items_.length; i++) {
@@ -57,13 +57,13 @@ contract Meta_v1 is PMClone {
       json_items_[i]._key = item._key;
       json_items_[i]._type = item._type;
 
-      if(item._type == Json_v1.Type.ARRAY || item._type == Json_v1.Type.OBJECT) {
+      if(item._type == Json.Type.ARRAY || item._type == Json.Type.OBJECT) {
         json_items_[i]._string = item._inject;
-      } else if (item._type == Json_v1.Type.STRING) {
+      } else if (item._type == Json.Type.STRING) {
         json_items_[i]._string = _keys[id_][item._key]._string;
-      } else if (item._type == Json_v1.Type.BOOL) {
+      } else if (item._type == Json.Type.BOOL) {
         json_items_[i]._bool = _keys[id_][item._key]._bool;
-      } else if (item._type == Json_v1.Type.NUMBER) {
+      } else if (item._type == Json.Type.NUMBER) {
         json_items_[i]._uint = _keys[id_][item._key]._uint;
       }
 
@@ -236,7 +236,7 @@ contract MetaConfigurator is PollyConfigurator {
   function run(Polly polly_, address for_, Polly.Param[] memory) public override payable returns(Polly.Param[] memory){
 
     // Clone a Meta module)
-    Meta_v1 meta_ = Meta_v1(polly_.cloneModule('Meta', 1));
+    Meta meta_ = Meta(polly_.cloneModule('Meta', 1));
 
     // Set the json module to use
     meta_.setJsonParser(polly_.getModule('Json', 1).implementation);

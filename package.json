@@ -8,6 +8,7 @@
     "node": "cd packages/core && npx hardhat node",
     "link-env": "ln -f .env packages/core/.env; ln -f .env packages/website/.env; ",
     "website:dev": "vercel dev",
+    "website:watch-build": "npx nodemon --watch packages/website --ext js --exec \"cd packages/website; npm run build\"",
     "core:coverage": "cd packages/core && npx hardhat coverage --network localhost",
     "core:compile": "cd packages/core && npx hardhat compile --force",
     "polly:deploy": "cd packages/core && npx hardhat polly:deploy --network localhost",

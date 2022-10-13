@@ -39,8 +39,8 @@ describe("Meta module", async function(){
     it("Setup", async function(){
       [owner, user1, user2, user3] = await ethers.getSigners();
       polly = await hre.polly.deploy();
-      await hre.polly.addModule('Json_v1');
-      await hre.polly.addModule('Meta_v1');
+      await hre.polly.addModule('Json');
+      await hre.polly.addModule('Meta');
     })
 
     it('Configure module', async function(){
@@ -62,7 +62,7 @@ describe("Meta module", async function(){
 
         const config = await polly.getConfigsForAddress(owner.address, 1, 1, false);
         expect(config[0].params[0]._address).to.be.properAddress;
-        meta = await ethers.getContractAt('Meta_v1', config[0].params[0]._address);
+        meta = await ethers.getContractAt('Meta', config[0].params[0]._address);
 
     });
 

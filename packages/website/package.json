@@ -1,5 +1,5 @@
 {
-  "name": "@polly-os/website",
+  "name": "@polly-tools/website",
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",

@@ -38,9 +38,9 @@ async function create(){
   await fs.writeFileSync(`${modulePath}/README.md`, result, 'utf8');
 
   await fs.mkdirSync(`${modulePath}/contracts`);
-  await fs.writeFileSync(`${modulePath}/contracts/${moduleName}_v1.sol`, '');
+  await fs.writeFileSync(`${modulePath}/contracts/${moduleName}.sol`, '');
   await fs.mkdirSync(`${modulePath}/test`);
-  await fs.writeFileSync(`${modulePath}/test/${moduleName}_v1.js`, '');
+  await fs.writeFileSync(`${modulePath}/test/${moduleName}.js`, '');
 
 }
 

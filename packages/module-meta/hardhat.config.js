@@ -1,6 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-abi-exporter");
-require("@polly-os/hardhat-polly");
+require("@polly-tools/hardhat-polly");
 require("hardhat-gas-reporter");
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -22,6 +22,6 @@ module.exports = {
     path: "./abi",
     only: ["Meta"],
     clear: true,
-    rename: (name, contract) => name.replace(/contracts\/[\d\w_-]+_v(\d+).sol/, "v$1/" + contract),
+    flat: true,
   }
 };

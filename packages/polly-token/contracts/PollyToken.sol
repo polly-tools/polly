@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 import '@openzeppelin/contracts/utils/introspection/ERC165.sol';
-import '@polly-os/core/contracts/Polly.sol';
-import '@polly-os/core/contracts/PollyAux.sol';
-import '@polly-os/module-meta/contracts/Meta_v1.sol';
+import '@polly-tools/core/contracts/Polly.sol';
+import '@polly-tools/core/contracts/PollyAux.sol';
+import '@polly-tools/module-meta/contracts/Meta.sol';
 
 
 
@@ -24,7 +24,7 @@ interface IERC2981Royalties {
 
 
 
-contract PollyToken_v1 is PollyAuxParent, ERC165, IERC2981Royalties {
+contract PollyToken is PollyAuxParent, ERC165, IERC2981Royalties {
 
   struct MetaEntry {
     string _key;
@@ -33,7 +33,7 @@ contract PollyToken_v1 is PollyAuxParent, ERC165, IERC2981Royalties {
 
   event TokenCreated(uint id);
 
-  Meta_v1 internal _meta;
+  Meta internal _meta;
 
   mapping(uint => bool) private _created;
   mapping(uint => uint) internal _supply;
@@ -41,10 +41,10 @@ contract PollyToken_v1 is PollyAuxParent, ERC165, IERC2981Royalties {
 
   function _setMetaHandler(address handler_) internal {
     require(address(_meta) == address(0), 'META_HANDLER_SET');
-    _meta = Meta_v1(handler_);
+    _meta = Meta(handler_);
   }
 
-  function getMetaHandler() public view returns (Meta_v1) {
+  function getMetaHandler() public view returns (Meta) {
     return _meta;
   }
 
@@ -72,8 +72,8 @@ contract PollyToken_v1 is PollyAuxParent, ERC165, IERC2981Royalties {
   }
 
 
-  function _getAux(string memory hook_) internal view returns(PollyTokenAux_v1) {
-    return PollyTokenAux_v1(_aux_hooks[hook_]);
+  function _getAux(string memory hook_) internal view returns(PollyTokenAux) {
+    return PollyTokenAux(_aux_hooks[hook_]);
   }
 
 
@@ -165,7 +165,7 @@ contract PollyToken_v1 is PollyAuxParent, ERC165, IERC2981Royalties {
 
 
 
-abstract contract PollyTokenAux_v1 is PollyAux {
+abstract contract PollyTokenAux is PollyAux {
 
   string[] private _aux_available_hooks = [
     "beforeCreateToken",
@@ -181,7 +181,7 @@ abstract contract PollyTokenAux_v1 is PollyAux {
   ];
 
 
-  function beforeCreateToken(address parent_, uint id_, PollyToken_v1.MetaEntry[] memory meta_) external virtual returns(uint, PollyToken_v1.MetaEntry[] memory) {return (id_, meta_);}
+  function beforeCreateToken(address, uint id_, PollyToken.MetaEntry[] memory meta_) external virtual returns(uint, PollyToken.MetaEntry[] memory) {return (id_, meta_);}
   function afterCreateToken(address parent_, uint id_) external virtual {}
   function beforeMint721(address parent_, uint id_, bool pre_, Msg memory msg_) external virtual {} // For ERC721
   function afterMint721(address parent_, uint id_, bool pre_, Msg memory msg_) external virtual {} // For ERC721

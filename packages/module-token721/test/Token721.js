@@ -1,6 +1,6 @@
 const { expect, config } = require("chai");
 const { ethers } = require("hardhat");
-const {parseParam, Enums} = require('@polly-os/utils/js/Polly.js')
+const {parseParam, Enums} = require('@polly-tools/utils/js/Polly.js')
 
 const Format = {
   KEY_VALUE: 0,
@@ -21,7 +21,7 @@ const Type = {
  * CHAINS
  */
 
-describe("Token1155 module", async function(){
+describe("Token721 module", async function(){
 
     const nullAddress = '0x'+'0'.repeat(40);
 
@@ -42,11 +42,11 @@ describe("Token1155 module", async function(){
       [owner, user1, user2, user3] = await ethers.getSigners();
 
       polly = await hre.polly.deploy();
-      await hre.polly.addModule('Json_v1');
-      await hre.polly.addModule('Meta_v1');
-      await hre.polly.addModule('Token1155_v1');
+      await hre.polly.addModule('Json');
+      await hre.polly.addModule('Meta');
+      await hre.polly.addModule('Token721');
 
-      p1155 = await hre.polly.configureModule('Token1155', {
+      p1155 = await hre.polly.configureModule('Token721', {
         version: 1,
         params: [
           parseParam(Enums.ParamType.ADDRESS, '0x0000000000000000000000000000000000000000'), // Pass an aux

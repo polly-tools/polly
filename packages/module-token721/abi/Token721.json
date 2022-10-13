@@ -268,7 +268,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken_v1.MetaEntry[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "meta_",
         "type": "tuple[]"
       },
@@ -332,7 +332,7 @@
     "name": "getAux",
     "outputs": [
       {
-        "internalType": "contract PollyTokenAux_v1",
+        "internalType": "contract PollyTokenAux",
         "name": "",
         "type": "address"
       }
@@ -345,7 +345,7 @@
     "name": "getMetaHandler",
     "outputs": [
       {
-        "internalType": "contract Meta_v1",
+        "internalType": "contract Meta",
         "name": "",
         "type": "address"
       }
@@ -408,7 +408,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken_v1.MetaEntry[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -761,7 +761,7 @@
             "type": "tuple"
           }
         ],
-        "internalType": "struct PollyToken_v1.MetaEntry[]",
+        "internalType": "struct PollyToken.MetaEntry[]",
         "name": "meta_",
         "type": "tuple[]"
       }

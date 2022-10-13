@@ -3,7 +3,7 @@ import Button from "components/Button";
 import Grid from "styled-components-grid";
 import _ from "lodash";
 import useContract from "base/hooks/useContract";
-import token721_abi from "@polly-os/core/abi/Token721.json";
+import token721_abi from "@polly-tools/core/abi/Token721.json";
 import Address from "components/Address";
 
 const avail_hooks = [

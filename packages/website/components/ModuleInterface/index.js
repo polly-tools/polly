@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import useModule from 'base/hooks/useModule.js';
-import { parseParam } from '@polly-os/utils/js/Polly.js';
+import { parseParam } from '@polly-tools/utils/js/Polly.js';
 import ModuleInput from 'components/ModuleInputs/ModuleInput.js';
 
 import * as Hello from './Hello.js';
