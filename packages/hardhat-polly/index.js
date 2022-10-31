@@ -18,21 +18,27 @@ extendEnvironment(async (hre) => {
   };
 
 
-  if(fork){
-    hre.polly.forked = true;
-    hre.polly.deploy = async function(){
+
+
+  hre.polly.forked = (fork);
+  hre.polly.deploy = async function(force_deploy = false){
+
+    if(hre.polly.forked && !force_deploy){
+
       polly = await hre.ethers.getContractAt('Polly', fork);
       log('Using forked Polly at -> '+polly.address.green);
       return polly;
+
     }
-  }
-  else {
-    hre.polly.deploy = async function(){
+    else {
+
       const Polly = await ethers.getContractFactory("Polly");
       polly = await Polly.deploy();
       log('Deployed Polly at -> '+polly.address.green);
       return polly;
+
     }
+
   }
 
   hre.polly.use = async function(address){
