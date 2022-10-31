@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-const { parseParam, parseParams, Enums } = require("@polly-tools/utils/js/Polly");
+const { parseParam, parseParams, Enums } = require("@polly-tools/core/utils/Polly.js");
 
 describe("Polly", function () {
 
@@ -25,8 +25,7 @@ describe("Polly", function () {
       // console.log(`   wallet3 -> `, wallet3.address.blue);
       // console.log('');
 
-      delete hre.polly.fork;
-      contracts.polly = await hre.polly.deploy();
+      contracts.polly = await hre.polly.deploy(true);
 
       // Read only
       const TestReadOnly = await ethers.getContractFactory("TestReadOnly");
