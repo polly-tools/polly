@@ -1,6 +1,10 @@
 {
   "name": "@polly-tools/create-polly-module",
   "version": "1.0.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
