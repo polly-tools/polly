@@ -11,14 +11,14 @@ import "@polly-tools/module-token721/contracts/Token721.sol";
 
 contract TokenUtils is PMReadOnly, PollyTokenAux {
   string public constant override PMNAME = "TokenUtils";
-  uint256 public constant override PMVERSION = 1;
+  uint public constant override PMVERSION = 1;
 
   /// @notice time check
-  function requireValidTime(address parent_address_, uint256 id_) public view {
+  function requireValidTime(address parent_address_, uint id_) public view {
     PollyToken parent_ = PollyToken(parent_address_);
     Meta meta_ = parent_.getMetaHandler();
-    uint256 min_time_ = meta_.getUint(id_, "min_time");
-    uint256 max_time_ = meta_.getUint(id_, "max_time");
+    uint min_time_ = meta_.getUint(id_, "Token/min_time");
+    uint max_time_ = meta_.getUint(id_, "Token/max_time");
 
     if (min_time_ > 0) {
       require(block.timestamp > min_time_, "MIN_TIME_NOT_REACHED");
@@ -28,11 +28,11 @@ contract TokenUtils is PMReadOnly, PollyTokenAux {
   }
 
   /// @notice block check
-  function requireValidBlock(address parent_address_, uint256 id_) public view {
+  function requireValidBlock(address parent_address_, uint id_) public view {
     PollyToken parent_ = PollyToken(parent_address_);
     Meta meta_ = parent_.getMetaHandler();
-    uint256 min_block_ = meta_.getUint(id_, "min_block");
-    uint256 max_block_ = meta_.getUint(id_, "max_block");
+    uint min_block_ = meta_.getUint(id_, "Token/min_block");
+    uint max_block_ = meta_.getUint(id_, "Token/max_block");
 
     if (min_block_ > 0) {
       require(block.number > min_block_, "MIN_BLOCK_NOT_REACHED");
@@ -44,14 +44,14 @@ contract TokenUtils is PMReadOnly, PollyTokenAux {
   /// @notice supply check
   function requireValidSupply1155(
     address parent_address_,
-    uint256 id_,
-    uint256 amount_
+    uint id_,
+    uint amount_
   ) public view {
     Token1155 parent_ = Token1155(parent_address_);
     Meta meta_ = parent_.getMetaHandler();
-    uint256 max_supply_ = meta_.getUint(id_, "max_supply");
+    uint max_supply_ = meta_.getUint(id_, "Token/max_supply");
     if (max_supply_ > 0) {
-      uint256 supply_ = parent_.totalSupply(id_);
+      uint supply_ = parent_.totalSupply(id_);
       require(max_supply_ >= supply_ + amount_, "MAX_SUPPLY_REACHED");
     }
   }
@@ -59,25 +59,25 @@ contract TokenUtils is PMReadOnly, PollyTokenAux {
   /// @notice max mint check
   function requireValidAmount1155(
     address parent_address_,
-    uint256 id_,
-    uint256 amount_
+    uint id_,
+    uint amount_
   ) public view {
     Token1155 parent_ = Token1155(parent_address_);
     Meta meta_ = parent_.getMetaHandler();
-    uint256 max_mint_ = meta_.getUint(id_, "max_mint");
+    uint max_mint_ = meta_.getUint(id_, "Token/max_mint");
     if (max_mint_ > 0) require(max_mint_ >= amount_, "MAX_MINT_REACHED");
   }
 
   /// @notice min price check
   function requireValidPrice1155(
     address parent_address_,
-    uint256 id_,
-    uint256 amount_,
-    uint256 value_
+    uint id_,
+    uint amount_,
+    uint value_
   ) public view {
     Token1155 parent_ = Token1155(parent_address_);
     Meta meta_ = parent_.getMetaHandler();
-    uint256 min_price_ = meta_.getUint(id_, "min_price");
+    uint min_price_ = meta_.getUint(id_, "Token/min_price");
     if (min_price_ > 0)
       require(value_ >= (amount_ * min_price_), "INVALID_PRICE");
   }
@@ -85,19 +85,19 @@ contract TokenUtils is PMReadOnly, PollyTokenAux {
   /// @notice min price check
   function requireValidPrice721(
     address parent_address_,
-    uint256 id_,
-    uint256 value_
+    uint id_,
+    uint value_
   ) public view {
     Token721 parent_ = Token721(parent_address_);
     Meta meta_ = parent_.getMetaHandler();
-    uint256 min_price_ = meta_.getUint(id_, "min_price");
+    uint min_price_ = meta_.getUint(id_, "Token/min_price");
     if (min_price_ > 0) require(value_ >= min_price_, "INVALID_PRICE");
   }
 
   /// @dev internal function to run on beforeMint1155 and beforeMint721
   function _beforeMint(
     address parent_,
-    uint256 id_,
+    uint id_,
     bool pre_,
     PollyAux.Msg memory
   ) private view {
@@ -108,8 +108,8 @@ contract TokenUtils is PMReadOnly, PollyTokenAux {
 
   function beforeMint1155(
     address parent_,
-    uint256 id_,
-    uint256 amount_,
+    uint id_,
+    uint amount_,
     bool pre_,
     PollyAux.Msg memory msg_
   ) public view override {
@@ -122,7 +122,7 @@ contract TokenUtils is PMReadOnly, PollyTokenAux {
 
   function beforeMint721(
     address parent_,
-    uint256 id_,
+    uint id_,
     bool pre_,
     PollyAux.Msg memory msg_
   ) public view override {
