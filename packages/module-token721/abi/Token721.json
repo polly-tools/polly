@@ -16,13 +16,13 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "spender",
+        "name": "approved",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "id",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -85,7 +85,7 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "id",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -134,45 +134,13 @@
   {
     "inputs": [
       {
-        "internalType": "address[]",
-        "name": "auxs_",
-        "type": "address[]"
-      }
-    ],
-    "name": "addAux",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "hook_",
-        "type": "string"
-      }
-    ],
-    "name": "addressForHook",
-    "outputs": [
-      {
         "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "spender",
+        "name": "to",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "id",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -273,9 +241,9 @@
         "type": "tuple[]"
       },
       {
-        "internalType": "address[]",
+        "internalType": "address",
         "name": "mint_",
-        "type": "address[]"
+        "type": "address"
       }
     ],
     "name": "createToken",
@@ -306,7 +274,26 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "exists",
+    "outputs": [
+      {
+        "internalType": "bool",
         "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -329,12 +316,63 @@
         "type": "string"
       }
     ],
-    "name": "getAux",
+    "name": "getHookAddress",
     "outputs": [
       {
-        "internalType": "contract PollyTokenAux",
+        "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
+      }
+    ],
+    "name": "getMeta",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "_string",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Polly.Param",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -357,60 +395,21 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "id_",
+        "name": "limit_",
         "type": "uint256"
       },
       {
-        "internalType": "string[]",
-        "name": "keys_",
-        "type": "string[]"
+        "internalType": "uint256",
+        "name": "page_",
+        "type": "uint256"
       }
     ],
-    "name": "getTokenMeta",
+    "name": "getTokens",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "_key",
-            "type": "string"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "_uint",
-                "type": "uint256"
-              },
-              {
-                "internalType": "int256",
-                "name": "_int",
-                "type": "int256"
-              },
-              {
-                "internalType": "bool",
-                "name": "_bool",
-                "type": "bool"
-              },
-              {
-                "internalType": "string",
-                "name": "_string",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "_address",
-                "type": "address"
-              }
-            ],
-            "internalType": "struct Polly.Param",
-            "name": "_value",
-            "type": "tuple"
-          }
-        ],
-        "internalType": "struct PollyToken.MetaEntry[]",
+        "internalType": "uint256[]",
         "name": "",
-        "type": "tuple[]"
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -459,19 +458,13 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "id_",
-        "type": "uint256"
-      }
-    ],
-    "name": "image",
+    "inputs": [],
+    "name": "highestId",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "",
-        "type": "string"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -494,12 +487,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "owner",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "operator",
         "type": "address"
       }
     ],
@@ -512,19 +505,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "hook_",
-        "type": "string"
-      }
-    ],
-    "name": "lockHook",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -570,7 +550,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "id",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -578,11 +558,24 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "owner",
+        "name": "",
         "type": "address"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "aux_",
+        "type": "address"
+      }
+    ],
+    "name": "registerAux",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -633,7 +626,7 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "receiver_",
+        "name": "recipient_",
         "type": "address"
       },
       {
@@ -659,7 +652,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "id",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
@@ -682,7 +675,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "id",
+        "name": "tokenId",
         "type": "uint256"
       },
       {
@@ -710,63 +703,6 @@
       }
     ],
     "name": "setApprovalForAll",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "id_",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "_key",
-            "type": "string"
-          },
-          {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "_uint",
-                "type": "uint256"
-              },
-              {
-                "internalType": "int256",
-                "name": "_int",
-                "type": "int256"
-              },
-              {
-                "internalType": "bool",
-                "name": "_bool",
-                "type": "bool"
-              },
-              {
-                "internalType": "string",
-                "name": "_string",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "_address",
-                "type": "address"
-              }
-            ],
-            "internalType": "struct Polly.Param",
-            "name": "_value",
-            "type": "tuple"
-          }
-        ],
-        "internalType": "struct PollyToken.MetaEntry[]",
-        "name": "meta_",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "setMetaForId",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -837,25 +773,6 @@
         "type": "uint256"
       }
     ],
-    "name": "tokenExists",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "id_",
-        "type": "uint256"
-      }
-    ],
     "name": "tokenURI",
     "outputs": [
       {
@@ -894,11 +811,18 @@
       },
       {
         "internalType": "uint256",
-        "name": "id",
+        "name": "tokenId",
         "type": "uint256"
       }
     ],
     "name": "transferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
