@@ -6,8 +6,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@polly-tools/core": "^1.0.0",
-    "@polly-tools/module-meta": "^1.0.0",
+    "@polly-tools/core": "^1.0.1",
+    "@polly-tools/module-meta": "^1.0.1",
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
     "hardhat": "^2.11.2",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
