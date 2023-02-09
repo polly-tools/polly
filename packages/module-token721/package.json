@@ -1,6 +1,6 @@
 {
   "name": "@polly-tools/module-token721",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -9,10 +9,10 @@
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@polly-tools/core": "^1.0.0",
-    "@polly-tools/polly-token": "^1.1.0",
-    "@polly-tools/hardhat-polly": "^1.0.0",
-    "@polly-tools/module-meta": "^1.0.1",
-    "@polly-tools/module-json": "^1.0.1",
+    "@polly-tools/polly-token": "^1.0.1",
+    "@polly-tools/hardhat-polly": "^1.0.1",
+    "@polly-tools/module-meta": "^1.0.0",
+    "@polly-tools/module-json": "^1.0.0",
     "@typechain/hardhat": "^6.1.2",
     "@types/mocha": "^9.1.0",
     "hardhat": "^2.11.2",
