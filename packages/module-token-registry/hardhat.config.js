@@ -20,7 +20,7 @@ module.exports = {
   abiExporter: {
     runOnCompile: true,
     path: "./abi",
-    only: ["TokenGates"],
+    only: ["TokenRegistry"],
     clear: true,
     flat: true,
   }

@@ -1,19 +1,14 @@
 [
   {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "inputs": [
       {
         "internalType": "contract Polly",
-        "name": "polly_",
+        "name": "",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "for_",
+        "name": "",
         "type": "address"
       },
       {
@@ -45,7 +40,7 @@
           }
         ],
         "internalType": "struct Polly.Param[]",
-        "name": "params_",
+        "name": "",
         "type": "tuple[]"
       }
     ],
@@ -70,7 +65,7 @@
         "type": "string[]"
       }
     ],
-    "stateMutability": "pure",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -127,7 +122,7 @@
           }
         ],
         "internalType": "struct Polly.Param[]",
-        "name": "params_",
+        "name": "",
         "type": "tuple[]"
       }
     ],

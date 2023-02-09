@@ -4,7 +4,7 @@ require("@polly-tools/hardhat-polly");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.9",
+  solidity: "0.8.4",
   polly: {
     fork: {
       localhost: process.env.POLLY_ADDRESS

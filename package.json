@@ -14,6 +14,7 @@
     "polly:deploy": "cd packages/core && npx hardhat polly:deploy --network localhost",
     "polly:test": "cd packages/core && npx hardhat test test/polly.js",
     "polly:watch": "npx nodemon --watch packages/core/contracts --watch packages/core/test -e sol,js --exec \"npm run polly:test\"",
+    "modules:compile": "node scripts/compile-modules.js",
     "module:compile": "node scripts/compile-module.js $npm_config_name",
     "module:test": "node scripts/test-module.js $npm_config_name",
     "module:watch": "npx nodemon --watch packages/core/contracts --watch packages/core/test -e sol,js --exec \"npm run module:test --name=$npm_config_name\""

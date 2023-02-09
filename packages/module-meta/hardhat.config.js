@@ -7,6 +7,7 @@ require("hardhat-gas-reporter");
 module.exports = {
   solidity: "0.8.9",
   polly: {
+    verbose: true,
     fork: {
       localhost: process.env.POLLY_ADDRESS
     }

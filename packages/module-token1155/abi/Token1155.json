@@ -177,38 +177,6 @@
   {
     "inputs": [
       {
-        "internalType": "address[]",
-        "name": "auxs_",
-        "type": "address[]"
-      }
-    ],
-    "name": "addAux",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "hook_",
-        "type": "string"
-      }
-    ],
-    "name": "addressForHook",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -369,23 +337,10 @@
         "type": "string"
       }
     ],
-    "name": "getAux",
+    "name": "getHookAddress",
     "outputs": [
       {
-        "internalType": "contract PollyTokenAux",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getMetaHandler",
-    "outputs": [
-      {
-        "internalType": "contract Meta",
+        "internalType": "address",
         "name": "",
         "type": "address"
       }
@@ -401,56 +356,57 @@
         "type": "uint256"
       },
       {
-        "internalType": "string[]",
-        "name": "keys_",
-        "type": "string[]"
+        "internalType": "string",
+        "name": "key_",
+        "type": "string"
       }
     ],
-    "name": "getTokenMeta",
+    "name": "getMeta",
     "outputs": [
       {
         "components": [
           {
+            "internalType": "uint256",
+            "name": "_uint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "_int",
+            "type": "int256"
+          },
+          {
+            "internalType": "bool",
+            "name": "_bool",
+            "type": "bool"
+          },
+          {
             "internalType": "string",
-            "name": "_key",
+            "name": "_string",
             "type": "string"
           },
           {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "_uint",
-                "type": "uint256"
-              },
-              {
-                "internalType": "int256",
-                "name": "_int",
-                "type": "int256"
-              },
-              {
-                "internalType": "bool",
-                "name": "_bool",
-                "type": "bool"
-              },
-              {
-                "internalType": "string",
-                "name": "_string",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "_address",
-                "type": "address"
-              }
-            ],
-            "internalType": "struct Polly.Param",
-            "name": "_value",
-            "type": "tuple"
+            "internalType": "address",
+            "name": "_address",
+            "type": "address"
           }
         ],
-        "internalType": "struct PollyToken.MetaEntry[]",
+        "internalType": "struct Polly.Param",
         "name": "",
-        "type": "tuple[]"
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMetaHandler",
+    "outputs": [
+      {
+        "internalType": "contract Meta",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -501,25 +457,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "id_",
-        "type": "uint256"
-      }
-    ],
-    "name": "image",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "for_",
         "type": "address"
@@ -557,19 +494,6 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "hook_",
-        "type": "string"
-      }
-    ],
-    "name": "lockHook",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "id_",
         "type": "uint256"
@@ -596,6 +520,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "aux_",
+        "type": "address"
+      }
+    ],
+    "name": "registerAux",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -646,7 +583,7 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "receiver_",
+        "name": "recipient_",
         "type": "address"
       },
       {
@@ -705,7 +642,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "id",
+        "name": "tokenId",
         "type": "uint256"
       },
       {
@@ -845,6 +782,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "tokenCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -899,6 +849,13 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdraw",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

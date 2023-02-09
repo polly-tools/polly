@@ -21,6 +21,10 @@ extendEnvironment(async (hre) => {
 
 
   hre.polly.forked = (fork);
+
+  if(hre.polly.forked)
+    log('Forking Polly at -> '+fork.green);
+
   hre.polly.deploy = async function(force_deploy = false){
 
     if(hre.polly.forked && !force_deploy){
@@ -60,6 +64,7 @@ extendEnvironment(async (hre) => {
 
     // Add module handler to Polly
     const tx = await polly.updateModule(module.address);
+    log('Adding module -> '+name.green+' at -> '+module.address.green);
     const receipt = await tx.wait();
 
     const events = receipt.events.filter(e => e.event === 'moduleUpdated');

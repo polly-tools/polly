@@ -52,7 +52,7 @@ export default async (req, res) => {
     const data = {};
     const {name, method, version, ...query} = getQuery(req);
 
-    const _abi = await require(`base/abi/modules/${name}/${version ? version : 1}/${name}.json`)
+    const _abi = await require(`base/abi/modules/${name}/v${version ? version : 1}/${name}.json`)
 
     const abi = new ABIAPI(_abi);
     abi.supportedMethods = abi.getReadMethods();

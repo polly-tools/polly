@@ -1,3 +1,5 @@
+const BigNumber = require('bignumber.js');
+
 const Enums = {
   ModuleType: {
     READONLY: 0,
@@ -37,6 +39,13 @@ function parseParamType(type, input){
 
 function parseParam(input){
   let type;
+  if(input._isBigNumber){
+    if(input.isNegative())
+      type = Enums.ParamType.INT;
+    else
+      type = Enums.ParamType.UINT
+  }
+  else
   if(typeof input == 'string' && input.match(/^0x/)){
     type = Enums.ParamType.ADDRESS;
   }

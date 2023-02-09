@@ -3,11 +3,11 @@ import Token721 from './Token721/Token721.js';
 
 
 const interfaces = {
-  Token721
+  Token721,
 }
 
 
-export default function ConfigInterface({config}){
+export default function ConfigInterface({config, module}){
 
   const Interface = interfaces[config.module];
 

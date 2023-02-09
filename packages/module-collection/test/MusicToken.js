@@ -91,17 +91,17 @@ describe("MusicToken module", async function(){
           ['isrc', parseParam('DKU3-202200101')],
           ['losslessAudio', parseParam('https://myserver.com/audio.wav')],
           ['animation_url', parseParam('https://myserver.com/audio.mp3')],
-          ['royalty_base', parseParam(300)],
-          ['royalty_recipient', parseParam(user1.address)],
-          ['min_time', parseParam(min_time)],
-          ['max_time', parseParam(max_time)],
+          ['royalty.base', parseParam(300)],
+          ['royalty.recipient', parseParam(user1.address)],
+          ['token.min_time', parseParam(min_time)],
+          ['token.max_time', parseParam(max_time)],
         ], [], [])
 
         await p1155.createToken([
           ['title', parseParam('My Song 2')],
           ['artist', parseParam('My Artist 2')],
-          ['royalty_base', parseParam(250)],
-          ['royalty_recipient', parseParam(user1.address)],
+          ['royalty.base', parseParam(250)],
+          ['royalty.recipient', parseParam(user1.address)],
         ], [], [])
 
         await expect(p1155.createToken([], [], [])).to.be.revertedWith('EMPTY_META');

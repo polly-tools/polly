@@ -1,6 +1,7 @@
 const { task } = require("hardhat/config");
 const { types } = require("hardhat/config")
 const fs = require("fs");
+const { cwd } = require("process");
 
 require("colors");
 
@@ -21,13 +22,13 @@ task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 task('polly:deploy-module', 'Deploy a module implementation', async ({name, at, update}) => {
 
   await hre.run('compile');
-  console.log(`Deploying module ${name}_v${at} to network ${hre.network.name}`);
+  console.log(`Deploying module ${name}@${at} to network ${hre.network.name}`);
 
-  const Module = await hre.ethers.getContractFactory(`${name}_v${at}`);
+  const Module = await hre.ethers.getContractFactory(name);
   let moduleAddress;
 
   let module_scripts = false;
-  const script_file = `./scripts/${name}_v${at}.js`;
+  const script_file = `${cwd()}/scripts/${name}.js`;
   if(fs.existsSync(script_file))
     module_scripts = require(script_file);
 
