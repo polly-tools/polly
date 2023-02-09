@@ -1,6 +1,6 @@
 {
   "name": "@polly-tools/hardhat-polly",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hardhat plugin for projects using Polly modules or core",
   "main": "index.js",
   "publishConfig": {
