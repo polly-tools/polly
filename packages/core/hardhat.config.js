@@ -34,8 +34,11 @@ module.exports = {
   },
   polly: {
     verbose: false,
-    fork: {
-      hardhat: process.env.POLLY_ADDRESS
+    networks: {
+      hardhat: process.env.POLLY_ADDRESS,
+      localhost: process.env.POLLY_ADDRESS,
+      goerli: '0x3504e31F9b8aa9006a742dEe706c9FF9a276F4FA',
+      mainnet: '0x68dF9600D9246C7fB4C3ece126AbdE558f3Fdb19'
     }
   },
   paths: {
@@ -57,7 +60,13 @@ module.exports = {
     path: './abi',
     runOnCompile: true,
     except: ['@openzeppelin', 'TestModule'],
-    flat: true
+    clear: true,
+    rename: (sourceName, contractName) => {
+      const parts = sourceName.split('/');
+      const filename = parts[parts.length - 1];
+      const path = parts.slice(1, parts.length - 1).join('/').trim();
+      return `${path ? path+'/' : ''}${contractName}.abi`;
+    }
   },
   networks: {
     hardhat: {

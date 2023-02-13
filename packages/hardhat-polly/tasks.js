@@ -19,10 +19,10 @@ task("polly:deploy", "Deploys the Polly contract", async (taskArgs, hre) => {
 });
 
 
-task('polly:deploy-module', 'Deploy a module implementation', async ({name, at, update}) => {
+task('polly:deploy-module', 'Deploy a module implementation', async ({name, update}, hre) => {
 
   await hre.run('compile');
-  console.log(`Deploying module ${name}@${at} to network ${hre.network.name}`);
+  console.log(`Deploying module ${name} to network ${hre.network.name}`);
 
   const Module = await hre.ethers.getContractFactory(name);
   let moduleAddress;
@@ -47,17 +47,17 @@ task('polly:deploy-module', 'Deploy a module implementation', async ({name, at, 
 
 })
 .addParam("name", "The module contract name")
-.addParam("at", "Version to dpeloy")
 .addOptionalParam("update", "Update module after deployment", false, types.boolean)
 
 
-task('polly:update-module', 'Update a module in Polly', async ({implementation}) => {
+task('polly:update-module', 'Update a module in Polly', async ({implementation}, hre) => {
 
   console.log(`Updating module on network ${hre.network.name}`);
   const [owner] = await ethers.getSigners();
 
-  const polly = await hre.polly.deploy();
-  const tx = await polly.updateModule(implementation);
+  if(!hre.polly) throw new Error('Polly not found');
+
+  const tx = await hre.polly.updateModule(implementation);
   const receipt = await tx.wait();
 
   const events = receipt.events.filter(e => e.event === 'moduleUpdated');
@@ -66,15 +66,3 @@ task('polly:update-module', 'Update a module in Polly', async ({implementation})
 
 })
 .addParam("implementation", "The module contract name")
-
-// task('polly:deploy-all-modules', 'Deploy all modules', async ({update}) => {
-
-//   await hre.run('compile');
-//   console.log(`Deploying all modules to network ${hre.network.name}`);
-
-//   for(let index in modules){
-//     await hre.run('polly:deploy-module', {name: modules[index], update: update});
-//   }
-
-// })
-// .addOptionalParam("update", "Update modules after deployment", false, types.boolean)

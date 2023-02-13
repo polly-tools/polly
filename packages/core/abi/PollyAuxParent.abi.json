@@ -7,7 +7,7 @@
         "type": "string"
       }
     ],
-    "name": "addressForHook",
+    "name": "getHookAddress",
     "outputs": [
       {
         "internalType": "address",
@@ -16,6 +16,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "aux_",
+        "type": "address"
+      }
+    ],
+    "name": "registerAux",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

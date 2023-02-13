@@ -7,6 +7,7 @@
   },
   "scripts": {
     "test": "npx hardhat test",
+    "node": "npx hardhat node",
     "dev": "npx nodemon -e sol,js --exec \"npm run test\"",
     "polly:test": "npx hardhat test test/polly.js",
     "polly:dev": "npx nodemon -e sol,js --exec \"npm run polly:test\""
